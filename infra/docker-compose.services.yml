@@ -611,8 +611,3 @@ services:
   # ========================================
   # MONITORING & OBSERVABILITY (Defined in base.yml)
   # ========================================
-
-volumes:
-  prometheus_data:
-  grafana_data:
-  elasticsearch_data:

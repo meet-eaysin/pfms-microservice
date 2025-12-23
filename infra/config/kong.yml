@@ -1,0 +1,146 @@
+_format_version: '3.0'
+
+# PFMS Kong Gateway Configuration
+# Declarative configuration for DB-less mode
+
+services:
+  # ============================================
+  # Auth Service
+  # ============================================
+  - name: auth-service
+    url: http://auth-service:3001
+    protocol: http
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+
+    routes:
+      - name: auth-routes
+        paths:
+          - /auth
+        strip_path: true
+        preserve_host: false
+        protocols:
+          - http
+          - https
+
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+          policy: local
+          fault_tolerant: true
+          hide_client_headers: false
+
+      - name: cors
+        config:
+          origins:
+            - '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+            - OPTIONS
+          headers:
+            - Accept
+            - Accept-Version
+            - Content-Length
+            - Content-MD5
+            - Content-Type
+            - Date
+            - Authorization
+          exposed_headers:
+            - X-Auth-Token
+          credentials: true
+          max_age: 3600
+
+      - name: request-id
+        config:
+          header_name: X-Request-ID
+          echo_downstream: true
+          generator: uuid
+
+  # ============================================
+  # Expense Service
+  # ============================================
+  - name: expense-service
+    url: http://expense-service:3003
+    protocol: http
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+
+    routes:
+      - name: expense-routes
+        paths:
+          - /expenses
+        strip_path: true
+        preserve_host: false
+        protocols:
+          - http
+          - https
+
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+          policy: local
+          fault_tolerant: true
+          hide_client_headers: false
+
+      - name: cors
+        config:
+          origins:
+            - '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+            - OPTIONS
+          headers:
+            - Accept
+            - Accept-Version
+            - Content-Length
+            - Content-MD5
+            - Content-Type
+            - Date
+            - Authorization
+          exposed_headers:
+            - X-Auth-Token
+          credentials: true
+          max_age: 3600
+
+      - name: request-id
+        config:
+          header_name: X-Request-ID
+          echo_downstream: true
+          generator: uuid
+
+# ============================================
+# Global Plugins
+# ============================================
+plugins:
+  - name: correlation-id
+    config:
+      header_name: X-Correlation-ID
+      generator: uuid#counter
+      echo_downstream: true
+
+  - name: request-size-limiting
+    config:
+      allowed_payload_size: 10
+      size_unit: megabytes
+      require_content_length: false
+
+  - name: response-ratelimiting
+    enabled: false
+    config:
+      limits:
+        sms:
+          minute: 10

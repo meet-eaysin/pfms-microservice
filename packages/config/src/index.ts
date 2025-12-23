@@ -38,3 +38,17 @@ export { rabbitmqSchema } from './schemas/rabbitmq.schema';
 export { jwtSchema } from './schemas/jwt.schema';
 export { loggingSchema } from './schemas/logging.schema';
 export { authSchema } from './schemas/auth.schema';
+
+// ============================================
+// Environment Validator
+// (Runtime validation with Zod)
+// ============================================
+
+export {
+  validateEnv,
+  tryValidateEnv,
+  getEnv,
+  checkRequiredEnv,
+  envSchema,
+  type Env,
+} from './env-validator';

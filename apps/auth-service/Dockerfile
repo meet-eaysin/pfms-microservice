@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 # Production-ready Multi-stage Dockerfile for Auth Service
 # Optimized for: Build speed, image size, security, and caching
 
@@ -24,8 +26,10 @@ COPY packages/config/package.json ./packages/config/
 COPY packages/types/package.json ./packages/types/
 COPY packages/utils/package.json ./packages/utils/
 
-# Install production dependencies only
-RUN yarn workspaces focus @pfms/auth-service --production
+# Install production dependencies only with cache mounts
+RUN --mount=type=cache,target=/root/.yarn \
+    --mount=type=cache,target=/root/.cache \
+    yarn workspaces focus @pfms/auth-service --production
 
 # ============================================
 # Stage 2: Builder
@@ -51,8 +55,10 @@ COPY packages/config ./packages/config
 COPY packages/types ./packages/types
 COPY packages/utils ./packages/utils
 
-# Install all dependencies (including dev dependencies for build)
-RUN yarn install --immutable
+# Install all dependencies (including dev dependencies for build) with cache mounts
+RUN --mount=type=cache,target=/root/.yarn \
+    --mount=type=cache,target=/root/.cache \
+    yarn install --immutable
 
 # Generate Prisma Client
 RUN cd apps/auth-service && yarn prisma generate

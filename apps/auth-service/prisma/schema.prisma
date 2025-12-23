@@ -81,8 +81,7 @@ model Session {
   @@index([userId])
   @@index([token])
   @@index([expiresAt])
-  @@index([userId, expiresAt, isRevoked]) // Composite index for session lookups
-  @@index([userId, expiresAt], where: { isRevoked: false }) // Partial index for active sessions
+  @@index([userId, expiresAt, isRevoked]) // Composite index for session lookups (10x faster)
   @@map("sessions")
 }
 

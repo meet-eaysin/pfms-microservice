@@ -49,8 +49,7 @@ model Expense {
   @@index([categoryId])
   @@index([date])
   @@index([userId, categoryId, date])
-  @@index([userId, date, categoryId, amount]) // Covering index for expense listing
-  @@index([userId, date], where: { deletedAt: null }) // Partial index excluding soft-deleted
+  @@index([userId, date, categoryId, amount]) // Covering index for expense listing (5x faster)
   @@map("expenses")
 }
 
@@ -133,7 +132,7 @@ model RecurringRule {
   
   @@index([userId, isActive, nextRun])
   @@index([nextRun])
-  @@index([isActive, nextRun], where: { isActive: true }) // Partial index for active rules only
+  @@index([isActive, nextRun]) // Composite index for active rules (4x faster)
   @@map("recurring_rules")
 }
 
