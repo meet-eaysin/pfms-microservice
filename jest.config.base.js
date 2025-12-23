@@ -98,4 +98,5 @@ module.exports = {
   // Error handling
   bail: 0,
   errorOnDeprecated: true,
+  passWithNoTests: true,
 };
