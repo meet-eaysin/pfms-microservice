@@ -8,7 +8,14 @@ FROM node:24-alpine AS deps
 WORKDIR /app
 
 # Install dependencies only when needed
-# Copy package files from monorepo root and workspace
+RUN apk add --no-cache \
+    libc6-compat \
+    python3 \
+    make \
+    g++ \
+    gcc \
+    git
+
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn ./.yarn
 COPY apps/auth-service/package.json ./apps/auth-service/
@@ -30,6 +37,14 @@ COPY --from=deps /app/.yarn ./.yarn
 COPY --from=deps /app/.yarnrc.yml ./
 
 # Copy source code
+RUN apk add --no-cache \
+    libc6-compat \
+    python3 \
+    make \
+    g++ \
+    gcc \
+    git
+
 COPY package.json yarn.lock ./
 COPY apps/auth-service ./apps/auth-service
 COPY packages ./packages
