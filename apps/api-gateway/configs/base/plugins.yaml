@@ -1,0 +1,111 @@
+# Base Global Plugin Definitions
+# These plugins are applied globally across all routes and services
+# Environment-specific plugin configurations can be applied in configs/{env}/overrides.yaml
+
+_format_version: '3.0'
+
+plugins:
+  # ============================================
+  # AUTHENTICATION - Better-Auth JWT
+  # ============================================
+  # JWT Authentication using Better-Auth JWKS endpoint
+  # Better-Auth provides JWT tokens via the JWT plugin
+  # JWKS endpoint: http://auth-service:3001/api/auth/jwks
+  - name: jwt
+    config:
+      # URI to fetch JWKS (JSON Web Key Set) from Better-Auth
+      # This allows Kong to verify JWT signatures without storing keys
+      uri_param_names:
+        - jwt
+      cookie_names:
+        - better_auth.session_token # Better-Auth session cookie
+      header_names:
+        - Authorization
+      claims_to_verify:
+        - exp # Expiration time
+      # Note: JWKS URI will be configured per environment via overrides
+      # Dev: http://auth-service:3001/api/auth/jwks
+      # Prod: https://auth.yourdomain.com/api/auth/jwks
+      run_on_preflight: false
+      maximum_expiration: 86400 # 24 hours max token lifetime
+
+  # ============================================
+  # CORS - Global
+  # ============================================
+  - name: cors
+    config:
+      origins: ['*']
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS']
+      headers:
+        - Content-Type
+        - Authorization
+        - X-Requested-With
+        - Accept
+        - Accept-Language
+        - X-Session-Token
+      exposed_headers:
+        - Content-Length
+        - X-RateLimit-Limit
+        - X-RateLimit-Remaining
+        - X-Kong-Upstream-Latency
+        - X-Kong-Latency
+      credentials: true
+      max_age: 3600
+      preflight_continue: false
+
+  # ============================================
+  # RATE LIMITING - Global
+  # ============================================
+  - name: rate-limiting
+    config:
+      minute: 500
+      hour: 5000
+      policy: local # Will be overridden to 'redis' in staging/prod
+      fault_tolerant: true
+      hide_client_headers: false
+      # Redis config will be added via environment overrides
+
+  # ============================================
+  # SECURITY HEADERS
+  # ============================================
+  - name: response-transformer
+    config:
+      add:
+        headers:
+          # Security headers
+          - X-Content-Type-Options:nosniff
+          - X-Frame-Options:DENY
+          - X-XSS-Protection:1; mode=block
+          - Referrer-Policy:strict-origin-when-cross-origin
+          # Performance headers
+          - X-Kong-Upstream-Latency:$upstream_response_time
+          - X-Kong-Latency:$request_time
+
+  # ============================================
+  # REQUEST TRACKING
+  # ============================================
+  - name: correlation-id
+    config:
+      header_name: X-Request-ID
+      generator: uuid
+      echo_downstream: true
+
+  # ============================================
+  # REQUEST SIZE LIMITING
+  # ============================================
+  - name: request-size-limiting
+    config:
+      allowed_payload_size: 10 # 10 MB default
+      size_unit: megabytes
+      require_content_length: false
+
+  # ============================================
+  # LOGGING (File-based for development)
+  # ============================================
+  - name: file-log
+    config:
+      path: /tmp/kong-access.log
+      reopen: true
+      # Log format includes request/response details
+      custom_fields_by_lua:
+        request_id: return kong.ctx.shared.correlation_id

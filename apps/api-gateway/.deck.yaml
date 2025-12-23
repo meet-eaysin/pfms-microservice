@@ -1,0 +1,37 @@
+# Kong Deck CLI Configuration
+# https://docs.konghq.com/deck/latest/reference/deck/
+
+# Format version
+_format_version: '3.0'
+
+# Kong Admin API endpoint (override with KONG_ADMIN_URL env var)
+kong-addr: 'http://localhost:8001'
+
+# Headers to include in requests to Kong Admin API
+headers:
+  - 'Kong-Admin-Token:${KONG_ADMIN_TOKEN}'
+
+# Select tags to filter resources
+# select-tag:
+#   - "managed-by-deck"
+
+# Skip consumers during sync (useful for production)
+# skip-consumers: false
+
+# Parallelism for sync operations
+parallelism: 10
+
+# Timeout for HTTP requests to Kong Admin API
+timeout: 30
+
+# Enable verbose output
+# verbose: 2
+
+# State file location (for tracking sync state)
+# state-file: ".deck.state"
+
+# Workspace (Kong Enterprise only)
+# workspace: "default"
+
+# Enable analytics (send anonymous usage data to Kong)
+analytics: false

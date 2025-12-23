@@ -1,0 +1,272 @@
+# Prometheus Alert Rules for PFMS
+
+groups:
+  - name: service_alerts
+    interval: 15s
+    rules:
+      # ============================================
+      # SERVICE AVAILABILITY ALERTS
+      # ============================================
+
+      - alert: ServiceDown
+        expr: up{job=~".*-service"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: availability
+        annotations:
+          summary: '{{ $labels.job }} is down'
+          description: 'Service {{ $labels.job }} has been unavailable for more than 2 minutes'
+
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[5m])) by (job)
+            /
+            sum(rate(http_requests_total[5m])) by (job)
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          category: error_rate
+        annotations:
+          summary: 'High error rate in {{ $labels.job }}'
+          description: 'Error rate is {{ $value | humanizePercentage }} in {{ $labels.job }}'
+
+      # ============================================
+      # PERFORMANCE ALERTS
+      # ============================================
+
+      - alert: HighResponseTime
+        expr: |
+          histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: 'High response time in {{ $labels.job }}'
+          description: '95th percentile response time is {{ $value }}s in {{ $labels.job }}'
+
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: critical
+          category: performance
+        annotations:
+          summary: 'Critical latency in {{ $labels.job }}'
+          description: '99th percentile latency is {{ $value }}s in {{ $labels.job }}'
+
+      # ============================================
+      # DATABASE ALERTS
+      # ============================================
+
+      - alert: PostgreSQLDown
+        expr: up{job="postgresql"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: 'PostgreSQL is down'
+          description: 'PostgreSQL database has been unavailable for more than 2 minutes'
+
+      - alert: PostgreSQLConnections
+        expr: |
+          postgresql_stat_activity_count{datname!~"postgres|template.*"}
+          / on() group_left
+          postgresql_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: 'High PostgreSQL connection usage'
+          description: 'PostgreSQL connections are at {{ $value | humanizePercentage }} of max'
+
+      - alert: MongoDBDown
+        expr: up{job="mongodb"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: 'MongoDB is down'
+          description: 'MongoDB has been unavailable for more than 2 minutes'
+
+      # ============================================
+      # CACHE ALERTS
+      # ============================================
+
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          category: cache
+        annotations:
+          summary: 'Redis is down'
+          description: 'Redis cache has been unavailable for more than 2 minutes'
+
+      - alert: RedisMemoryHigh
+        expr: |
+          redis_memory_used_bytes / redis_memory_max_bytes > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          category: cache
+        annotations:
+          summary: 'High Redis memory usage'
+          description: 'Redis memory usage is {{ $value | humanizePercentage }}'
+
+      - alert: RedisEvictions
+        expr: |
+          rate(redis_evicted_keys_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          category: cache
+        annotations:
+          summary: 'Redis keys being evicted'
+          description: 'Redis is evicting {{ $value }} keys per second'
+
+      # ============================================
+      # MESSAGE QUEUE ALERTS
+      # ============================================
+
+      - alert: RabbitMQDown
+        expr: up{job="rabbitmq"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: message_queue
+        annotations:
+          summary: 'RabbitMQ is down'
+          description: 'RabbitMQ has been unavailable for more than 2 minutes'
+
+      - alert: RabbitMQMemoryHigh
+        expr: |
+          rabbitmq_vm_memory_used / rabbitmq_vm_memory_limit > 0.7
+        for: 5m
+        labels:
+          severity: warning
+          category: message_queue
+        annotations:
+          summary: 'High RabbitMQ memory usage'
+          description: 'RabbitMQ memory usage is {{ $value | humanizePercentage }}'
+
+      - alert: QueueBacklog
+        expr: |
+          rabbitmq_queue_messages > 1000
+        for: 10m
+        labels:
+          severity: warning
+          category: message_queue
+        annotations:
+          summary: 'Message queue backlog building up'
+          description: 'Queue {{ $labels.queue }} has {{ $value }} messages pending'
+
+      # ============================================
+      # API GATEWAY ALERTS
+      # ============================================
+
+      - alert: KongDown
+        expr: up{job="kong"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: gateway
+        annotations:
+          summary: 'Kong API Gateway is down'
+          description: 'Kong has been unavailable for more than 2 minutes'
+
+      - alert: GatewayErrorRate
+        expr: |
+          (
+            sum(rate(kong_http_requests_total{status=~"5.."}[5m]))
+            /
+            sum(rate(kong_http_requests_total[5m]))
+          ) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          category: gateway
+        annotations:
+          summary: 'High gateway error rate'
+          description: 'Kong error rate is {{ $value | humanizePercentage }}'
+
+      # ============================================
+      # INFRASTRUCTURE ALERTS
+      # ============================================
+
+      - alert: HighCPUUsage
+        expr: |
+          (100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: 'High CPU usage on {{ $labels.instance }}'
+          description: 'CPU usage is {{ $value }}%'
+
+      - alert: DiskSpaceLow
+        expr: |
+          (
+            node_filesystem_avail_bytes{fstype=~"ext4|xfs"}
+            /
+            node_filesystem_size_bytes{fstype=~"ext4|xfs"}
+          ) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: 'Low disk space on {{ $labels.device }}'
+          description: 'Available disk space is {{ $value | humanizePercentage }}'
+
+  - name: business_alerts
+    interval: 15s
+    rules:
+      # ============================================
+      # BUSINESS LOGIC ALERTS
+      # ============================================
+
+      - alert: UnexpectedExpenseCreationRate
+        expr: |
+          rate(expense_created_total[5m]) > 100
+        for: 5m
+        labels:
+          severity: info
+          category: business
+        annotations:
+          summary: 'Unusual expense creation rate'
+          description: 'Expenses are being created at {{ $value }}/sec'
+
+      - alert: HighBudgetAlertVolume
+        expr: |
+          rate(budget_alerts_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: info
+          category: business
+        annotations:
+          summary: 'High budget alert volume'
+          description: 'Budget alerts are being generated at {{ $value }}/sec'
+
+      - alert: FailedTransactionRate
+        expr: |
+          (
+            sum(rate(transaction_failures_total[5m]))
+            /
+            sum(rate(transaction_total[5m]))
+          ) > 0.02
+        for: 5m
+        labels:
+          severity: warning
+          category: business
+        annotations:
+          summary: 'High transaction failure rate'
+          description: 'Transaction failure rate is {{ $value | humanizePercentage }}'

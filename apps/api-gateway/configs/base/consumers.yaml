@@ -1,0 +1,17 @@
+# Base Consumers and ACL Definitions
+# Test consumers for development and testing
+# Production consumers should be managed separately
+
+_format_version: '3.0'
+
+consumers:
+  # Default consumer for testing
+  - username: test-client
+    custom_id: test-client-001
+    basicauth_credentials:
+      - username: testuser
+        password: testpass123
+
+acls:
+  - consumer: test-client
+    group: user-app

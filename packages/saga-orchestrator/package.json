@@ -1,0 +1,27 @@
+{
+  "name": "@pfms/saga-orchestrator",
+  "version": "1.0.0",
+  "description": "Saga orchestrator for distributed transactions in PFMS",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@pfms/utils": "workspace:*",
+    "ioredis": "^5.8.2"
+  },
+  "devDependencies": {
+    "@pfms/eslint-config": "workspace:*",
+    "@pfms/typescript-config": "workspace:*",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

@@ -1,0 +1,602 @@
+_format_version: '3.0'
+_transform: true
+services:
+  - name: auth-service
+    url: http://auth-service:3001
+    protocol: http
+    host: auth-service
+    port: 3001
+    retries: 5
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - core
+      - authentication
+  - name: user-service
+    url: http://user-service:3002
+    protocol: http
+    host: user-service
+    port: 3002
+    retries: 5
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - core
+      - user-management
+  - name: expense-service
+    url: http://expense-service:3003
+    protocol: http
+    host: expense-service
+    port: 3003
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - expense
+  - name: income-service
+    url: http://income-service:3004
+    protocol: http
+    host: income-service
+    port: 3004
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - income
+  - name: investment-service
+    url: http://investment-service:3005
+    protocol: http
+    host: investment-service
+    port: 3005
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - investment
+  - name: loan-service
+    url: http://loan-service:3006
+    protocol: http
+    host: loan-service
+    port: 3006
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - loan
+  - name: group-service
+    url: http://group-service:3007
+    protocol: http
+    host: group-service
+    port: 3007
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - group
+  - name: savings-service
+    url: http://savings-service:3014
+    protocol: http
+    host: savings-service
+    port: 3014
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - savings
+  - name: tax-service
+    url: http://tax-service:3008
+    protocol: http
+    host: tax-service
+    port: 3008
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - tax
+  - name: ai-service
+    url: http://ai-service:3009
+    protocol: http
+    host: ai-service
+    port: 3009
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - analytics
+      - ai
+  - name: notification-service
+    url: http://notification-service:3010
+    protocol: http
+    host: notification-service
+    port: 3010
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - notification
+      - communication
+  - name: automation-service
+    url: http://automation-service:3011
+    protocol: http
+    host: automation-service
+    port: 3011
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - automation
+      - rules
+  - name: report-service
+    url: http://report-service:3012
+    protocol: http
+    host: report-service
+    port: 3012
+    retries: 3
+    connect_timeout: 120000
+    write_timeout: 60000
+    read_timeout: 60000
+    tags:
+      - reporting
+      - exports
+  - name: market-service
+    url: http://market-service:3013
+    protocol: http
+    host: market-service
+    port: 3013
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - market-data
+      - external
+  - name: grafana
+    url: http://grafana:3000
+    protocol: http
+    host: grafana
+    port: 3000
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - monitoring
+      - observability
+  - name: prometheus
+    url: http://prometheus:9090
+    protocol: http
+    host: prometheus
+    port: 9090
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - monitoring
+      - metrics
+routes:
+  - name: auth-health-routes
+    service: auth-service
+    paths:
+      - /api/v1/health
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    strip_path: false
+  - name: auth-routes
+    service: auth-service
+    paths:
+      - /api/v1/auth
+      - /api/auth
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Content-Type
+            - Authorization
+  - name: user-routes
+    service: user-service
+    paths:
+      - /api/v1/user
+      - /api/v1/profile
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+  - name: expense-routes
+    service: expense-service
+    paths:
+      - /api/v1/expenses
+      - /api/v1/habits
+      - /api/v1/categories
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+    strip_path: false
+  - name: income-routes
+    service: income-service
+    paths:
+      - /api/v1/income
+      - /api/v1/sources
+      - /api/v1/cashflow
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+  - name: investment-routes
+    service: investment-service
+    paths:
+      - /api/v1/portfolios
+      - /api/v1/assets
+      - /api/v1/investments
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+  - name: loan-routes
+    service: loan-service
+    paths:
+      - /api/v1/loans
+      - /api/v1/contacts
+      - /api/v1/payments
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+  - name: group-routes
+    service: group-service
+    paths:
+      - /api/v1/groups
+      - /api/v1/settlements
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+  - name: savings-routes
+    service: savings-service
+    paths:
+      - /api/v1/savings
+      - /api/v1/goals
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+  - name: tax-routes
+    service: tax-service
+    paths:
+      - /api/v1/tax
+      - /api/v1/deductions
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 50
+          hour: 500
+  - name: ai-routes
+    service: ai-service
+    paths:
+      - /api/v1/ai
+      - /api/v1/insights
+      - /api/v1/chat
+    methods:
+      - GET
+      - POST
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 30
+          hour: 300
+  - name: notification-routes
+    service: notification-service
+    paths:
+      - /api/v1/notifications
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+  - name: automation-routes
+    service: automation-service
+    paths:
+      - /api/v1/automation
+      - /api/v1/rules
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+  - name: report-routes
+    service: report-service
+    paths:
+      - /api/v1/reports
+      - /api/v1/export
+    methods:
+      - GET
+      - POST
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 20
+          hour: 100
+  - name: market-routes
+    service: market-service
+    paths:
+      - /api/v1/market
+      - /api/v1/quotes
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 2000
+  - name: grafana-routes
+    service: grafana
+    paths:
+      - /grafana
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    strip_path: true
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 2000
+  - name: prometheus-routes
+    service: prometheus
+    paths:
+      - /prometheus
+    methods:
+      - GET
+      - POST
+    protocols:
+      - http
+      - https
+    strip_path: true
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+plugins:
+  - name: rate-limiting
+    config:
+      minute: 200
+      hour: 2000
+      policy: redis
+      redis_host: ${REDIS_HOST}
+      redis_port: ${REDIS_PORT}
+      redis_password: ${REDIS_PASSWORD}
+      redis_database: 0
+      fault_tolerant: true
+  - name: cors
+    config:
+      origins:
+        - https://pfms.example.com
+        - https://admin.pfms.example.com
+        - https://app.pfms.example.com
+      methods:
+        - GET
+        - HEAD
+        - PUT
+        - PATCH
+        - POST
+        - DELETE
+        - OPTIONS
+      headers:
+        - Content-Type
+        - Authorization
+        - X-Requested-With
+        - Accept
+      exposed_headers:
+        - Content-Length
+        - X-RateLimit-Limit
+        - X-RateLimit-Remaining
+      credentials: true
+      max_age: 86400
+upstreams:
+  - name: auth-service-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        http_path: /health
+        unhealthy:
+          http_statuses:
+            - 429
+            - 500
+            - 502
+            - 503
+            - 504
+          tcp_failures: 0
+          timeouts: 0
+          interval: 30
+        healthy:
+          http_statuses:
+            - 200
+            - 201
+            - 202
+            - 204
+            - 301
+            - 302
+            - 304
+            - 305
+            - 306
+            - 307
+            - 308
+            - 401
+            - 403
+            - 404
+          successes: 3
+          interval: 30
+consumers:
+  - username: test-client
+    custom_id: test-client-001
+    basicauth_credentials:
+      - username: testuser
+        password: testpass123
+acls:
+  - consumer: test-client
+    group: user-app

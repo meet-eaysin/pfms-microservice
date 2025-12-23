@@ -1,0 +1,324 @@
+# Base Docker Compose configuration shared across all environments
+#
+# KEY CHANGE: Each microservice has its own PostgreSQL instance for true isolation
+# Shared services: Redis (cache), RabbitMQ (events), MongoDB (analytics only)
+
+services:
+  # ============================================
+  # SHARED INFRASTRUCTURE
+  # ============================================
+
+  # Redis - Shared Cache & Session Store
+  redis:
+    image: redis:7-alpine
+    container_name: pfms_redis
+    restart: unless-stopped
+    command: >
+      redis-server --appendonly yes --appendfsync everysec --maxmemory 512mb --maxmemory-policy allkeys-lru --loglevel debug
+    volumes:
+      - redis_data:/data
+    # Port exposed only within Docker network (internal access only)
+    # External access via Kong Gateway
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # RabbitMQ - Shared Event Bus & Message Queue
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: pfms_rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./scripts/rabbitmq-init.sh:/docker-entrypoint-initdb.d/init.sh
+    # Ports exposed only within Docker network (internal access only)
+    # AMQP: 5672 (internal), Management: 15672 (internal)
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # MongoDB - Analytics & AI Data Only
+  mongodb:
+    image: mongo:7.0
+    container_name: pfms_mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: pfms
+    volumes:
+      - mongodb_data:/data/db
+      - ./config/mongodb-init.js:/docker-entrypoint-initdb.d/init.js
+    # Port exposed only within Docker network (internal access only)
+    healthcheck:
+      test: ['CMD', 'mongosh', 'admin', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # MinIO - S3-compatible Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: pfms_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    # Ports exposed only within Docker network (internal access only)
+    # API: 9000 (internal), Console: 9001 (internal)
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Prometheus - Metrics Collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: pfms_prometheus
+    restart: unless-stopped
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    # Port exposed only within Docker network (internal access only)
+    # Can be accessed via Kong Gateway for admin users
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - pfms_network
+
+  # Grafana - Metrics Visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: pfms_grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_USER: admin
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning
+    # Port exposed only within Docker network (internal access only)
+    # Can be accessed via Kong Gateway for admin users
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Elasticsearch - Logs storage
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: pfms_elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - pfms_network
+
+  # Kibana - Logs visualization
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: pfms_kibana
+    restart: unless-stopped
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    networks:
+      - pfms_network
+    depends_on:
+      - elasticsearch
+
+  # ============================================
+  # PER-SERVICE DATABASES (Microservice Isolation)
+  # ============================================
+
+  # Auth Service Database
+  postgres-auth:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_auth
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+    ports:
+      - '5433:5432' # Development only - expose for host access
+    # Services in Docker connect via container name 'postgres-auth:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Expense Service Database
+  postgres-expense:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_expense
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: expense_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_expense_data:/var/lib/postgresql/data
+    # Port exposed only within Docker network (internal access only)
+    # Services connect via container name 'postgres-expense:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # User Service Database
+  postgres-user:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_user
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: user_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_user_data:/var/lib/postgresql/data
+    # Port exposed only within Docker network (internal access only)
+    # Services connect via container name 'postgres-user:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Income Service Database
+  postgres-income:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_income
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: income_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_income_data:/var/lib/postgresql/data
+    # Port exposed only within Docker network (internal access only)
+    # Services connect via container name 'postgres-income:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Investment Service Database
+  postgres-investment:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_investment
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: investment_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_investment_data:/var/lib/postgresql/data
+    # Port exposed only within Docker network (internal access only)
+    # Services connect via container name 'postgres-investment:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Loan Service Database
+  postgres-loan:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_loan
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: loan_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_loan_data:/var/lib/postgresql/data
+    # Port exposed only within Docker network (internal access only)
+    # Services connect via container name 'postgres-loan:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+networks:
+  pfms_network:
+    driver: bridge
+
+volumes:
+  # Shared infrastructure
+  redis_data:
+  rabbitmq_data:
+  mongodb_data:
+  minio_data:
+  prometheus_data:
+  grafana_data:
+  kong_data:
+
+  # Per-service databases
+  postgres_auth_data:
+  postgres_expense_data:
+  postgres_user_data:
+  postgres_income_data:
+  postgres_investment_data:
+  postgres_loan_data:

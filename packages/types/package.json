@@ -1,0 +1,16 @@
+{
+  "name": "@pfms/types",
+  "version": "1.0.0",
+  "description": "Shared type definitions for PFMS",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@pfms/typescript-config": "workspace:*",
+    "typescript": "^5.5.2"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "@pfms/event-bus",
+  "version": "1.0.0",
+  "description": "RabbitMQ event bus for PFMS microservices",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@pfms/utils": "workspace:*",
+    "amqplib": "^0.10.9",
+    "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@pfms/eslint-config": "workspace:*",
+    "@pfms/typescript-config": "workspace:*",
+    "@types/amqplib": "^0.10.8",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

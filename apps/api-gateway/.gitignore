@@ -1,0 +1,23 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Deck state files
+.deck.state
+
+# Backup files
+configs/backup/*.yaml
+configs/backup/*.yml
+
+# Generated/merged configs
+configs/*/kong.generated.yaml
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

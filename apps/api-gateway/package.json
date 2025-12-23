@@ -1,0 +1,36 @@
+{
+  "name": "@pfms/api-gateway",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kong API Gateway configuration and management",
+  "scripts": {
+    "validate": "npm run validate:dev",
+    "validate:dev": "node scripts/merge-config.js dev && deck validate --config configs/dev/kong.yaml",
+    "validate:staging": "node scripts/merge-config.js staging && deck validate --config configs/staging/kong.yaml",
+    "validate:prod": "node scripts/merge-config.js prod && deck validate --config configs/prod/kong.yaml",
+    "sync": "npm run sync:dev",
+    "sync:dev": "node scripts/substitute-env.js dev && deck sync --config configs/dev/kong.yaml",
+    "sync:staging": "node scripts/substitute-env.js staging && deck sync --config configs/staging/kong.yaml",
+    "sync:prod": "node scripts/substitute-env.js prod && deck sync --config configs/prod/kong.yaml",
+    "diff": "npm run diff:dev",
+    "diff:dev": "node scripts/substitute-env.js dev && deck diff --config configs/dev/kong.yaml",
+    "diff:staging": "node scripts/substitute-env.js staging && deck diff --config configs/staging/kong.yaml",
+    "diff:prod": "node scripts/substitute-env.js prod && deck diff --config configs/prod/kong.yaml",
+    "dump": "deck dump --output-file configs/backup/kong-$(date +%Y%m%d-%H%M%S).yaml",
+    "lint": "yamllint configs/**/*.yaml",
+    "format": "prettier --write \"configs/**/*.{yaml,yml}\"",
+    "format:check": "prettier --check \"configs/**/*.{yaml,yml}\""
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "js-yaml": "^4.1.0",
+    "prettier": "^3.2.5",
+    "yaml-lint": "^1.7.0"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "notes": {
+    "deck-cli": "Deck CLI must be installed globally. See README for installation instructions."
+  }
+}

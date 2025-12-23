@@ -1,0 +1,36 @@
+# Development Environment Overrides
+# These settings override base configurations for development environment
+
+_format_version: '3.0'
+
+# Override JWT plugin to disable authentication in development (optional)
+# Uncomment to disable JWT validation for easier testing
+# plugins:
+#   - name: jwt
+#     enabled: false
+
+# Override CORS to be permissive in development
+plugins:
+  - name: cors
+    config:
+      origins:
+        - 'http://localhost:3000'
+        - 'http://localhost:5173'
+        - 'http://localhost:8080'
+        - '*' # Allow all in development
+      credentials: true
+      max_age: 3600
+
+  # Keep local rate limiting in development (no Redis required)
+  - name: rate-limiting
+    config:
+      minute: 1000 # More generous in development
+      hour: 10000
+      policy: local
+      fault_tolerant: true
+
+  # Verbose logging in development
+  - name: file-log
+    config:
+      path: /tmp/kong-dev-access.log
+      reopen: true

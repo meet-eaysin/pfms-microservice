@@ -1,0 +1,305 @@
+# Prometheus Configuration for PFMS Microservices
+# Global settings
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'pfms'
+    environment: 'development'
+
+# Alert manager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - localhost:9093
+
+# Load alert rules
+rule_files:
+  - '/etc/prometheus/rules/alert_rules.yml'
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'prometheus'
+
+  # ============================================
+  # MICROSERVICES (14 services)
+  # ============================================
+
+  - job_name: 'auth-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['auth-service:3001']
+        labels:
+          service: 'auth'
+          type: 'nestjs'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'auth-service'
+
+  - job_name: 'user-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['user-service:3002']
+        labels:
+          service: 'user'
+          type: 'nestjs'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'user-service'
+
+  - job_name: 'expense-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['expense-service:3003']
+        labels:
+          service: 'expense'
+          type: 'express'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'expense-service'
+
+  - job_name: 'income-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['income-service:3004']
+        labels:
+          service: 'income'
+          type: 'express'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'income-service'
+
+  - job_name: 'investment-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['investment-service:3005']
+        labels:
+          service: 'investment'
+          type: 'express'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'investment-service'
+
+  - job_name: 'loan-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['loan-service:3006']
+        labels:
+          service: 'loan'
+          type: 'nestjs'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'loan-service'
+
+  - job_name: 'group-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['group-service:3007']
+        labels:
+          service: 'group'
+          type: 'express'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'group-service'
+
+  - job_name: 'tax-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['tax-service:3008']
+        labels:
+          service: 'tax'
+          type: 'express'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'tax-service'
+
+  - job_name: 'ai-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['ai-service:3009']
+        labels:
+          service: 'ai'
+          type: 'express'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'ai-service'
+
+  - job_name: 'notification-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['notification-service:3010']
+        labels:
+          service: 'notification'
+          type: 'express'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'notification-service'
+
+  - job_name: 'automation-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['automation-service:3011']
+        labels:
+          service: 'automation'
+          type: 'nestjs'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'automation-service'
+
+  - job_name: 'report-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['report-service:3012']
+        labels:
+          service: 'report'
+          type: 'express'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'report-service'
+
+  - job_name: 'market-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['market-service:3013']
+        labels:
+          service: 'market'
+          type: 'express'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'market-service'
+
+  - job_name: 'savings-service'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['savings-service:3014']
+        labels:
+          service: 'savings'
+          type: 'express'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'savings-service'
+
+  # ============================================
+  # INFRASTRUCTURE SERVICES
+  # ============================================
+
+  - job_name: 'postgresql'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ['postgres:5432']
+        labels:
+          service: 'postgres'
+          type: 'database'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'postgresql'
+
+  - job_name: 'redis'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ['redis:6379']
+        labels:
+          service: 'redis'
+          type: 'cache'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'redis-cache'
+
+  - job_name: 'rabbitmq'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ['rabbitmq:15672']
+        labels:
+          service: 'rabbitmq'
+          type: 'message-queue'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'rabbitmq'
+
+  - job_name: 'mongodb'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ['mongodb:27017']
+        labels:
+          service: 'mongodb'
+          type: 'database'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'mongodb'
+
+  # ============================================
+  # API GATEWAY
+  # ============================================
+
+  - job_name: 'kong'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['kong:8001']
+        labels:
+          service: 'kong'
+          type: 'gateway'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'kong-gateway'

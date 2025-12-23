@@ -1,0 +1,126 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "globalDependencies": ["tsconfig.json"],
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "outputs": ["dist/**", "build/**", ".next/**"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "package.json", "tsconfig.json"],
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "eslint.config.*"],
+      "cache": true
+    },
+    "lint:fix": {
+      "cache": false
+    },
+    "check-types": {
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json"],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**", ".jest-cache/**"],
+      "inputs": ["src/**/*.ts", "test/**/*.ts", "jest.config.js", "tsconfig.spec.json"],
+      "cache": true
+    },
+    "test:unit": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/unit/**", ".jest-cache/**"],
+      "inputs": ["src/**/*.ts", "test/unit/**/*.ts", "jest.config.js", "tsconfig.spec.json"],
+      "cache": true
+    },
+    "test:integration": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/integration/**"],
+      "inputs": [
+        "src/**/*.ts",
+        "test/integration/**/*.ts",
+        "jest.config.integration.js",
+        "tsconfig.spec.json"
+      ],
+      "cache": false
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/e2e/**"],
+      "inputs": ["src/**/*.ts", "test/e2e/**/*.ts", "jest.config.e2e.js", "tsconfig.spec.json"],
+      "cache": false
+    },
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "test:coverage": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"],
+      "inputs": ["src/**/*.ts", "test/**/*.ts", "jest.config.js", "tsconfig.spec.json"],
+      "cache": true
+    },
+    "test:ci": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**", ".jest-cache/**"],
+      "inputs": ["src/**/*.ts", "test/**/*.ts", "jest.config.js", "tsconfig.spec.json"],
+      "cache": true
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:seed": {
+      "cache": false
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": true
+    },
+    "format": {
+      "cache": false
+    },
+    "validate": {
+      "cache": true,
+      "inputs": ["configs/**/*.yaml", "configs/**/*.yml", ".deck.yaml", "scripts/**/*.js"]
+    },
+    "validate:dev": {
+      "cache": true,
+      "inputs": ["configs/base/**", "configs/dev/**", ".deck.yaml", "scripts/**/*.js"]
+    },
+    "validate:staging": {
+      "cache": true,
+      "inputs": ["configs/base/**", "configs/staging/**", ".deck.yaml", "scripts/**/*.js"]
+    },
+    "validate:prod": {
+      "cache": true,
+      "inputs": ["configs/base/**", "configs/prod/**", ".deck.yaml", "scripts/**/*.js"]
+    },
+    "sync": {
+      "cache": false
+    },
+    "sync:dev": {
+      "cache": false
+    },
+    "sync:staging": {
+      "cache": false
+    },
+    "sync:prod": {
+      "cache": false
+    },
+    "diff": {
+      "cache": false
+    },
+    "diff:dev": {
+      "cache": false
+    },
+    "diff:staging": {
+      "cache": false
+    },
+    "diff:prod": {
+      "cache": false
+    }
+  }
+}
