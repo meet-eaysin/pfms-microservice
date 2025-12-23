@@ -59,7 +59,7 @@ COPY packages/eslint-config ./packages/eslint-config
 # Install all dependencies (including dev dependencies for build) with cache mounts
 RUN --mount=type=cache,target=/root/.yarn \
     --mount=type=cache,target=/root/.cache \
-    yarn install --immutable
+    yarn install
 
 # Generate Prisma Client
 RUN cd apps/auth-service && yarn prisma generate
