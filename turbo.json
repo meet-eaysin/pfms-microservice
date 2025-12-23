@@ -1,6 +1,13 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": ["tsconfig.json"],
+  "globalEnv": [
+    "NODE_ENV",
+    "HOST",
+    "SERVICE_PORT",
+    "ENABLE_SWAGGER",
+    "CORS_ORIGIN"
+  ],
   "ui": "tui",
   "tasks": {
     "build": {
