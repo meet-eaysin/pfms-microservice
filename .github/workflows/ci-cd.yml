@@ -109,7 +109,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Run Unit Tests (Shard ${{ matrix.shard }}/4)
-        run: yarn test:unit --shard=${{ matrix.shard }}/4
+        run: yarn test:unit -- --shard=${{ matrix.shard }}/4
 
   integration-tests:
     name: Integration Tests
