@@ -17,8 +17,7 @@ RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
 # Copy package files for dependency installation
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn/releases ./.yarn/releases
-COPY .yarn/plugins ./.yarn/plugins
+
 
 # Copy workspace package.json files
 COPY apps/expense-service/package.json ./apps/expense-service/
