@@ -314,6 +314,7 @@ volumes:
   prometheus_data:
   grafana_data:
   kong_data:
+  elasticsearch_data:
 
   # Per-service databases
   postgres_auth_data:
