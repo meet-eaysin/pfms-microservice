@@ -1,0 +1,52 @@
+# Dependencies
+node_modules
+*/*/node_modules
+.pnp
+.pnp.js
+
+# Testing
+coverage
+*.log
+.jest-cache
+
+# Build outputs
+dist
+build
+.next
+.turbo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+!README.md
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log
+logs
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Development
+*.test.ts
+*.spec.ts
+__tests__
+__mocks__

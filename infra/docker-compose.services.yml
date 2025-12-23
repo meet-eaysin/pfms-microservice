@@ -17,20 +17,23 @@ services:
       NODE_ENV: production
       SERVICE_NAME: auth-service
       SERVICE_PORT: 3001
-      DATABASE_URL: postgresql://postgres:postgres@postgres-auth:5432/auth_db
+      DATABASE_URL: postgresql://${POSTGRES_AUTH_USER:-postgres}:${POSTGRES_AUTH_PASSWORD:-postgres_dev_password}@postgres-auth:5432/auth_db
       DATABASE_HOST: postgres-auth
       DATABASE_PORT: 5432
       DATABASE_NAME: auth_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_AUTH_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_AUTH_PASSWORD:-postgres_dev_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_dev_password}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
-      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      RABBITMQ_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq_dev_password}
+      JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRY: 24h
-      LOG_LEVEL: debug
-      ENABLE_SWAGGER: 'true'
+      LOG_LEVEL: info
+      ENABLE_SWAGGER: 'false'
     # Port 3001 is internal only - access via Kong on port 8000
     # ports:
     #   - "3001:3001"
@@ -44,11 +47,18 @@ services:
     networks:
       - pfms_network
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3001/health']
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://localhost:3001/api/v1/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
+    restart: unless-stopped
     # Production mode - use CMD from Dockerfile (node dist/main.js)
     # volumes:
     #   - ../apps/auth-service/src:/app/src
@@ -107,15 +117,19 @@ services:
       NODE_ENV: production
       SERVICE_NAME: expense-service
       SERVICE_PORT: 3003
+      DATABASE_URL: postgresql://${POSTGRES_EXPENSE_USER:-postgres}:${POSTGRES_EXPENSE_PASSWORD:-postgres_dev_password}@postgres-expense:5432/expense_db
       DATABASE_HOST: postgres-expense
       DATABASE_PORT: 5432
       DATABASE_NAME: expense_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_EXPENSE_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_EXPENSE_PASSWORD:-postgres_dev_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_dev_password}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq_dev_password}
       LOG_LEVEL: info
     # NO PORT EXPOSURE - Internal Docker network only
     # External access ONLY via Kong Gateway (port 8000)
