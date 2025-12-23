@@ -53,6 +53,8 @@ COPY apps/expense-service ./apps/expense-service
 COPY packages/event-bus ./packages/event-bus
 COPY packages/types ./packages/types
 COPY packages/utils ./packages/utils
+COPY packages/typescript-config ./packages/typescript-config
+COPY packages/eslint-config ./packages/eslint-config
 
 # Install all dependencies (including dev dependencies for build) with cache mounts
 RUN --mount=type=cache,target=/root/.yarn \
