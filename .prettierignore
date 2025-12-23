@@ -16,3 +16,4 @@ coverage
 .pnp.cjs
 .pnp.loader.mjs
 *.lock
+next-env.d.ts

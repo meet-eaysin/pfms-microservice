@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { UUID, CreateExpenseDto, Expense } from '@pfms/types';
-import { AppError, ValidationError, HttpStatus, ResponseUtil } from '@pfms/utils';
+import { UUID, CreateExpenseDto } from '@pfms/types';
+import { ValidationError, NotFoundError, HttpStatus, ResponseUtil } from '@pfms/utils';
 import { ExpenseService } from './expense.service';
 
 export class ExpenseController {
@@ -59,7 +59,7 @@ export class ExpenseController {
       const expense = await this.expenseService.getExpense(id as UUID, userId as UUID);
 
       if (!expense) {
-        throw new AppError('Expense not found', HttpStatus.NOT_FOUND);
+        throw new NotFoundError('Expense', id);
       }
 
       res.status(HttpStatus.OK).json(ResponseUtil.success(expense));
@@ -98,7 +98,7 @@ export class ExpenseController {
       );
 
       if (!expense) {
-        throw new AppError('Expense not found', HttpStatus.NOT_FOUND);
+        throw new NotFoundError('Expense', id);
       }
 
       res.status(HttpStatus.OK).json(ResponseUtil.success(expense));
@@ -115,7 +115,7 @@ export class ExpenseController {
       const success = await this.expenseService.deleteExpense(id as UUID, userId as UUID);
 
       if (!success) {
-        throw new AppError('Expense not found', HttpStatus.NOT_FOUND);
+        throw new NotFoundError('Expense', id);
       }
 
       res.status(HttpStatus.NO_CONTENT).send();
