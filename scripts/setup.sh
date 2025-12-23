@@ -79,14 +79,25 @@ echo -e "\n${YELLOW}Waiting for services to be ready...${NC}"
 sleep 10
 
 # Run database migrations
-echo -e "\n${YELLOW}Running database migrations...${NC}"
-docker-compose -f infra/docker-compose.dev.yml exec postgres psql -U postgres -d pfms_dev -c "\
-CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";
-CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";
-CREATE EXTENSION IF NOT EXISTS \"btree_gist\";
-CREATE EXTENSION IF NOT EXISTS \"citext\";
-"
-echo -e "${GREEN}✓ Database extensions created${NC}"
+echo -e "\n${YELLOW}Running database migrations (creating extensions)...${NC}"
+
+# Define services and their databases
+SERVICES=("auth" "expense" "user" "income" "investment" "loan")
+
+for service in "${SERVICES[@]}"; do
+    db_name="${service}_db"
+    container_name="postgres-${service}"
+    
+    echo "Initializing $db_name on $container_name..."
+    docker-compose -f infra/docker-compose.dev.yml exec -T $container_name psql -U postgres -d $db_name -c "\
+    CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";
+    CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";
+    CREATE EXTENSION IF NOT EXISTS \"btree_gist\";
+    CREATE EXTENSION IF NOT EXISTS \"citext\";
+    " || echo -e "${RED}⚠ Failed to initialize $db_name (is the container running?)${NC}"
+done
+
+echo -e "${GREEN}✓ Database extensions created for all services${NC}"
 
 # Build packages
 echo -e "\n${YELLOW}Building packages...${NC}"
