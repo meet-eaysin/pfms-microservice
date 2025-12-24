@@ -65,6 +65,7 @@ COPY --link apps/auth-service ./apps/auth-service
 COPY --link packages/config ./packages/config
 COPY --link packages/types ./packages/types
 COPY --link packages/utils ./packages/utils
+COPY --link packages/eslint-config ./packages/eslint-config
 COPY --link packages/typescript-config ./packages/typescript-config
 
 # Install all dependencies (including dev) with caching

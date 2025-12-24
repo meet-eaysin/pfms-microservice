@@ -53,6 +53,7 @@ COPY --link apps/expense-service ./apps/expense-service
 COPY --link packages/event-bus ./packages/event-bus
 COPY --link packages/types ./packages/types
 COPY --link packages/utils ./packages/utils
+COPY --link packages/eslint-config ./packages/eslint-config
 COPY --link packages/typescript-config ./packages/typescript-config
 
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn/berry/cache \
