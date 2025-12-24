@@ -86,10 +86,6 @@ RUN yarn turbo run build \
 # Build auth service
 RUN cd apps/auth-service && yarn build
 
-# Remove development dependencies
-RUN yarn workspaces focus @pfms/auth-service --production && \
-    yarn cache clean
-
 # ==============================================================================
 # Stage 3: Runner - Minimal production image
 # ==============================================================================
@@ -109,6 +105,10 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 WORKDIR /app
 
+# Copy Prisma generated client first (before it might be pruned)
+COPY --from=builder --chown=authservice:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=authservice:nodejs /app/node_modules/@prisma/client ./node_modules/@prisma/client
+
 # Copy production dependencies
 COPY --from=builder --chown=authservice:nodejs /app/node_modules ./node_modules
 
@@ -124,10 +124,6 @@ COPY --from=builder --chown=authservice:nodejs /app/packages/types/dist ./node_m
 COPY --from=builder --chown=authservice:nodejs /app/packages/types/package.json ./node_modules/@pfms/types/
 COPY --from=builder --chown=authservice:nodejs /app/packages/utils/dist ./node_modules/@pfms/utils/dist
 COPY --from=builder --chown=authservice:nodejs /app/packages/utils/package.json ./node_modules/@pfms/utils/
-
-# Copy Prisma generated client
-COPY --from=builder --chown=authservice:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=authservice:nodejs /app/node_modules/@prisma/client ./node_modules/@prisma/client
 
 # Create logs directory with proper permissions
 RUN mkdir -p /app/logs && chown -R authservice:nodejs /app/logs

@@ -76,8 +76,6 @@ RUN yarn turbo run build \
 
 RUN cd apps/expense-service && yarn build
 
-RUN yarn workspaces focus @pfms/expense-service --production && yarn cache clean
-
 # ==============================================================================
 # Stage 3: Runner
 # ==============================================================================
@@ -92,6 +90,10 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 WORKDIR /app
 
+# Copy Prisma generated client first (before any pruning)
+COPY --from=builder --chown=expenseservice:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=expenseservice:nodejs /app/node_modules/@prisma/client ./node_modules/@prisma/client
+
 COPY --from=builder --chown=expenseservice:nodejs /app/node_modules ./node_modules
 
 # Copy built application
@@ -105,10 +107,6 @@ COPY --from=builder --chown=expenseservice:nodejs /app/packages/types/dist ./nod
 COPY --from=builder --chown=expenseservice:nodejs /app/packages/types/package.json ./node_modules/@pfms/types/
 COPY --from=builder --chown=expenseservice:nodejs /app/packages/utils/dist ./node_modules/@pfms/utils/dist
 COPY --from=builder --chown=expenseservice:nodejs /app/packages/utils/package.json ./node_modules/@pfms/utils/
-
-# Copy Prisma generated client
-COPY --from=builder --chown=expenseservice:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=expenseservice:nodejs /app/node_modules/@prisma/client ./node_modules/@prisma/client
 
 RUN mkdir -p /app/logs && chown -R expenseservice:nodejs /app/logs
 
