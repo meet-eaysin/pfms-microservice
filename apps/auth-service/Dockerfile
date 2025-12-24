@@ -27,11 +27,15 @@ RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 WORKDIR /app
 
 # ==============================================================================
-# Stage 2: Dependencies - Install production dependencies only
+# Stage 2: Builder - Build application and dependencies
 # ==============================================================================
-FROM base AS deps
+FROM base AS builder
 
-# Copy dependency manifests with optimized layer caching
+# Install build dependencies
+RUN apk add --no-cache python3 make g++ && \
+    rm -rf /var/cache/apk/*
+
+# Copy dependency manifests first for better layer caching
 COPY --link package.json yarn.lock .yarnrc.yml ./
 
 # Copy workspace package.json files for monorepo
@@ -48,27 +52,13 @@ COPY --link packages/types/package.json ./packages/types/
 COPY --link packages/typescript-config/package.json ./packages/typescript-config/
 COPY --link packages/utils/package.json ./packages/utils/
 
-# Install production dependencies with optimized caching
+# Install all dependencies (including dev) with caching
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn/berry/cache \
     --mount=type=cache,id=yarn-state,target=/root/.yarn/state \
-    yarn workspaces focus @pfms/auth-service --production && \
-    yarn cache clean
+    yarn install --immutable
 
-# ==============================================================================
-# Stage 3: Builder - Build application and dependencies
-# ==============================================================================
-FROM base AS builder
-
-# Install build dependencies
-RUN apk add --no-cache python3 make g++ && \
-    rm -rf /var/cache/apk/*
-
-# Copy dependencies from deps stage
-COPY --from=deps --link /app/node_modules ./node_modules
-COPY --from=deps --link /app/.yarnrc.yml ./
-
-# Copy source code
-COPY --link package.json yarn.lock turbo.json ./
+# Copy source code (after install for better layer caching)
+COPY --link turbo.json ./
 
 # Copy target service source
 COPY --link apps/auth-service ./apps/auth-service
@@ -82,11 +72,6 @@ COPY --link packages/saga-orchestrator ./packages/saga-orchestrator
 COPY --link packages/types ./packages/types
 COPY --link packages/typescript-config ./packages/typescript-config
 COPY --link packages/utils ./packages/utils
-
-# Install all dependencies (including dev) with caching
-RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn/berry/cache \
-    --mount=type=cache,id=yarn-state,target=/root/.yarn/state \
-    yarn install --immutable
 
 # Generate Prisma Client
 RUN cd apps/auth-service && yarn prisma generate
@@ -106,7 +91,7 @@ RUN yarn workspaces focus @pfms/auth-service --production && \
     yarn cache clean
 
 # ==============================================================================
-# Stage 4: Runner - Minimal production image
+# Stage 3: Runner - Minimal production image
 # ==============================================================================
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS runner
 

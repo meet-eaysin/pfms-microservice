@@ -22,12 +22,16 @@ RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 WORKDIR /app
 
 # ==============================================================================
-# Stage 2: Dependencies
+# Stage 2: Builder
 # ==============================================================================
-FROM base AS deps
+FROM base AS builder
 
+RUN apk add --no-cache python3 make g++ && rm -rf /var/cache/apk/*
+
+# Copy dependency manifests first for better layer caching
 COPY --link package.json yarn.lock .yarnrc.yml ./
 
+# Copy workspace package.json files for monorepo
 COPY --link apps/api-gateway/package.json ./apps/api-gateway/
 COPY --link apps/auth-service/package.json ./apps/auth-service/
 COPY --link apps/expense-service/package.json ./apps/expense-service/
@@ -41,22 +45,13 @@ COPY --link packages/types/package.json ./packages/types/
 COPY --link packages/typescript-config/package.json ./packages/typescript-config/
 COPY --link packages/utils/package.json ./packages/utils/
 
+# Install all dependencies (including dev) with caching
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn/berry/cache \
     --mount=type=cache,id=yarn-state,target=/root/.yarn/state \
-    yarn workspaces focus @pfms/expense-service --production && \
-    yarn cache clean
+    yarn install --immutable
 
-# ==============================================================================
-# Stage 3: Builder
-# ==============================================================================
-FROM base AS builder
-
-RUN apk add --no-cache python3 make g++ && rm -rf /var/cache/apk/*
-
-COPY --from=deps --link /app/node_modules ./node_modules
-COPY --from=deps --link /app/.yarnrc.yml ./
-
-COPY --link package.json yarn.lock turbo.json ./
+# Copy source code (after install for better layer caching)
+COPY --link turbo.json ./
 
 # Copy target service source
 COPY --link apps/expense-service ./apps/expense-service
@@ -71,10 +66,6 @@ COPY --link packages/types ./packages/types
 COPY --link packages/typescript-config ./packages/typescript-config
 COPY --link packages/utils ./packages/utils
 
-RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn/berry/cache \
-    --mount=type=cache,id=yarn-state,target=/root/.yarn/state \
-    yarn install --immutable
-
 RUN cd apps/expense-service && yarn prisma generate
 
 RUN yarn turbo run build \
@@ -88,7 +79,7 @@ RUN cd apps/expense-service && yarn build
 RUN yarn workspaces focus @pfms/expense-service --production && yarn cache clean
 
 # ==============================================================================
-# Stage 4: Runner
+# Stage 3: Runner
 # ==============================================================================
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS runner
 
