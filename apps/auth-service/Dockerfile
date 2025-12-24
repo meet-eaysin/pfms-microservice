@@ -36,8 +36,13 @@ COPY --link package.json yarn.lock .yarnrc.yml ./
 
 # Copy workspace package.json files for monorepo
 COPY --link apps/auth-service/package.json ./apps/auth-service/
+COPY --link packages/api-client/package.json ./packages/api-client/
 COPY --link packages/config/package.json ./packages/config/
+COPY --link packages/eslint-config/package.json ./packages/eslint-config/
+COPY --link packages/event-bus/package.json ./packages/event-bus/
+COPY --link packages/saga-orchestrator/package.json ./packages/saga-orchestrator/
 COPY --link packages/types/package.json ./packages/types/
+COPY --link packages/typescript-config/package.json ./packages/typescript-config/
 COPY --link packages/utils/package.json ./packages/utils/
 
 # Install production dependencies with optimized caching
@@ -62,11 +67,14 @@ COPY --from=deps --link /app/.yarnrc.yml ./
 # Copy source code
 COPY --link package.json yarn.lock turbo.json ./
 COPY --link apps/auth-service ./apps/auth-service
+COPY --link packages/api-client ./packages/api-client
 COPY --link packages/config ./packages/config
-COPY --link packages/types ./packages/types
-COPY --link packages/utils ./packages/utils
 COPY --link packages/eslint-config ./packages/eslint-config
+COPY --link packages/event-bus ./packages/event-bus
+COPY --link packages/saga-orchestrator ./packages/saga-orchestrator
+COPY --link packages/types ./packages/types
 COPY --link packages/typescript-config ./packages/typescript-config
+COPY --link packages/utils ./packages/utils
 
 # Install all dependencies (including dev) with caching
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn/berry/cache \

@@ -29,8 +29,13 @@ FROM base AS deps
 COPY --link package.json yarn.lock .yarnrc.yml ./
 
 COPY --link apps/expense-service/package.json ./apps/expense-service/
+COPY --link packages/api-client/package.json ./packages/api-client/
+COPY --link packages/config/package.json ./packages/config/
+COPY --link packages/eslint-config/package.json ./packages/eslint-config/
 COPY --link packages/event-bus/package.json ./packages/event-bus/
+COPY --link packages/saga-orchestrator/package.json ./packages/saga-orchestrator/
 COPY --link packages/types/package.json ./packages/types/
+COPY --link packages/typescript-config/package.json ./packages/typescript-config/
 COPY --link packages/utils/package.json ./packages/utils/
 
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn/berry/cache \
@@ -50,11 +55,14 @@ COPY --from=deps --link /app/.yarnrc.yml ./
 
 COPY --link package.json yarn.lock turbo.json ./
 COPY --link apps/expense-service ./apps/expense-service
-COPY --link packages/event-bus ./packages/event-bus
-COPY --link packages/types ./packages/types
-COPY --link packages/utils ./packages/utils
+COPY --link packages/api-client ./packages/api-client
+COPY --link packages/config ./packages/config
 COPY --link packages/eslint-config ./packages/eslint-config
+COPY --link packages/event-bus ./packages/event-bus
+COPY --link packages/saga-orchestrator ./packages/saga-orchestrator
+COPY --link packages/types ./packages/types
 COPY --link packages/typescript-config ./packages/typescript-config
+COPY --link packages/utils ./packages/utils
 
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn/berry/cache \
     --mount=type=cache,id=yarn-state,target=/root/.yarn/state \
