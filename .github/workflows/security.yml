@@ -1,0 +1,91 @@
+name: Security Scanning
+
+on:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  trivy-fs:
+    name: Trivy Filesystem Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy FS scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-fs.sarif
+          severity: CRITICAL,HIGH
+          exit-code: '0'
+
+      - name: Upload FS scan results
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-fs.sarif
+          category: trivy-fs
+
+      - name: Run npm audit
+        run: |
+          corepack enable
+          corepack prepare yarn@4.12.0 --activate
+          yarn npm audit --all --recursive || true
+
+  trivy-image:
+    name: Trivy Image Scan (${{ matrix.image }})
+    runs-on: ubuntu-latest
+    needs: trivy-fs
+    # Only run if images exist (after docker builds on push)
+    if: github.event_name == 'push'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - auth-service
+          - expense-service
+          # Uncomment as services are created:
+          # - user-service
+          # - income-service
+          # - investment-service
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull latest image
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ github.repository_owner }}/pfms-${{ matrix.image }}:latest || echo "Image not found, skipping scan"
+
+      - name: Run Trivy image scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/pfms-${{ matrix.image }}:latest
+          format: sarif
+          output: trivy-image-${{ matrix.image }}.sarif
+          severity: CRITICAL,HIGH
+          exit-code: '0'
+
+      - name: Upload image scan results
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-image-${{ matrix.image }}.sarif
+          category: trivy-image-${{ matrix.image }}
