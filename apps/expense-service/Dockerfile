@@ -58,13 +58,10 @@ COPY --from=deps --link /app/.yarnrc.yml ./
 
 COPY --link package.json yarn.lock turbo.json ./
 
-# Copy all workspace apps (required for workspace resolution)
-COPY --link apps/api-gateway ./apps/api-gateway
-COPY --link apps/auth-service ./apps/auth-service
+# Copy target service source
 COPY --link apps/expense-service ./apps/expense-service
-COPY --link apps/web ./apps/web
 
-# Copy all workspace packages
+# Copy all workspace packages source (required for building)
 COPY --link packages/api-client ./packages/api-client
 COPY --link packages/config ./packages/config
 COPY --link packages/eslint-config ./packages/eslint-config
