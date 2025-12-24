@@ -101,7 +101,7 @@ describe('ExpenseService', () => {
       const userId = 'user-123' as UUID;
       const expenseId = '550e8400-e29b-41d4-a716-446655440000' as UUID;
       const updateDto = {
-        amount: 75.50,
+        amount: 75.5,
         description: 'Updated groceries',
       };
 
@@ -116,7 +116,7 @@ describe('ExpenseService', () => {
       const userId = 'user-123' as UUID;
       const expenseId = 'non-existent-id' as UUID;
       const updateDto = {
-        amount: 75.50,
+        amount: 75.5,
       };
 
       const updated = await service.updateExpense(expenseId, userId, updateDto);
@@ -128,7 +128,7 @@ describe('ExpenseService', () => {
       const userId = 'wrong-user' as UUID;
       const expenseId = '550e8400-e29b-41d4-a716-446655440000' as UUID;
       const updateDto = {
-        amount: 75.50,
+        amount: 75.5,
       };
 
       const updated = await service.updateExpense(expenseId, userId, updateDto);
@@ -141,20 +141,20 @@ describe('ExpenseService', () => {
     it('should delete an existing expense', async () => {
       const userId = 'user-123' as UUID;
       const expenseId = '550e8400-e29b-41d4-a716-446655440000' as UUID;
-      
+
       const result = await service.deleteExpense(expenseId, userId);
       expect(result).toBe(true);
 
       // Verify it's deleted by checking list
       const list = await service.listExpenses(userId);
-      const found = list.expenses.find(e => e.id === expenseId);
+      const found = list.expenses.find((e) => e.id === expenseId);
       expect(found).toBeUndefined();
     });
 
     it('should return false when deleting non-existent expense', async () => {
       const userId = 'user-123' as UUID;
       const expenseId = 'non-existent-id' as UUID;
-      
+
       const result = await service.deleteExpense(expenseId, userId);
       expect(result).toBe(false);
     });
@@ -162,7 +162,7 @@ describe('ExpenseService', () => {
     it('should return false when userId does not match', async () => {
       const userId = 'wrong-user' as UUID;
       const expenseId = '550e8400-e29b-41d4-a716-446655440000' as UUID;
-      
+
       const result = await service.deleteExpense(expenseId, userId);
       expect(result).toBe(false);
     });
