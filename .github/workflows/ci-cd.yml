@@ -34,7 +34,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
 
       - name: Enable Corepack + Yarn
         run: |
@@ -74,7 +73,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
 
       - name: Enable Corepack + Yarn
         run: |
@@ -121,7 +119,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
 
       - name: Enable Corepack + Yarn
         run: |
@@ -193,7 +190,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
 
       - name: Enable Corepack + Yarn
         run: |
@@ -266,7 +262,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
 
       - name: Enable Corepack + Yarn
         run: |
