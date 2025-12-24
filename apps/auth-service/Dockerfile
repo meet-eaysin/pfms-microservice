@@ -35,7 +35,10 @@ FROM base AS deps
 COPY --link package.json yarn.lock .yarnrc.yml ./
 
 # Copy workspace package.json files for monorepo
+COPY --link apps/api-gateway/package.json ./apps/api-gateway/
 COPY --link apps/auth-service/package.json ./apps/auth-service/
+COPY --link apps/expense-service/package.json ./apps/expense-service/
+COPY --link apps/web/package.json ./apps/web/
 COPY --link packages/api-client/package.json ./packages/api-client/
 COPY --link packages/config/package.json ./packages/config/
 COPY --link packages/eslint-config/package.json ./packages/eslint-config/
