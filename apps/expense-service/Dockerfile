@@ -27,9 +27,6 @@ WORKDIR /app
 FROM base AS deps
 
 COPY --link package.json yarn.lock .yarnrc.yml ./
-COPY --link .yarn/releases ./.yarn/releases
-COPY --link .yarn/plugins ./.yarn/plugins
-
 
 COPY --link apps/expense-service/package.json ./apps/expense-service/
 COPY --link packages/event-bus/package.json ./packages/event-bus/
@@ -49,7 +46,6 @@ FROM base AS builder
 RUN apk add --no-cache python3 make g++ && rm -rf /var/cache/apk/*
 
 COPY --from=deps --link /app/node_modules ./node_modules
-COPY --from=deps --link /app/.yarn ./.yarn
 COPY --from=deps --link /app/.yarnrc.yml ./
 
 COPY --link package.json yarn.lock turbo.json ./

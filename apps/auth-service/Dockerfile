@@ -33,9 +33,6 @@ FROM base AS deps
 
 # Copy dependency manifests with optimized layer caching
 COPY --link package.json yarn.lock .yarnrc.yml ./
-COPY --link .yarn/releases ./.yarn/releases
-COPY --link .yarn/plugins ./.yarn/plugins
-
 
 # Copy workspace package.json files for monorepo
 COPY --link apps/auth-service/package.json ./apps/auth-service/
@@ -60,7 +57,6 @@ RUN apk add --no-cache python3 make g++ && \
 
 # Copy dependencies from deps stage
 COPY --from=deps --link /app/node_modules ./node_modules
-COPY --from=deps --link /app/.yarn ./.yarn
 COPY --from=deps --link /app/.yarnrc.yml ./
 
 # Copy source code
