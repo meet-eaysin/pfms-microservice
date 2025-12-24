@@ -338,3 +338,79 @@
 2025-12-20 23:22:16 [ExpenseService] warn: 🚫 Not found {"path":"/api/v2/expenses"}
 2025-12-20 23:22:16 [ExpenseService] info: 📊 Request {"method":"POST","path":"/api/v2/expenses","status":404,"duration":"2ms"}
 2025-12-20 23:25:49 [ExpenseService] info: 📊 Request {"method":"GET","path":"/health","status":200,"duration":"0ms"}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":20}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":1,"total":1}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":20}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":1,"total":1}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":10}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":1,"total":1}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"non-existent-user","page":1,"limit":20}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"non-existent-user","count":0,"total":0}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: ✏️ Updating expense {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":{"amount":75.5,"description":"Updated groceries"}}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":{"amount":75.5,"description":"Updated groceries"}}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: ✏️ Updating expense {"expenseId":"non-existent-id","userId":{"amount":75.5}}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"non-existent-id","userId":{"amount":75.5}}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: 🗑️ Deleting expense {"expenseId":"550e8400-e29b-41d4-a716-446655440000"}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"550e8400-e29b-41d4-a716-446655440000"}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] info: 🗑️ Deleting expense {"expenseId":"non-existent-id"}
+2025-12-24 09:49:52 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"non-existent-id"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":20}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":1,"total":1}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":20}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":1,"total":1}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":10}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":1,"total":1}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"non-existent-user","page":1,"limit":20}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"non-existent-user","count":0,"total":0}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 📝 Creating expense {"userId":"user-456","amount":25.99}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Expense created {"expenseId":"60f59ecf-a652-4f86-8ae8-492bd4355418","userId":"user-456","amount":25.99}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 📝 Creating expense {"userId":"user-456","amount":25.99}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Expense created {"expenseId":"0caa2114-a163-4ba8-9daa-5595843bfa27","userId":"user-456","amount":25.99}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 📝 Creating expense {"userId":"user-456","amount":25.99}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Expense created {"expenseId":"42da1957-e2ea-475b-a802-6a2881f6e7c6","userId":"user-456","amount":25.99}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 📝 Creating expense {"userId":"user-456","amount":25.99}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Expense created {"expenseId":"889a1157-1007-4978-a564-e35ac14186fa","userId":"user-456","amount":25.99}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✏️ Updating expense {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"user-123"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Expense updated {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"user-123"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✏️ Updating expense {"expenseId":"non-existent-id","userId":"user-123"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"non-existent-id","userId":"user-123"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✏️ Updating expense {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"wrong-user"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"wrong-user"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 🗑️ Deleting expense {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"user-123"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Expense deleted {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"user-123"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":20}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":0,"total":0}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 🗑️ Deleting expense {"expenseId":"non-existent-id","userId":"user-123"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"non-existent-id","userId":"user-123"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] info: 🗑️ Deleting expense {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"wrong-user"}
+2025-12-24 09:50:53 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"wrong-user"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":20}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":1,"total":1}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":20}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":1,"total":1}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":10}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":1,"total":1}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"non-existent-user","page":1,"limit":20}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"non-existent-user","count":0,"total":0}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 📝 Creating expense {"userId":"user-456","amount":25.99}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Expense created {"expenseId":"b012a580-03cf-4808-a39e-00cd678562a8","userId":"user-456","amount":25.99}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 📝 Creating expense {"userId":"user-456","amount":25.99}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Expense created {"expenseId":"4931ccb3-5d16-4a88-99ec-7e66ab5f0088","userId":"user-456","amount":25.99}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 📝 Creating expense {"userId":"user-456","amount":25.99}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Expense created {"expenseId":"76c0c6d7-b662-4f2b-990e-405fbb62e4d7","userId":"user-456","amount":25.99}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 📝 Creating expense {"userId":"user-456","amount":25.99}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Expense created {"expenseId":"3f5140a6-efcd-4203-b385-f6cfdf77e7a2","userId":"user-456","amount":25.99}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✏️ Updating expense {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"user-123"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Expense updated {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"user-123"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✏️ Updating expense {"expenseId":"non-existent-id","userId":"user-123"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"non-existent-id","userId":"user-123"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✏️ Updating expense {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"wrong-user"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"wrong-user"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 🗑️ Deleting expense {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"user-123"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Expense deleted {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"user-123"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 📥 Fetching expenses {"userId":"user-123","page":1,"limit":20}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: ✅ Retrieved expenses {"userId":"user-123","count":0,"total":0}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 🗑️ Deleting expense {"expenseId":"non-existent-id","userId":"user-123"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"non-existent-id","userId":"user-123"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] info: 🗑️ Deleting expense {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"wrong-user"}
+2025-12-24 09:51:23 [ExpenseService:ExpenseService] warn: ⚠️ Expense not found or unauthorized {"expenseId":"550e8400-e29b-41d4-a716-446655440000","userId":"wrong-user"}
