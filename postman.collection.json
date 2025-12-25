@@ -1,0 +1,823 @@
+{
+  "info": {
+    "name": "PFMS Microservices (Consolidated)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Identity Service",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password123!\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password123!\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Johnny\",\n  \"preferences\": {\n    \"theme\": \"dark\"\n  }\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enable MFA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me/security/mfa/enable",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me", "security", "mfa", "enable"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"totp\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[Admin] List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users?page=1&limit=10"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "[Admin] Ban User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users/:id/ban",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users", ":id", "ban"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Spam\",\n  \"duration\": \"7d\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notification Service",
+      "item": [
+        {
+          "name": "Get Preferences",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/preferences",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "preferences"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Update Preferences",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/preferences",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "preferences"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"channels\": {\n    \"email\": true,\n    \"sms\": false\n  }\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ledger Service",
+      "item": [
+        {
+          "name": "Create Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/finance/transactions",
+              "host": ["{{base_url}}"],
+              "path": ["finance", "transactions"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 50,\n  \"type\": \"EXPENSE\",\n  \"categoryId\": \"uuid\",\n  \"date\": \"2024-01-01T10:00:00Z\",\n  \"description\": \"Lunch\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/finance/transactions?limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["finance", "transactions?limit=50"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/finance/transactions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["finance", "transactions", ":id"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get Monthly Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/finance/summary/monthly?year=2024&month=1",
+              "host": ["{{base_url}}"],
+              "path": ["finance", "summary", "monthly?year=2024&month=1"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "[Admin] Recalculate User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/ledger/recalculate",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "ledger", "recalculate"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"uuid\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[Admin] Force Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/transactions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "transactions", ":id"]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Planning Service",
+      "item": [
+        {
+          "name": "List Budgets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/finance/planning/budgets",
+              "host": ["{{base_url}}"],
+              "path": ["finance", "planning", "budgets"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create Budget",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/finance/planning/budgets",
+              "host": ["{{base_url}}"],
+              "path": ["finance", "planning", "budgets"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000,\n  \"period\": \"monthly\",\n  \"categoryId\": \"uuid\",\n  \"startDate\": \"2024-01-01\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Goals",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/finance/planning/goals",
+              "host": ["{{base_url}}"],
+              "path": ["finance", "planning", "goals"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create Goal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/finance/planning/goals",
+              "host": ["{{base_url}}"],
+              "path": ["finance", "planning", "goals"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Car\",\n  \"targetAmount\": 20000\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deposit to Goal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/finance/planning/goals/:id/deposit",
+              "host": ["{{base_url}}"],
+              "path": ["finance", "planning", "goals", ":id", "deposit"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Social Finance Service",
+      "item": [
+        {
+          "name": "List Groups",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/social/groups",
+              "host": ["{{base_url}}"],
+              "path": ["social", "groups"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create Group",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/social/groups",
+              "host": ["{{base_url}}"],
+              "path": ["social", "groups"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ski Trip\",\n  \"type\": \"trip\",\n  \"currency\": \"USD\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Group Expense",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/social/groups/:id/expenses",
+              "host": ["{{base_url}}"],
+              "path": ["social", "groups", ":id", "expenses"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Dinner\",\n  \"amount\": 100,\n  \"payerId\": \"me\",\n  \"splits\": [\n    {\n      \"userId\": \"bob\",\n      \"amount\": 50\n    },\n    {\n      \"userId\": \"me\",\n      \"amount\": 50\n    }\n  ]\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Settle Up",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/social/groups/:id/settle",
+              "host": ["{{base_url}}"],
+              "path": ["social", "groups", ":id", "settle"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payerId\": \"me\",\n  \"payeeId\": \"bob\",\n  \"amount\": 50\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[Admin] Freeze Group",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/groups/:id/freeze",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "groups", ":id", "freeze"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Abuse\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Investment Service",
+      "item": [
+        {
+          "name": "List Portfolios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/invest/portfolios",
+              "host": ["{{base_url}}"],
+              "path": ["invest", "portfolios"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create Portfolio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/invest/portfolios",
+              "host": ["{{base_url}}"],
+              "path": ["invest", "portfolios"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Retirement\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Trade",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/invest/portfolios/:id/transactions",
+              "host": ["{{base_url}}"],
+              "path": ["invest", "portfolios", ":id", "transactions"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"symbol\": \"AAPL\",\n  \"type\": \"BUY\",\n  \"quantity\": 10,\n  \"price\": 150,\n  \"date\": \"2024-01-01\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Quote",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/invest/market/quote/AAPL",
+              "host": ["{{base_url}}"],
+              "path": ["invest", "market", "quote", "AAPL"]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Lending Service",
+      "item": [
+        {
+          "name": "List Loans",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/loans?type=LENT",
+              "host": ["{{base_url}}"],
+              "path": ["loans?type=LENT"]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create Loan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/loans",
+              "host": ["{{base_url}}"],
+              "path": ["loans"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Lent to Bob\",\n  \"principalAmount\": 500,\n  \"interestRate\": 5,\n  \"type\": \"LENT\",\n  \"contactId\": \"uuid\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Record Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/loans/:id/payments",
+              "host": ["{{base_url}}"],
+              "path": ["loans", ":id", "payments"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 50,\n  \"date\": \"2024-02-01\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Intelligence Service",
+      "item": [
+        {
+          "name": "Chat Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/insights/ai/chat",
+              "host": ["{{base_url}}"],
+              "path": ["insights", "ai", "chat"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"How much did I spend on food?\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/insights/reports",
+              "host": ["{{base_url}}"],
+              "path": ["insights", "reports"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"TAX\",\n  \"year\": 2024\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[Admin] Retrain Model",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/intelligence/retrain",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "intelligence", "retrain"]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"modelType\": \"CATEGORIZATION\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
+}
