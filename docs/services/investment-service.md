@@ -1,139 +1,186 @@
 # Investment Service Documentation
 
 ## 1. Service Overview
+
 **Service Name**: `investment-service`
-**Bounded Context**: Portfolio Management & Market Analysis
+**Purpose**: Manages investment portfolios, tracks asset performance, and records buy/sell transactions.
 **Responsibility**:
-- Asset Tracking (Stocks, Crypto, ETFs, Bonds).
-- Portfolio Performance (Realized/Unrealized Gains, ROI).
-- Market Data Ingestion (Real-time/EOD prices).
-- Transaction History (Buy, Sell, Dividends, Splits).
 
-**Non-Responsibilities**:
-- General Expense Tracking (Ledger Service).
-- Tax Filing (Ledger Service handles the aggregates, Investment Service provides the data).
+- Portfolio Creation & Management
+- Transaction Recording (Buy, Sell, Dividend, Transfer)
+- Performance Analytics (ROI, Realized/Unrealized Gains)
+- Asset Attribution (Stocks, Crypto, ETFs, custom assets)
+  **Business Value**: Allows users to track their Net Worth growth and investment strategy effectiveness.
+  **Scope**:
+- **In Scope**: Tracking quantity/cost basis, calculating returns.
+- **Out of Scope**: Placing actual trade orders to brokers, Real-time Market Data fetching (Delegated to `market-data-service`).
 
-**Justification**:
-Consolidates `Investment Service` and `Market Data Service`. Market Data is technically just an "Oracle" for the Investment domain. separating it creates latency and complexity when calculating portfolio values (a Portfolio Service would have to query Market Data for every single viewing). Merging them allows for efficient joining of "My Quantity" * "Current Price".
+## 2. Functional Description
 
-## 2. Use Cases
+**Core Features**:
 
-### User
-- **Add Transaction**: "Bought 10 AAPL at $150 on 2023-01-01".
-- **View Dashboard**: Total Value, Daily Change, Allocation Pie Chart.
-- **Watchlist**: Track assets I don't own yet.
-- **Drill Down**: See performance of a specific holding.
-
-### System
-- **Price Scheduler**: Periodically fetch latest prices for all user-held symbols.
+- Multi-portfolio support (Retirement, Checking, Crypto Wallet).
+- FIFO (First-In-First-Out) logic for capital gains calculation.
+- Historical value tracking.
+  **Internal Responsibilities**:
+- Listening to market price updates to re-value portfolios.
+  **Non-functional Expectations**:
+- **Latency**: Portfolio summary calculations can be heavy; caching is critical.
 
 ## 3. Database Design
-**Database**: PostgreSQL
-**Schema**: `investment`
 
-### Core Tables
+**Database Type**: PostgreSQL (Primary) + Redis (Cache)
+
+### Schema (Key Tables)
 
 #### `portfolios`
-Logical grouping of assets.
-```sql
-CREATE TABLE portfolios (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
 
-#### `holdings`
-Current snapshot of ownership (Optimized Read Model).
-```sql
-CREATE TABLE holdings (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    portfolio_id UUID REFERENCES portfolios(id) ON DELETE CASCADE,
-    symbol VARCHAR(20) NOT NULL, -- AAPL, BTC
-    market_code VARCHAR(10) DEFAULT 'US', -- Exchange code
-    quantity DECIMAL(20,8) NOT NULL,
-    average_buy_price DECIMAL(15,2) NOT NULL,
-    currency VARCHAR(3) DEFAULT 'USD',
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(portfolio_id, symbol)
-);
-```
+| Column        | Type    | Description |
+| :------------ | :------ | :---------- |
+| `id`          | UUID    | PK          |
+| `user_id`     | UUID    | FK          |
+| `name`        | VARCHAR | "Roth IRA"  |
+| `description` | TEXT    |             |
 
-#### `transactions`
-The immutable history.
-```sql
-CREATE TABLE transactions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    portfolio_id UUID REFERENCES portfolios(id),
-    type VARCHAR(20) NOT NULL, -- BUY, SELL, DIVIDEND, SPLIT
-    symbol VARCHAR(20) NOT NULL,
-    quantity DECIMAL(20,8) NOT NULL,
-    price_per_unit DECIMAL(15,2) NOT NULL,
-    fees DECIMAL(15,2) DEFAULT 0,
-    date TIMESTAMP NOT NULL,
-    notes TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
+#### `assets`
 
-#### `market_prices` (Timeseries)
-Historical price data.
-```sql
-CREATE TABLE market_prices (
-    symbol VARCHAR(20) NOT NULL,
-    price DECIMAL(15,2) NOT NULL,
-    currency VARCHAR(3) DEFAULT 'USD',
-    date TIMESTAMP NOT NULL,
-    source VARCHAR(50), -- 'yahoo', 'alpha_vantage'
-    PRIMARY KEY (symbol, date)
-);
--- Note: In production, this might move to TimeScaleDB or InfluxDB.
-```
+| Column          | Type    | Description      |
+| :-------------- | :------ | :--------------- |
+| `id`            | UUID    | PK               |
+| `portfolio_id`  | UUID    | FK               |
+| `symbol`        | VARCHAR | "AAPL", "BTC"    |
+| `quantity`      | DECIMAL | Current Holdings |
+| `avg_buy_price` | DECIMAL | Cost Basis       |
 
-## 4. API Design
-**Protocol**: REST / JSON
+#### `investment_transactions`
 
-### Endpoints
-- `GET /portfolios` - List summaries.
-- `GET /portfolios/:id` - Detailed view with current market value.
-- `POST /transactions` - Record a trade.
-    - Side Effect: Re-calculates `holdings` average price.
-- `GET /market/search` - Search for symbols (Proxy to Provider).
-- `GET /market/chart/:symbol` - Get price history.
+| Column           | Type      | Description                |
+| :--------------- | :-------- | :------------------------- |
+| `id`             | UUID      | PK                         |
+| `asset_id`       | UUID      | FK                         |
+| `type`           | ENUM      | BUY, SELL, DIVIDEND, SPLIT |
+| `quantity`       | DECIMAL   |                            |
+| `price_per_unit` | DECIMAL   |                            |
+| `fees`           | DECIMAL   |                            |
+| `date`           | TIMESTAMP |                            |
 
-## 5. Business Logic & Workflows
+**Data Lifecycle**: Indefinite retention.
+**Migration Strategy**: Prisma Migrations.
 
-### Recording a BUY
-1. **Input**: Symbol, Qty, Price, Date.
-2. **Transaction**: Insert row into `transactions`.
-3. **Holding Update**: 
-   - Get existing holding.
-   - Calculate new `weighted_average_price`.
-   - `NewQty = OldQty + BuyQty`.
-   - Update `holdings` table.
-4. **Ledger Sync (Optional)**: If linked to a cash account, debit the cost from **Ledger**.
+## 4. Use Cases
 
-### Price Updates (Background Job)
-1. **Trigger**: Every 15 minutes (or daily EOD).
-2. **Scope**: Select distinct `symbol` from `holdings` table.
-3. **Fetch**: Batch query external Provider API.
-4. **Store**: Insert into `market_prices`.
+**User-Driven**:
+
+- "As a user, I want to record that I bought 10 shares of Apple."
+- "As a user, I want to see my portfolio's total value today."
+- "As a user, I want to see how much dividend I earned this year."
+  **System-Driven**:
+- "Recalculate portfolio value when market closes."
+  **Edge Cases**:
+- Stock splits (Requires adjusting quantity/price history).
+- Asset delisting.
+
+## 5. API Design (Port 3005)
+
+### Portfolios
+
+#### List Portfolios
+
+**Endpoint**: `GET /api/v1/portfolios`
+
+- **Response**: `{ "portfolios": [...] }`
+
+#### Create Portfolio
+
+**Endpoint**: `POST /api/v1/portfolios`
+
+- **Body**: `{ "name": "Crypto" }`
+
+#### Portfolio Summary
+
+**Endpoint**: `GET /api/v1/portfolios/:id/summary`
+
+- **Response**:
+  ```json
+  {
+    "totalInvested": 10000,
+    "currentValue": 12000,
+    "unrealizedGain": 2000,
+    "returnPct": 20.0
+  }
+  ```
+
+### Transactions
+
+#### Record Transaction
+
+**Endpoint**: `POST /api/v1/portfolios/:id/transactions`
+
+- **Body**:
+  ```json
+  {
+    "symbol": "AAPL",
+    "type": "BUY",
+    "quantity": 10,
+    "price": 150.0,
+    "date": "2024-01-01"
+  }
+  ```
+- **Response**: `{ "transaction": ... }`
+- **Events**: `investment.transaction.created`
+
+#### Get History
+
+**Endpoint**: `GET /api/v1/portfolios/:id/transactions`
+
+### Analytics
+
+#### Get Performance
+
+**Endpoint**: `GET /api/v1/portfolios/:id/performance`
+
+- **Query**: `period=1Y`
+- **Response**: `{ "chart_data": [...] }`
 
 ## 6. Inter-Service Communication
 
-### Outbound
-- **Ledger Service**: Optionally push "Realized Gains" (Sell events) or "Dividends" as Income transactions.
-- **External APIs**: Yahoo Finance / Finnhub.
+**Calls**:
 
-## 7. Scalability & Performance
-- **Caching**: `latest_price:{symbol}` in Redis is critical. Do not query DB for current price constantly.
-- **Batching**: Market data providers have rate limits. Must batch requests.
+- `market-data-service`: To validate symbols and get current prices.
+  **Called By**:
+- **API Gateway**
+- `tax-service`: To calculate Capital Gains.
+- `report-service`: Investment summarization.
+  **Events Published**:
+- `investment.transaction.created`:
+  - `tax-service`: Capital gains tracking.
+  - `ledger-service`: Update Cashflow (if linked to cash account).
+    **Subscribed Events**:
+- `market.price_update`: Trigger re-valuation.
 
-## 8. Observability
-- **Metrics**: `market_data_api_latency`, `portfolio_valuation_time`.
+## 7. Third-Party Dependencies
 
-## 9. Testing Strategy
-- **Unit**: Average Cost Basis (ACB) calculation logic. This is complex (FIFO vs Weighted Avg).
-- **Integration**: Mock the Market Data API to ensure system handles "API Down" gracefully.
+- None (Relies on Market Data Service).
+
+## 8. Security Considerations
+
+- **Data Isolation**: Ensure user can only see their own portfolios.
+
+## 9. Configuration & Environment
+
+- `DATABASE_URL`: Postgres.
+- `RABBITMQ_URL`: Event bus.
+
+## 10. Observability & Monitoring
+
+- **Metrics**:
+  - `investment_transactions_total`
+- **Logs**: Audit logs for manually entered trades.
+
+## 11. Error Handling & Edge Cases
+
+- **Selling more than owned**: Validation Error (400) - Short selling not supported in MVP.
+
+## 12. Assumptions & Open Questions
+
+- **Assumption**: User manually enters trades (Bank sync out of scope).

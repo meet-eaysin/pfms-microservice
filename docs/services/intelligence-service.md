@@ -1,123 +1,145 @@
 # Intelligence Service Documentation
 
 ## 1. Service Overview
+
 **Service Name**: `intelligence-service`
-**Bounded Context**: Analytics & Decision Support
+**Purpose**: Powers the AI features of the platform, including Chat, Insights, and Predictions.
 **Responsibility**:
-- Advanced Reporting (PDF Exports, Cashflow Statements).
-- AI Categorization (Machine Learning pipeline).
-- Natural Language Querying ("How much did I spend on Sushi?").
-- Predictive Analytics (Forecasts).
 
-**Non-Responsibilities**:
-- Storing Transactional Truth (Ledger Service).
-- Real-time Balance checks (Ledger Service).
+- AI Chatbot (Financial Assistant)
+- Spend Anomaly Detection
+- Cashflow Forecasting (ML)
+- Transaction Auto-Categorization
+  **Business Value**: Provides the "Smart" in "Smart Finance", differentiating the product from simple spreadsheet apps.
+  **Scope**:
+- **In Scope**: LLM integration, ML model inference, Vector DB management.
+- **Out of Scope**: Model training infrastructure (assumed offline/job based).
 
-**Justification**:
-Consolidates `AI/Analytics` and `Report` services. Both are read-heavy, compute-intensive consumers of data. Merging them centralizes the "Data Science" aspect of the platform. Reports are just static outputs of Analytics.
+## 2. Functional Description
 
-## 2. Use Cases
+**Core Features**:
 
-### User
-- **Export Data**: "Download 2024 Tax Report (PDF)".
-- **Ask Assistant**: "What is my net worth trend?"
-- **Insights**: "You spent 20% more on Coffee this month."
-- **Auto-Categorize**: "Uber Eats" -> "Dining".
-
-### System
-- **Nightly Batch**: Analyze daily transactions to detect anomalies.
+- Natural Language Querying ("How much did I spend on Uber?").
+- Context-aware insights.
+- Categorization API.
+  **Internal Responsibilities**:
+- RAG (Retrieval Augmented Generation) pipeline.
+- Sanitizing data before sending to LLM.
+  **Non-functional Expectations**:
+- **Latency**: Streaming responses for Chat to reduce perceived latency.
+- **Privacy**: Strict PII redaction before external API calls.
 
 ## 3. Database Design
-**Database**: MongoDB (Primary for unstructured data) + S3 (Artifacts)
-**Schema**: `intelligence`
 
-### Core Collections
+**Database Type**: MongoDB (Chat History) + Redis (Cache) + Vector DB (pgvector or Pinecone)
 
-#### `generated_reports`
-Metadata for file exports.
+### Schema (Key Collections)
+
+#### `chat_sessions` (Mongo)
+
 ```json
 {
-  "_id": "ObjectId",
-  "userId": "UUID",
-  "type": "TAX_REPORT",
-  "status": "COMPLETED",
-  "fileUrl": "s3://reports/user-123/2024-tax.pdf",
-  "parameters": { "year": 2024 },
-  "createdAt": "ISODate"
-}
-```
-
-#### `chat_history`
-Context for LLM Assistant.
-```json
-{
-  "_id": "ObjectId",
-  "userId": "UUID",
-  "sessionId": "UUID",
+  "_id": "uuid",
+  "userId": "uuid",
   "messages": [
-    { "role": "user", "content": "Analyze my spending" },
-    { "role": "assistant", "content": "Sure..." }
-  ]
-}
-```
-
-#### `spending_patterns` (Materialized View)
-Pre-aggregated stats for fast lookup.
-```json
-{
-  "_id": "userId_month_year",
-  "totalExpense": 5000,
-  "topCategories": [
-    { "name": "Rent", "amount": 2000 },
-    { "name": "Food", "amount": 800 }
+    { "role": "user", "content": "..." },
+    { "role": "assistant", "content": "..." }
   ],
-  "anomalies": []
+  "startedAt": "timestamp"
 }
 ```
 
-## 4. API Design
-**Protocol**: REST / JSON
+#### `forecasts` (Postgres)
 
-### Endpoints
-- `POST /reports` - Request a report generation (Async).
-    - Returns `jobId`.
-- `GET /reports` - List previous reports.
-- `POST /ai/chat` - Send message to assistant.
-- `POST /ai/categorize` - Predict category for a raw transaction description.
+| Column       | Type    | Description       |
+| :----------- | :------ | :---------------- |
+| `user_id`    | UUID    | PK                |
+| `date`       | DATE    | Forecast Date     |
+| `amount`     | DECIMAL | Predicted Balance |
+| `confidence` | DECIMAL | 0-1               |
 
-## 5. Business Logic & Workflows
+**Data Lifecycle**: Chat history 1 year.
+**Migration Strategy**: Standard Schema updates.
 
-### Report Generation (Async)
-1. **Input**: Report Type, Date Range.
-2. **Queue**: Push job to `reporting_queue`.
-3. **Worker**:
-    - Fetch raw data from **Ledger Service** (via API or Read Replica).
-    - Aggregate and formatting (Puppeteer for PDF).
-    - Upload to S3.
-    - Update `generated_reports` status.
-4. **Notify**: Send Event -> Notification Service emails user.
+## 4. Use Cases
 
-### Auto-Categorization
-1. **Input**: "Starbucks #1234".
-2. **Model**: Query local NLP model or vector DB.
-3. **Output**: "Category: Coffee", "Confidence: 0.98".
+**User-Driven**:
+
+- "As a user, I ask: 'Can I afford a vacation?'"
+  **System-Driven**:
+- "Suggest category 'Food' for transaction 'MCDONALDS 342'."
+  **Edge Cases**:
+- LLM Hallucinations (Disclaimer required).
+- Token limit exceeded.
+
+## 5. API Design (Port 3009)
+
+### AI Chat
+
+#### Send Message
+
+**Endpoint**: `POST /api/v1/ai/chat`
+
+- **Body**: `{ "message": "Analyze my spending." }`
+- **Response**: `{ "reply": "Sure...", "intent": "analytics" }`
+
+### Insights
+
+#### Get Categorization
+
+**Endpoint**: `POST /api/v1/ai/categorize`
+
+- **Body**: `{ "description": "Starbucks", "amount": 5.00 }`
+- **Response**: `{ "category": "Coffee", "confidence": 0.99 }`
+
+#### Get Forecast
+
+**Endpoint**: `GET /api/v1/ai/forecast/cashflow`
+
+- **Query**: `days=30`
+- **Response**: `{ "points": [...] }`
 
 ## 6. Inter-Service Communication
 
-### Inbound
-- **Ledger Service**: Sends `transaction.created` events for real-time indexing.
+**Calls**:
 
-### Outbound
-- **Ledger Service**: Batch fetch for heavy reports.
-- **S3**: Storage.
+- `ledger-service`: To fetch transaction data for context.
+- External LLM (OpenAI/Gemini).
+  **Called By**:
+- **API Gateway** (Chat).
+- `expense-service` (Auto-categorize).
+  **Events Published**:
+- None.
+  **Subscribed Events**:
+- `expense.created`: Update user context/embeddings.
 
-## 7. Scalability & Performance
-- **Isolation**: Heavy reporting jobs run on separate worker nodes to avoid slowing down API.
-- **Data Lake**: Periodically syncs Ledger data to a Data Warehouse (e.g., BigQuery) if scale demands.
+## 7. Third-Party Dependencies
 
-## 8. Observability
-- **Metrics**: `report_generation_duration_seconds`, `ai_model_latency`.
+1.  **OpenAI / Gemini / Anthropic API**: LLM Provider.
+    - **Auth**: API Key.
+    - **Cost**: Managed via rate limits.
 
-## 9. Testing Strategy
-- **Unit**: Template rendering.
-- **Integration**: End-to-End flow: Request Report -> Wait for Job -> Verify S3 URL.
+## 8. Security Considerations
+
+- **Data Leakage**: Do not send raw PII to LLM. Replace names with generic tokens if needed.
+- **Injection**: Prompt Injection defenses required.
+
+## 9. Configuration & Environment
+
+- `OPENAI_API_KEY`.
+- `MONGO_URL`.
+
+## 10. Observability & Monitoring
+
+- **Metrics**:
+  - `ai_tokens_used_total`
+  - `ai_response_time_seconds`
+- **Logs**: Log user intents (not raw content if private).
+
+## 11. Error Handling & Edge Cases
+
+- **AI Down**: Fallback to rule-based logic or "Service Unavailable".
+
+## 12. Assumptions & Open Questions
+
+- **Assumption**: User consents to AI data processing.

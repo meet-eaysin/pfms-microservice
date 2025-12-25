@@ -1,132 +1,190 @@
 # Lending Service Documentation
 
 ## 1. Service Overview
+
 **Service Name**: `lending-service`
-**Bounded Context**: Liability & Debt Management
+**Purpose**: Manages debts, loans, and informal lending between the user and their contacts.
 **Responsibility**:
-- Loan Lifecycle (Origination, Active, Paid, Defaulted).
-- Repayment Scheduling (EMI calculation).
-- Contact Management (People I owe / people who owe me).
-- Interest Calculation (Simple/Compound).
 
-**Non-Responsibilities**:
-- Moving Money (Ledger Service).
-- Legal Arbitrations.
+- Loan Lifecycle Tracking (Lent vs Borrowed)
+- Repayment Scheduling (EMI)
+- Contact Management (Counter-parties)
+- Dispute Resolution
+  **Business Value**: Tracks "Who owes me" and "Who I owe", which is critical for accurate Net Worth calculation.
+  **Scope**:
+- **In Scope**: Peer-to-Peer loans, Bank loans, Credit card debt tracking.
+- **Out of Scope**: Payment processing (actual money movement).
 
-**Justification**:
-Consolidates `Loan Service`. Loans are complex state machines. Unlike a simple "Expense", a Loan changes value over time (interest), has future obligations (schedule), and involves a counter-party (Contact). This distinct lifecycle warrants a dedicated service.
+## 2. Functional Description
 
-## 2. Use Cases
+**Core Features**:
 
-### User
-- **Record Loan**: "I lent $5000 to John at 5% interest."
-- **Generate Schedule**: "Calculate monthly payments for 1 year."
-- **Record Repayment**: "John paid back $200 today."
-- **Track Status**: "See how much is remaining on my Car Loan."
-
-### System
-- **EMI Reminder**: Check schedule and trigger Notification.
-- **Interest Accrual**: Daily job to update "Current Balance" for compound interest loans.
+- Create Loans (Lent/Borrowed).
+- Calculate EMI schedules.
+- Record Payments.
+- Track Default/Settled status.
+  **Internal Responsibilities**:
+- Interest calculation (Simple/Compound).
+- Alerting for due dates.
+  **Non-functional Expectations**:
+- **Consistency**: Balance calculations must be exact.
 
 ## 3. Database Design
-**Database**: PostgreSQL
-**Schema**: `lending`
 
-### Core Tables
+**Database Type**: PostgreSQL
+
+### Schema (Key Tables)
 
 #### `contacts`
-External entities involved in loans.
-```sql
-CREATE TABLE contacts (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20),
-    email VARCHAR(100),
-    relation VARCHAR(50), -- Friend, Bank, Family
-    trust_score INT DEFAULT 100,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
+
+| Column    | Type    | Description |
+| :-------- | :------ | :---------- |
+| `id`      | UUID    | PK          |
+| `user_id` | UUID    | FK          |
+| `name`    | VARCHAR |             |
+| `email`   | VARCHAR | Optional    |
 
 #### `loans`
-The contract.
-```sql
-CREATE TABLE loans (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL,
-    contact_id UUID REFERENCES contacts(id),
-    name VARCHAR(200) NOT NULL, -- "Car Loan", "Lent to Bob"
-    type VARCHAR(20) NOT NULL, -- LENT (Asset), BORROWED (Liability)
-    
-    principal_amount DECIMAL(15,2) NOT NULL,
-    currency VARCHAR(3) DEFAULT 'USD',
-    
-    interest_rate DECIMAL(5,2) DEFAULT 0,
-    interest_type VARCHAR(20) DEFAULT 'fixed', -- fixed, simple, compound
-    
-    start_date DATE NOT NULL,
-    end_date DATE,
-    
-    status VARCHAR(20) DEFAULT 'active', -- active, paid, defaulted
-    
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
 
-#### `repayment_schedules`
-Expected future cashflows.
-```sql
-CREATE TABLE repayment_schedules (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    loan_id UUID REFERENCES loans(id) ON DELETE CASCADE,
-    due_date DATE NOT NULL,
-    amount_due DECIMAL(15,2) NOT NULL,
-    amount_paid DECIMAL(15,2) DEFAULT 0,
-    status VARCHAR(20) DEFAULT 'pending', -- pending, paid, overdue, partial
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
+| Column          | Type    | Description             |
+| :-------------- | :------ | :---------------------- |
+| `id`            | UUID    | PK                      |
+| `contact_id`    | UUID    | FK                      |
+| `type`          | ENUM    | LENT, BORROWED          |
+| `principal`     | DECIMAL |                         |
+| `balance`       | DECIMAL |                         |
+| `interest_rate` | DECIMAL | %                       |
+| `start_date`    | DATE    |                         |
+| `status`        | ENUM    | ACTIVE, PAID, DEFAULTED |
 
-## 4. API Design
-**Protocol**: REST / JSON
+#### `repayment_schedule`
 
-### Endpoints
-- `POST /contacts` - Create counter-party.
-- `POST /loans` - Create new loan.
-    - Payload: `{ principal, rate, duration, type, contactId }`
-- `GET /loans/:id/schedule` - View EMI table.
-- `POST /loans/:id/payments` - Record a payment.
-    - Side Effect: Updates `repayment_schedules` status and `loan` remaining balance.
+| Column       | Type    | Description   |
+| :----------- | :------ | :------------ |
+| `id`         | UUID    | PK            |
+| `loan_id`    | UUID    | FK            |
+| `due_date`   | DATE    |               |
+| `amount_due` | DECIMAL |               |
+| `status`     | ENUM    | PENDING, PAID |
 
-## 5. Business Logic & Workflows
+#### `payments`
 
-### Loan Origination
-1. **Input**: Amount, Rate, Tenure.
-2. **Calculation**: If EMI, use formula `P * r * (1+r)^n / ((1+r)^n - 1)`.
-3. **Persist**: Save `loan` and generate N rows in `repayment_schedules`.
-4. **Ledger Sync**:
-    - If "BORROWED": Register INCOME in Ledger (Money received).
-    - If "LENT": Register EXPENSE in Ledger (Money left).
+| Column    | Type    | Description |
+| :-------- | :------ | :---------- |
+| `id`      | UUID    | PK          |
+| `loan_id` | UUID    | FK          |
+| `amount`  | DECIMAL |             |
+| `date`    | DATE    |             |
 
-### Repayment Recording
-1. **Input**: Amount, Date.
-2. **Logic**: Apply payment to the oldest "Pending" schedule item (Waterfall method).
-3. **Update**: Mark schedule items as "Paid" or "Partial".
-4. **Ledger Sync**:
-    - If "BORROWED": Register EXPENSE in Ledger (Repayment).
-    - If "LENT": Register INCOME in Ledger (Repayment received).
+**Data Lifecycle**: Loans retained until settled + archive period.
+**Migration Strategy**: Prisma Migrations.
+
+## 4. Use Cases
+
+**User-Driven**:
+
+- "As a user, I lent $500 to Bob."
+- "As a user, Bob paid me back $100."
+- "As a user, I want to see my upcoming EMI for my Car Loan."
+  **System-Driven**:
+- "Mark loan as SETTLED when balance hits 0."
+  **Edge Cases**:
+- Early repayment (Recalculate interest?).
+- Partial payments.
+
+## 5. API Design (Port 3006)
+
+### Contacts
+
+#### List Contacts
+
+**Endpoint**: `GET /api/v1/contacts`
+
+- **Response**: `{ "contacts": [...] }`
+
+#### Create Contact
+
+**Endpoint**: `POST /api/v1/contacts`
+
+- **Body**: `{ "name": "Bob", "relationship": "Friend" }`
+
+### Loans
+
+#### Create Loan
+
+**Endpoint**: `POST /api/v1/loans`
+
+- **Body**:
+  ```json
+  {
+    "contactId": "uuid",
+    "type": "LENT",
+    "principal": 1000,
+    "interestRate": 5.0,
+    "startDate": "2024-01-01"
+  }
+  ```
+- **Response**: `{ "loan": ... }`
+- **Events**: `loan.created`
+
+#### List Loans
+
+**Endpoint**: `GET /api/v1/loans`
+
+- **Query**: `status=ACTIVE`
+
+#### Get Details
+
+**Endpoint**: `GET /api/v1/loans/:id`
+
+- **Response**: `{ "loan": ..., "payments": [...], "schedule": [...] }`
+
+### Payments
+
+#### Record Payment
+
+**Endpoint**: `POST /api/v1/loans/:id/payments`
+
+- **Body**: `{ "amount": 200, "date": "..." }`
+- **Response**: `{ "payment": ..., "remainingBalance": 800 }`
+- **Events**: `loan.payment.received`
 
 ## 6. Inter-Service Communication
 
-### Outbound
-- **Ledger Service**: To record the actual cash movement.
-- **Notification Service**: "Payment Due Tomorrow".
+**Calls**:
 
-## 7. Scalability & Performance
-- **Data Volume**: Low. Loans are infrequent compared to daily expenses.
-- **Consistency**: High. Must not lose track of debt.
+- None.
+  **Called By**:
+- **API Gateway**
+  **Events Published**:
+- `loan.created`:
+  - `intelligence-service`: Analytics.
+- `loan.payment.received`:
+  - `ledger-service`: Update Cashflow (if configured).
 
-## 8. Testing Strategy
-- **Unit**: Interest Math.
-- **Integration**: Create Loan -> Generate Schedule -> Pay 1st Installment -> Verify Remaining Balance.
+## 7. Third-Party Dependencies
+
+- None.
+
+## 8. Security Considerations
+
+- **Privacy**: Loan data is private.
+
+## 9. Configuration & Environment
+
+- `DATABASE_URL`: Postgres.
+- `RABBITMQ_URL`: Event bus.
+
+## 10. Observability & Monitoring
+
+- **Metrics**:
+  - `active_loans_total`
+  - `total_debt_value`
+
+## 11. Error Handling & Edge Cases
+
+- **Payment > Balance**: Return warning or error (Allow for overpayment/tip?).
+
+## 12. Assumptions & Open Questions
+
+- **Assumption**: Simple interest calculation predominantly for MVP.
