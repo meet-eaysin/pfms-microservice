@@ -7,16 +7,17 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { RegisterUserUseCase } from '../../application/use-cases/register-user.use-case';
-import { LoginUserUseCase } from '../../application/use-cases/login-user.use-case';
-import { LogoutUserUseCase } from '../../application/use-cases/logout-user.use-case';
-import { RefreshSessionUseCase } from '../../application/use-cases/refresh-session.use-case';
-import { EnableMfaUseCase } from '../../application/use-cases/enable-mfa.use-case';
-import { VerifyMfaUseCase } from '../../application/use-cases/verify-mfa.use-case';
-import { ForgotPasswordUseCase } from '../../application/use-cases/forgot-password.use-case';
-import { ResetPasswordUseCase } from '../../application/use-cases/reset-password.use-case';
-import { RegisterUserDto } from '../../application/dtos/register-user.dto';
-import { LoginUserDto } from '../../application/dtos/login-user.dto';
+import {
+  RegisterUserUseCase,
+  EnableMfaUseCase,
+  ForgotPasswordUseCase,
+  LoginUserUseCase,
+  LogoutUserUseCase,
+  RefreshSessionUseCase,
+  ResetPasswordUseCase,
+  VerifyMfaUseCase,
+} from '../../application/use-cases';
+import { LoginUserDto, RegisterUserDto } from '../../application/dtos';
 import { AuthGuard } from '@nestjs/passport'; // Or custom guard
 
 @Controller('auth')
