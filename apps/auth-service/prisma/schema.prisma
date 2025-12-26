@@ -1,10 +1,8 @@
 // Prisma schema for Auth Service
-// Database: PostgreSQL  
-// better-auth integration with custom extensions
+// Database: PostgreSQL
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -12,279 +10,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============================================
-// USERS - Core Authentication
-// ============================================
-
 model User {
   id            String    @id @default(uuid()) @db.Uuid
   email         String    @unique @db.VarChar(255)
-  emailVerified Boolean   @default(false) @map("email_verified")
-  name          String?   @db.VarChar(200)
-  image         String?   @db.Text
-  
-  // Password (optional - OAuth users may not have password)
-  password      String?   @db.VarChar(255)
-  
-  // Status
-  isActive      Boolean   @default(true) @map("is_active")
-  isSuspended   Boolean   @default(false) @map("is_suspended")
-  suspendedAt   DateTime? @map("suspended_at")
-  suspendedReason String? @db.Text @map("suspended_reason")
-  
-  // Timestamps
-  lastLogin     DateTime? @map("last_login")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-  
-  // Relations
+  password_hash String?   @db.VarChar
+  role          String    @default("user") @db.VarChar
+  is_verified   Boolean   @default(false)
+  mfa_enabled   Boolean   @default(false)
+  created_at    DateTime  @default(now())
+
   sessions      Session[]
-  accounts      Account[]
-  mfaSettings   MfaSetting[]
-  passwordResets PasswordReset[]
-  emailVerifications EmailVerification[]
-  loginAttempts  LoginAttempt[]
-  auditLogs     AuditLog[]
-  
-  @@index([email])
+  oauth_accounts OAuthAccount[]
+
   @@map("users")
 }
 
-// ============================================
-// SESSIONS - better-auth sessions
-// ============================================
-
 model Session {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  token     String   @unique @db.VarChar(255)
-  
-  // Device & Location
-  ipAddress String?  @map("ip_address") @db.Inet
-  userAgent String?  @map("user_agent") @db.Text
-  deviceId  String?  @map("device_id") @db.VarChar(255)
-  deviceInfo Json?   @map("device_info") @db.JsonB
-  location  Json?    @db.JsonB // {country, city, lat, lng}
-  
-  // Session lifecycle
-  expiresAt DateTime @map("expires_at")
-  lastAccessedAt DateTime @default(now()) @map("last_accessed_at")
-  createdAt DateTime @default(now()) @map("created_at")
-  
-  // Security
-  isRevoked Boolean  @default(false) @map("is_revoked")
-  revokedAt DateTime? @map("revoked_at")
-  revokedReason String? @map("revoked_reason") @db.Text
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([userId])
-  @@index([token])
-  @@index([expiresAt])
-  @@index([userId, expiresAt, isRevoked]) // Composite index for session lookups (10x faster)
+  id            String    @id @default(uuid()) @db.Uuid
+  user_id       String    @db.Uuid
+  refresh_token String    @db.Text
+  device_info   Json?     @db.JsonB
+  expires_at    DateTime
+
+  user          User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
   @@map("sessions")
 }
 
-// ============================================
-// OAUTH ACCOUNTS - Social Login
-// ============================================
+model OAuthAccount {
+  provider_id      String  @db.VarChar
+  provider_user_id String  @db.VarChar
+  user_id          String  @db.Uuid
 
-model Account {
-  id                String   @id @default(uuid()) @db.Uuid
-  userId            String   @map("user_id") @db.Uuid
-  
-  provider          String   @db.VarChar(50) // google, facebook, apple, github
-  providerAccountId String   @map("provider_account_id") @db.VarChar(255)
-  
-  // OAuth tokens
-  accessToken       String?  @map("access_token") @db.Text
-  refreshToken      String?  @map("refresh_token") @db.Text
-  idToken           String?  @map("id_token") @db.Text
-  expiresAt         DateTime? @map("expires_at")
-  tokenType         String?  @map("token_type") @db.VarChar(50)
-  scope             String?  @db.Text
-  
-  // Provider-specific data
-  providerData      Json?    @map("provider_data") @db.JsonB
-  
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
-  
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-  @@map("accounts")
-}
+  user             User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-// ============================================
-// MFA - Two-Factor Authentication
-// ============================================
-
-model MfaSetting {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  
-  method    String   @db.VarChar(50) // totp, sms, email
-  isEnabled Boolean  @default(false) @map("is_enabled")
-  isPrimary Boolean  @default(false) @map("is_primary")
-  
-  // TOTP specific
-  secret    String?  @db.VarChar(255) // Encrypted
-  qrCode    String?  @map("qr_code") @db.Text
-  
-  // SMS/Email specific  
-  phone     String?  @db.VarChar(20)
-  
-  // Backup codes
-  backupCodes Json?  @map("backup_codes") @db.JsonB // Encrypted array
-  
-  // Verification
-  verified  Boolean  @default(false)
-  verifiedAt DateTime? @map("verified_at")
-  
-  lastUsedAt DateTime? @map("last_used_at")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@unique([userId, method])
-  @@index([userId])
-  @@map("mfa_settings")
-}
-
-// ============================================
-// PASSWORD RESET
-// ============================================
-
-model PasswordReset {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  
-  token     String   @unique @db.VarChar(255)
-  expiresAt DateTime @map("expires_at")
-  
-  used      Boolean  @default(false)
-  usedAt    DateTime? @map("used_at")
-  
-  ipAddress String?  @map("ip_address") @db.Inet
-  userAgent String?  @map("user_agent") @db.Text
-  
-  createdAt DateTime @default(now()) @map("created_at")
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([userId])
-  @@index([token])
-  @@index([expiresAt])
-  @@map("password_reset_tokens")
-}
-
-// ============================================
-// EMAIL VERIFICATION
-// ============================================
-
-model EmailVerification {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  
-  email     String   @db.VarChar(255)
-  token     String   @unique @db.VarChar(255)
-  expiresAt DateTime @map("expires_at")
-  
-  verified  Boolean  @default(false)
-  verifiedAt DateTime? @map("verified_at")
-  
-  createdAt DateTime @default(now()) @map("created_at")
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([userId])
-  @@index([email])
-  @@index([token])
-  @@map("email_verifications")
-}
-
-// ============================================
-// LOGIN ATTEMPTS - Security
-// ============================================
-
-model LoginAttempt {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String?  @map("user_id") @db.Uuid
-  email     String   @db.VarChar(255)
-  
-  success   Boolean
-  method    String   @db.VarChar(50) // password, oauth, mfa
-  
-  ipAddress String   @map("ip_address") @db.Inet
-  userAgent String?  @map("user_agent") @db.Text
-  location  Json?    @db.JsonB
-  
-  failureReason String? @map("failure_reason") @db.Text
-  
-  createdAt DateTime @default(now()) @map("created_at")
-  
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([email, createdAt])
-  @@index([userId, createdAt])
-  @@index([ipAddress, createdAt])
-  @@index([email, success, createdAt]) // Composite index for failed login analysis
-  @@map("login_attempts")
-}
-
-// ============================================
-// AUDIT LOGS - Compliance
-// ============================================
-
-model AuditLog {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String?  @map("user_id") @db.Uuid
-  
-  action    String   @db.VarChar(100)
-  resource  String   @db.VarChar(100)
-  resourceId String? @map("resource_id") @db.VarChar(100)
-  
-  changes   Json?    @db.JsonB // {before: {}, after: {}}
-  metadata  Json?    @db.JsonB
-  
-  ipAddress String?  @map("ip_address") @db.Inet
-  userAgent String?  @map("user_agent") @db.Text
-  
-  createdAt DateTime @default(now()) @map("created_at")
-  
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  
-  @@index([userId, createdAt])
-  @@index([action, createdAt])
-  @@index([resource, resourceId])
-  @@map("audit_logs")
-}
-
-// ============================================
-// RATE LIMITING - Security
-// ============================================
-
-model RateLimit {
-  id        String   @id @default(uuid()) @db.Uuid
-  
-  identifier String  @db.VarChar(255) // user_id, ip, email
-  action    String   @db.VarChar(100) // login, password_reset, etc
-  
-  attempts  Int      @default(0)
-  lastAttemptAt DateTime @map("last_attempt_at")
-  resetAt   DateTime @map("reset_at")
-  
-  isBlocked Boolean  @default(false) @map("is_blocked")
-  blockedUntil DateTime? @map("blocked_until")
-  
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  
-  @@unique([identifier, action])
-  @@index([identifier, action])
-  @@index([resetAt])
-  @@map("rate_limits")
+  @@id([provider_id, provider_user_id])
+  @@map("oauth_accounts")
 }
