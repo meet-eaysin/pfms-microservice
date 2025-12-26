@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ConfigModule as NestConfigModule } from '@nestjs/config'; // Renamed to avoid confusion if needed, or just remove if we use our own
+import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import { UserCreatedEvent } from './domain/ports/event-publisher';
 import { ConfigService } from './infrastructure/config/config.service';
 
@@ -39,7 +39,6 @@ import {
   UserPasswordChangedEvent,
 } from './domain/ports/event-publisher';
 
-// Mock/Simple Event Publisher for now (or RabbitMQ placeholder)
 class SimpleEventPublisher implements EventPublisher {
   async publishUserCreated(event: UserCreatedEvent) {
     console.log('Event Published: UserCreated', event);

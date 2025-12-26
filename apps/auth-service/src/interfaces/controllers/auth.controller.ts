@@ -43,7 +43,6 @@ export class AuthController {
     @Body() dto: LoginUserDto,
     @Req() req: { headers: { [key: string]: string | undefined }; ip: string },
   ) {
-    // Extract device info from req if needed
     const deviceInfo = {
       userAgent: req.headers['user-agent'],
       ip: req.ip,
@@ -55,12 +54,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: { user: { id: string } }) {
-    // We assume JWT strategy populates user and potentially sessionId if we add it to payload
-    // If not, we do global logout or need method to get session from token
-    // For now, assuming simply calling execute.
-    // If JwtStrategy extracts valid user, we have userId.
     const userId = req.user.id;
-    // Ideally we pass sessionId if available
     await this.logoutUseCase.execute(userId);
     return { success: true };
   }
