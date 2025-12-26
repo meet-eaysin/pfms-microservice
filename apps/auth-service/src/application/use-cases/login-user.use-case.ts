@@ -23,13 +23,11 @@ export class LoginUserUseCase {
     dto: LoginUserDto,
     deviceInfo: DeviceInfo = {},
   ): Promise<LoginUserResponseDto> {
-    // 1. Find User
     const user = await this.userRepository.findByEmail(dto.email);
     if (!user || !user.passwordHash) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // 2. Verify Password
     const isPasswordValid = await this.passwordEncoder.compare(
       dto.password,
       user.passwordHash,
@@ -38,7 +36,6 @@ export class LoginUserUseCase {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // 3. Generate Tokens
     const accessToken = this.tokenService.generateAccessToken({
       sub: user.id,
       email: user.email,
@@ -47,7 +44,6 @@ export class LoginUserUseCase {
 
     const refreshToken = this.tokenService.generateRefreshToken();
 
-    // 4. Create Session
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
 

@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import {
   loadAuthConfig,
   loadJWTConfig,
+  loadRedisConfig,
   loadServerConfig,
   AuthConfig,
   JWTConfig,
+  RedisConfig,
   ServerConfig,
 } from '@pfms/config';
 
@@ -13,11 +15,13 @@ export class ConfigService {
   public readonly auth: AuthConfig;
   public readonly jwt: JWTConfig;
   public readonly server: ServerConfig;
+  public readonly redis: RedisConfig;
 
   constructor() {
     this.auth = loadAuthConfig();
     this.jwt = loadJWTConfig();
     this.server = loadServerConfig();
+    this.redis = loadRedisConfig();
   }
 
   get isProduction(): boolean {
