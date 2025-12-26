@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const serverSchema = z.object({
-  NODE_ENV: z.enum(['development', 'staging', 'production']).default('development'),
+  NODE_ENV: z.enum(['development', 'staging', 'production', 'test']).default('development'),
   PORT: z.coerce.number().int().positive().default(3000),
   HOST: z.string().default('localhost'),
   SERVICE_NAME: z.string().default('unknown-service').describe('Microservice name'),

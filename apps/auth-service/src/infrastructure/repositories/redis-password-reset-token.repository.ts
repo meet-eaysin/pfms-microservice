@@ -8,7 +8,9 @@ export class RedisPasswordResetTokenRepository implements PasswordResetTokenRepo
   private redis: Redis;
 
   constructor(private readonly configService: ConfigService) {
-    this.redis = new Redis(this.configService.redis.REDIS_URL || 'redis://localhost:6379');
+    this.redis = new Redis(
+      this.configService.redis.REDIS_URL || 'redis://localhost:6379',
+    );
   }
 
   async save(email: string, token: string, ttlSeconds: number): Promise<void> {

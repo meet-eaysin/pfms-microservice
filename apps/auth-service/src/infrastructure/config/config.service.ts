@@ -57,7 +57,7 @@ export class ConfigService {
       if (!isNaN(parsed)) return parsed;
       throw new Error(`Invalid duration format: ${value}`);
     }
-    const num = parseInt(match[1], 10);
+    const num = parseInt(match[1]!, 10);
     const unit = match[2];
     switch (unit) {
       case 's':

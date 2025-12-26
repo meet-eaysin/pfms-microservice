@@ -69,7 +69,13 @@ export class RegisterUserUseCase {
     // We rely on DB to generate ID?
     const sessionId = randomUUID();
 
-    const session = new Session(sessionId, savedUser.id, refreshToken, expiresAt, {});
+    const session = new Session(
+      sessionId,
+      savedUser.id,
+      refreshToken,
+      expiresAt,
+      {},
+    );
     await this.sessionRepository.create(session);
 
     // 6. Return Response

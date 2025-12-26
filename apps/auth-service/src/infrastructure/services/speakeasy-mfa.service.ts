@@ -2,12 +2,9 @@ import { Injectable } from '@nestjs/common';
 import * as speakeasy from 'speakeasy';
 import * as QRCode from 'qrcode';
 import { MfaService, MfaSecret } from '../../domain/ports/mfa.service';
-import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class SpeakeasyMfaService implements MfaService {
-  constructor(private configService: ConfigService) {}
-
   async generateSecret(email: string): Promise<MfaSecret> {
     const secret = speakeasy.generateSecret({
       name: `PFMS (${email})`,

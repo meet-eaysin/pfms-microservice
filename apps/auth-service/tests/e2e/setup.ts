@@ -1,24 +1,9 @@
 /**
  * E2E Test Setup for Auth Service
+ * This file runs before each test file in the E2E suite
  */
 
-import { INestApplication } from '@nestjs/common';
+// Set longer timeout for E2E tests if needed
+jest.setTimeout(30000);
 
-let app: INestApplication | undefined;
-
-beforeAll(async () => {
-  // Create test application here when ready
-  // const moduleFixture = await Test.createTestingModule({
-  //   imports: [AppModule],
-  // }).compile();
-  // app = moduleFixture.createNestApplication();
-  // await app.init();
-});
-
-afterAll(async () => {
-  if (app) {
-    await app.close();
-  }
-});
-
-export { app };
+// Add any global test utilities or mocks here
