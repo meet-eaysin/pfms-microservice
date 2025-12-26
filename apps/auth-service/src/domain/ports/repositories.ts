@@ -19,7 +19,10 @@ export abstract class SessionRepository {
 }
 
 export abstract class OAuthAccountRepository {
-  abstract findByProvider(providerId: string, providerUserId: string): Promise<OAuthAccount | null>;
+  abstract findByProvider(
+    providerId: string,
+    providerUserId: string,
+  ): Promise<OAuthAccount | null>;
   abstract create(account: OAuthAccount): Promise<OAuthAccount>;
 }
 
@@ -29,7 +32,8 @@ export abstract class PasswordEncoder {
 }
 
 export abstract class TokenService {
-    abstract generateAccessToken(payload: TokenPayload): string;
-    abstract generateRefreshToken(): string;
-    abstract verifyAccessToken(token: string): TokenPayload;
+  abstract generateAccessToken(payload: TokenPayload): string;
+  abstract generateRefreshToken(): string;
+  abstract verifyAccessToken(token: string): TokenPayload;
+  abstract verifyRefreshToken(token: string): TokenPayload;
 }

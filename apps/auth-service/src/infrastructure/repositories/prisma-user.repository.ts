@@ -23,28 +23,29 @@ export class PrismaUserRepository implements UserRepository {
   async create(user: User): Promise<User> {
     const created = await this.prisma.user.create({
       data: {
-        id: user.id || undefined, // Prisma will generate if not provided, but we defined UUID in logic usually
+        id: user.id || undefined,
         email: user.email,
         password_hash: user.passwordHash,
         role: user.role,
         is_verified: user.isVerified,
         mfa_enabled: user.mfaEnabled,
-        // created_at is default now()
+        mfa_secret: user.mfaSecret,
       },
     });
     return this.mapToDomain(created);
   }
 
   async update(user: User): Promise<User> {
-     const updated = await this.prisma.user.update({
-        where: { id: user.id },
-        data: {
-            email: user.email,
-            password_hash: user.passwordHash,
-            role: user.role,
-            is_verified: user.isVerified,
-            mfa_enabled: user.mfaEnabled,
-        }
+    const updated = await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        email: user.email,
+        password_hash: user.passwordHash,
+        role: user.role,
+        is_verified: user.isVerified,
+        mfa_enabled: user.mfaEnabled,
+        mfa_secret: user.mfaSecret,
+      },
     });
     return this.mapToDomain(updated);
   }
@@ -58,6 +59,7 @@ export class PrismaUserRepository implements UserRepository {
       prismaUser.mfa_enabled,
       prismaUser.created_at,
       prismaUser.password_hash,
+      prismaUser.mfa_secret,
     );
   }
 }

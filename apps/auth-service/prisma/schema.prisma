@@ -17,6 +17,7 @@ model User {
   role          String    @default("user") @db.VarChar
   is_verified   Boolean   @default(false)
   mfa_enabled   Boolean   @default(false)
+  mfa_secret    String?   @db.VarChar
   created_at    DateTime  @default(now())
 
   sessions      Session[]

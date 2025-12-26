@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoginUserUseCase } from './login-user.use-case';
-import { UserRepository, SessionRepository, PasswordEncoder, TokenService } from '../../domain/ports/repositories';
+import {
+  UserRepository,
+  SessionRepository,
+  PasswordEncoder,
+  TokenService,
+} from '../../domain/ports/repositories';
 import { LoginUserDto } from '../dtos/login-user.dto';
 import { User } from '../../domain/entities/user.entity';
 import { UnauthorizedException } from '@nestjs/common';
@@ -56,7 +61,15 @@ describe('LoginUserUseCase', () => {
       email: 'test@example.com',
       password: 'password123',
     };
-    const user = new User('user-id', dto.email, 'user', true, false, new Date(), 'hashed_password');
+    const user = new User(
+      'user-id',
+      dto.email,
+      'user',
+      true,
+      false,
+      new Date(),
+      'hashed_password',
+    );
 
     (userRepository.findByEmail as jest.Mock).mockResolvedValue(user);
     (passwordEncoder.compare as jest.Mock).mockResolvedValue(true);
@@ -64,7 +77,10 @@ describe('LoginUserUseCase', () => {
     const result = await useCase.execute(dto);
 
     expect(userRepository.findByEmail).toHaveBeenCalledWith(dto.email);
-    expect(passwordEncoder.compare).toHaveBeenCalledWith(dto.password, 'hashed_password');
+    expect(passwordEncoder.compare).toHaveBeenCalledWith(
+      dto.password,
+      'hashed_password',
+    );
     expect(tokenService.generateAccessToken).toHaveBeenCalled();
     expect(tokenService.generateRefreshToken).toHaveBeenCalled();
     expect(sessionRepository.create).toHaveBeenCalled();
@@ -82,7 +98,15 @@ describe('LoginUserUseCase', () => {
   });
 
   it('should throw UnauthorizedException if password valid', async () => {
-    const user = new User('user-id', 'test@example.com', 'user', true, false, new Date(), 'hashed_password');
+    const user = new User(
+      'user-id',
+      'test@example.com',
+      'user',
+      true,
+      false,
+      new Date(),
+      'hashed_password',
+    );
     (userRepository.findByEmail as jest.Mock).mockResolvedValue(user);
     (passwordEncoder.compare as jest.Mock).mockResolvedValue(false);
     const dto = { email: 'test@example.com', password: 'pwd' };

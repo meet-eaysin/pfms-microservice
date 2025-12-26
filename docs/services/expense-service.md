@@ -99,7 +99,7 @@
   **Edge Cases**:
 - Changing the category of a past expense (Should update analytics).
 - User changes currency (Old expenses remain in original currency or converted? - Store original, convert on read).
-- **Social Split**: If User A pays $100 for a group of 4, `social-finance-service` handles the debt tracking. `expense-service` should ideally record the full $100 payment, but for *Budgeting* purposes, only $25 is the user's actual expense. The recommended flow is: Record $100 outflow (Asset Credit), $25 Expense (Debit), $75 Receivable (Asset Debit) in `ledger-service`. `expense-service` tracks the $25 "Net Cost" for category analytics.
+- **Social Split**: If User A pays $100 for a group of 4, `social-finance-service` handles the debt tracking. `expense-service` should ideally record the full $100 payment, but for _Budgeting_ purposes, only $25 is the user's actual expense. The recommended flow is: Record $100 outflow (Asset Credit), $25 Expense (Debit), $75 Receivable (Asset Debit) in `ledger-service`. `expense-service` tracks the $25 "Net Cost" for category analytics.
 
 ## 5. API Design (Port 3003)
 

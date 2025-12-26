@@ -63,12 +63,12 @@
 
 #### `financial_health_scores` (Postgres)
 
-| Column         | Type      | Description |
-| :------------- | :-------- | :---------- |
-| `user_id`      | UUID      | PK          |
-| `score`        | INT       | 0-100       |
-| `components`   | JSONB     | Breakdown   |
-| `calculated_at`| TIMESTAMP |             |
+| Column          | Type      | Description |
+| :-------------- | :-------- | :---------- |
+| `user_id`       | UUID      | PK          |
+| `score`         | INT       | 0-100       |
+| `components`    | JSONB     | Breakdown   |
+| `calculated_at` | TIMESTAMP |             |
 
 **Data Lifecycle**: Chat history 1 year.
 **Migration Strategy**: Standard Schema updates.
@@ -140,7 +140,7 @@
   **Events Published**:
 - `ai.health_score.updated`:
   - `notification-service`: Alert user if score drops significantly.
-  **Subscribed Events**:
+    **Subscribed Events**:
 - `expense.created`: Update user context/embeddings.
 - `investment.transaction.created`: Update portfolio context.
 

@@ -162,7 +162,7 @@
   - `intelligence-service`: Analytics.
 - `loan.payment.received`:
   - `ledger-service`: Update Cashflow (if configured).
-  **Subscribed Events**:
+    **Subscribed Events**:
 - `group.settlement.created`:
   - Check if any active loan exists between these users. If "Settled" in group, mark as Paid.
 

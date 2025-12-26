@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RegisterUserUseCase } from './register-user.use-case';
-import { UserRepository, SessionRepository, PasswordEncoder, TokenService } from '../../domain/ports/repositories';
+import {
+  UserRepository,
+  SessionRepository,
+  PasswordEncoder,
+  TokenService,
+} from '../../domain/ports/repositories';
 import { EventPublisher } from '../../domain/ports/event-publisher';
 import { RegisterUserDto } from '../dtos/register-user.dto';
 import { User } from '../../domain/entities/user.entity';
@@ -70,18 +75,22 @@ describe('RegisterUserUseCase', () => {
     };
 
     (userRepository.findByEmail as jest.Mock).mockResolvedValue(null);
-    (userRepository.create as jest.Mock).mockImplementation((u) => Promise.resolve({ ...u, id: 'user-id' }));
+    (userRepository.create as jest.Mock).mockImplementation((u) =>
+      Promise.resolve({ ...u, id: 'user-id' }),
+    );
 
     const result = await useCase.execute(dto);
 
     expect(userRepository.findByEmail).toHaveBeenCalledWith(dto.email);
     expect(passwordEncoder.hash).toHaveBeenCalledWith(dto.password);
     expect(userRepository.create).toHaveBeenCalled();
-    expect(eventPublisher.publishUserCreated).toHaveBeenCalledWith(expect.objectContaining({
-      email: dto.email,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-    }));
+    expect(eventPublisher.publishUserCreated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: dto.email,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+      }),
+    );
     expect(tokenService.generateAccessToken).toHaveBeenCalled();
     expect(tokenService.generateRefreshToken).toHaveBeenCalled();
     expect(sessionRepository.create).toHaveBeenCalled();
@@ -100,7 +109,9 @@ describe('RegisterUserUseCase', () => {
       lastName: 'User',
     };
 
-    (userRepository.findByEmail as jest.Mock).mockResolvedValue(new User('id', dto.email, 'user', true, false, new Date()));
+    (userRepository.findByEmail as jest.Mock).mockResolvedValue(
+      new User('id', dto.email, 'user', true, false, new Date()),
+    );
 
     await expect(useCase.execute(dto)).rejects.toThrow(ConflictException);
     expect(userRepository.create).not.toHaveBeenCalled();

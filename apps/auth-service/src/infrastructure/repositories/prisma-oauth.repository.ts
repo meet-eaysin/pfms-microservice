@@ -7,7 +7,10 @@ import { PrismaService } from '../config/prisma.service';
 export class PrismaOAuthAccountRepository implements OAuthAccountRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findByProvider(providerId: string, providerUserId: string): Promise<OAuthAccount | null> {
+  async findByProvider(
+    providerId: string,
+    providerUserId: string,
+  ): Promise<OAuthAccount | null> {
     const account = await this.prisma.oAuthAccount.findUnique({
       where: {
         provider_id_provider_user_id: {
@@ -17,7 +20,11 @@ export class PrismaOAuthAccountRepository implements OAuthAccountRepository {
       },
     });
     if (!account) return null;
-    return new OAuthAccount(account.provider_id, account.provider_user_id, account.user_id);
+    return new OAuthAccount(
+      account.provider_id,
+      account.provider_user_id,
+      account.user_id,
+    );
   }
 
   async create(account: OAuthAccount): Promise<OAuthAccount> {
@@ -28,6 +35,10 @@ export class PrismaOAuthAccountRepository implements OAuthAccountRepository {
         user_id: account.userId,
       },
     });
-    return new OAuthAccount(created.provider_id, created.provider_user_id, created.user_id);
+    return new OAuthAccount(
+      created.provider_id,
+      created.provider_user_id,
+      created.user_id,
+    );
   }
 }

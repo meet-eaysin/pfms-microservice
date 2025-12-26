@@ -50,24 +50,24 @@
 
 #### `journal_entries`
 
-| Column        | Type      | Description                         |
-| :------------ | :-------- | :---------------------------------- |
-| `id`          | UUID      | PK                                  |
-| `user_id`     | UUID      | FK                                  |
-| `date`        | TIMESTAMP |                                     |
-| `description` | TEXT      |                                     |
+| Column        | Type      | Description                          |
+| :------------ | :-------- | :----------------------------------- |
+| `id`          | UUID      | PK                                   |
+| `user_id`     | UUID      | FK                                   |
+| `date`        | TIMESTAMP |                                      |
+| `description` | TEXT      |                                      |
 | `reference`   | VARCHAR   | Link to external ID (e.g. ExpenseID) |
-| `source`      | ENUM      | MANUAL, EXPENSE_SERVICE, etc.       |
+| `source`      | ENUM      | MANUAL, EXPENSE_SERVICE, etc.        |
 
 #### `posting_lines`
 
-| Column      | Type    | Description                |
-| :---------- | :------ | :------------------------- |
-| `id`        | UUID    | PK                         |
-| `entry_id`  | UUID    | FK                         |
-| `account_id`| UUID    | FK                         |
-| `amount`    | DECIMAL | Positive debit, Negative credit, or separate columns |
-| `direction` | ENUM    | DEBIT, CREDIT              |
+| Column       | Type    | Description                                          |
+| :----------- | :------ | :--------------------------------------------------- |
+| `id`         | UUID    | PK                                                   |
+| `entry_id`   | UUID    | FK                                                   |
+| `account_id` | UUID    | FK                                                   |
+| `amount`     | DECIMAL | Positive debit, Negative credit, or separate columns |
+| `direction`  | ENUM    | DEBIT, CREDIT                                        |
 
 **Data Lifecycle**: Permanent.
 **Migration Strategy**: Prisma Migrations.

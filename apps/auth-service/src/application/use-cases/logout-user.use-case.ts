@@ -7,9 +7,9 @@ export class LogoutUserUseCase {
 
   async execute(userId: string, currentSessionId?: string): Promise<void> {
     if (currentSessionId) {
-        await this.sessionRepository.delete(currentSessionId);
+      await this.sessionRepository.delete(currentSessionId);
     } else {
-        await this.sessionRepository.delete(currentSessionId);
+      await this.sessionRepository.deleteByUserId(userId);
     }
   }
 }

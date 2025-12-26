@@ -16,7 +16,7 @@ export class PrismaSessionRepository implements SessionRepository {
         user_id: session.userId,
         refresh_token: session.refreshToken,
         expires_at: session.expiresAt,
-        device_info: (session.deviceInfo as unknown) as Prisma.InputJsonValue,
+        device_info: session.deviceInfo as unknown as Prisma.InputJsonValue,
       },
     });
     return this.mapToDomain(created);
@@ -29,17 +29,19 @@ export class PrismaSessionRepository implements SessionRepository {
   }
 
   async findByRefreshToken(token: string): Promise<Session | null> {
-      // Since token is likely hashed or just stored. 
-      // If the requirement was "Hashed token for rotation", we might need to search by exact match if we store hash, 
-      // OR we search by ID and verify hash.
-      // Docs say: "refresh_token: TEXT" in table.
-      // We will assume precise match for lookup for now, or scan.
-      // Ideally we index it. Schema has no unique index on refresh_token?
-      // Schema had: `refresh_token String @db.Text`. No @unique.
-      // But we probably want to find by it.
-      const session = await this.prisma.session.findFirst({ where: { refresh_token: token } });
-      if (!session) return null;
-      return this.mapToDomain(session);
+    // Since token is likely hashed or just stored.
+    // If the requirement was "Hashed token for rotation", we might need to search by exact match if we store hash,
+    // OR we search by ID and verify hash.
+    // Docs say: "refresh_token: TEXT" in table.
+    // We will assume precise match for lookup for now, or scan.
+    // Ideally we index it. Schema has no unique index on refresh_token?
+    // Schema had: `refresh_token String @db.Text`. No @unique.
+    // But we probably want to find by it.
+    const session = await this.prisma.session.findFirst({
+      where: { refresh_token: token },
+    });
+    if (!session) return null;
+    return this.mapToDomain(session);
   }
 
   async deleteByUserId(userId: string): Promise<void> {
@@ -52,18 +54,20 @@ export class PrismaSessionRepository implements SessionRepository {
 
   async update(session: Session): Promise<Session> {
     const updated = await this.prisma.session.update({
-        where: { id: session.id },
-        data: {
-            refresh_token: session.refreshToken,
-            expires_at: session.expiresAt,
-        }
+      where: { id: session.id },
+      data: {
+        refresh_token: session.refreshToken,
+        expires_at: session.expiresAt,
+      },
     });
     return this.mapToDomain(updated);
   }
 
   async findAllByUserId(userId: string): Promise<Session[]> {
-      const sessions = await this.prisma.session.findMany({ where: { user_id: userId } });
-      return sessions.map(s => this.mapToDomain(s));
+    const sessions = await this.prisma.session.findMany({
+      where: { user_id: userId },
+    });
+    return sessions.map((s) => this.mapToDomain(s));
   }
 
   private mapToDomain(prismaSession: PrismaSession): Session {
@@ -73,7 +77,7 @@ export class PrismaSessionRepository implements SessionRepository {
       prismaSession.refresh_token,
       prismaSession.expires_at,
       // Prisma JsonValue type is strict, we need to carefully cast or validate
-      prismaSession.device_info as unknown as DeviceInfo | null, 
+      prismaSession.device_info as unknown as DeviceInfo | null,
     );
   }
 }

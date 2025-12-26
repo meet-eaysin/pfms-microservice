@@ -1,6 +1,14 @@
 import { Injectable, ConflictException } from '@nestjs/common';
-import { RegisterUserDto, RegisterUserResponseDto } from '../dtos/register-user.dto';
-import { UserRepository, PasswordEncoder, TokenService, SessionRepository } from '../../domain/ports/repositories';
+import {
+  RegisterUserDto,
+  RegisterUserResponseDto,
+} from '../dtos/register-user.dto';
+import {
+  UserRepository,
+  PasswordEncoder,
+  TokenService,
+  SessionRepository,
+} from '../../domain/ports/repositories';
 import { EventPublisher } from '../../domain/ports/event-publisher';
 import { User, Session } from '../../domain/entities/user.entity';
 
@@ -41,9 +49,9 @@ export class RegisterUserUseCase {
       false, // isVerified
       false, // mfaEnabled
       new Date(),
-      passwordHash
+      passwordHash,
     );
-    
+
     // Note: Creating user returns the User with ID
     const savedUser = await this.userRepository.create(newUser);
 
@@ -58,12 +66,12 @@ export class RegisterUserUseCase {
 
     // 5. Generate Tokens
     // Access Token payload usually includes sub (userId) and role
-    const accessToken = this.tokenService.generateAccessToken({ 
-        sub: savedUser.id, 
-        email: savedUser.email, 
-        role: savedUser.role 
+    const accessToken = this.tokenService.generateAccessToken({
+      sub: savedUser.id,
+      email: savedUser.email,
+      role: savedUser.role,
     });
-    
+
     // Refresh Token
     // We need to create a session first?
     // Docs: "refresh_token: TEXT" in sessions table.
@@ -71,24 +79,24 @@ export class RegisterUserUseCase {
     // Flow: Generate RT -> Create Session -> Return RT.
     // My TokenService generates a JWT for RT as decided.
     const refreshToken = this.tokenService.generateRefreshToken();
-    
+
     // Create Session
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
 
-    // We rely on DB to generate ID? 
+    // We rely on DB to generate ID?
     // Prisma `default(uuid())` works if we pass undefined.
     // If we want to embed ID in token, we MUST generate it here.
     // Let's use `crypto.randomUUID()` or similar.
     // Assuming Node environment has it.
-    const sessionId =  randomUUID();
+    const sessionId = randomUUID();
 
     const session = new Session(
-        sessionId,
-        savedUser.id,
-        refreshToken,
-        expiresAt,
-        {} 
+      sessionId,
+      savedUser.id,
+      refreshToken,
+      expiresAt,
+      {},
     );
     await this.sessionRepository.create(session);
 
