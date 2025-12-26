@@ -1,0 +1,22 @@
+# NPM Configuration for PFMS Monorepo
+
+# Use npm workspaces
+workspaces=true
+
+# Strict peer dependency resolution
+legacy-peer-deps=false
+
+# Save exact versions (no ^ or ~)
+save-exact=true
+
+# Automatically install peer dependencies
+auto-install-peers=true
+
+# Engine strict mode (enforce node version)
+engine-strict=true
+
+# Progress display
+progress=true
+
+# Logging
+loglevel=warn
