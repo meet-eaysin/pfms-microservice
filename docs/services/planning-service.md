@@ -136,8 +136,10 @@
 
 - `notification-service`: To send alerts.
 - `ledger-service`: To check category spending totals.
+- `intelligence-service`: To fetch smart budget recommendations.
   **Called By**:
 - **API Gateway**
+- `intelligence-service`: To read current budgets for context.
   **Events Published**:
 - `automation.rule_triggered`:
   - `notification-service`: Deliver message.

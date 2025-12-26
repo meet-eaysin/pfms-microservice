@@ -88,6 +88,7 @@
 - "As a user, I want to see my upcoming EMI for my Car Loan."
   **System-Driven**:
 - "Mark loan as SETTLED when balance hits 0."
+- "Convert 'Social Finance' group debt (User A owes User B $500) into a formal 'Loan' with interest."
   **Edge Cases**:
 - Early repayment (Recalculate interest?).
 - Partial payments.
@@ -161,6 +162,9 @@
   - `intelligence-service`: Analytics.
 - `loan.payment.received`:
   - `ledger-service`: Update Cashflow (if configured).
+  **Subscribed Events**:
+- `group.settlement.created`:
+  - Check if any active loan exists between these users. If "Settled" in group, mark as Paid.
 
 ## 7. Third-Party Dependencies
 

@@ -160,6 +160,10 @@
   **Events Published**:
 - `group.expense.created`:
   - `notification-service`: Push notification "You were added to an expense".
+  - `expense-service`: Create personal expense record for each member's share (Net Cost).
+- `group.settlement.created`:
+  - `ledger-service`: Debit Payer (Cash) / Credit Payee (Cash) - *If Integrated*.
+  - `lending-service`: Close any open P2P loans if they match.
 
 ## 7. Third-Party Dependencies
 

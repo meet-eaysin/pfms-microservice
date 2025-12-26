@@ -76,6 +76,7 @@
 - "As a user, I want to see how much dividend I earned this year."
   **System-Driven**:
 - "Recalculate portfolio value when market closes."
+- "Analyze portfolio sentiment using `intelligence-service` news feed."
   **Edge Cases**:
 - Stock splits (Requires adjusting quantity/price history).
 - Asset delisting.

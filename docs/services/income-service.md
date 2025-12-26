@@ -148,6 +148,7 @@
 - `planning-service`: To allocate savings from income.
   **Events Published**:
 - `income.received`:
+  - `ledger-service`: Debit Asset Account (Bank) / Credit Revenue Account (Income).
   - `tax-service`: Update liability estimate.
   - `planning-service`: Trigger "Pay Yourself First" rules.
 
