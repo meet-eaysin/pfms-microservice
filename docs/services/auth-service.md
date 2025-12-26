@@ -3,231 +3,184 @@
 ## 1. Service Overview
 
 **Service Name**: `auth-service`
-**Purpose**: Manages user authentication, session handling, and security credentials.
+**Purpose**: Manages user authentication, session handling, and security credentials using `better-auth`.
 **Responsibility**:
 
-- User Registration & Login
-- Multi-Factor Authentication (MFA)
-- Session Management (Refresh Tokens, Device tracking)
-- OAuth Integration (Google, Facebook, Apple)
+- User Registration & Login (Email/Password & OAuth)
+- Multi-Factor Authentication (MFA/2FA)
+- Session Management (Database-backed sessions)
+- OAuth Integration (Google, GitHub, Apple)
 - Password Management (Reset, Change)
-  **Business Value**: secure foundation for the platform, ensuring only authorized access to financial data.
+- Email Verification
+  **Business Value**: Secure foundation for the platform, ensuring only authorized access to financial data.
   **Scope**:
-- **In Scope**: Credentials, Tokens, Sessions, MFA, 3rd Party Logins.
+- **In Scope**: Credentials, Sessions, MFA, Social Logins, Email Verification.
 - **Out of Scope**: User Profiles (names, addresses) - handled by `user-service`.
 
 ## 2. Functional Description
 
-**Core Features**:
+**Core Features (via `better-auth`)**:
 
-- JWT-based Stateless Authentication (Access/Refresh Token pattern).
-- Secure Password Hashing (Argon2 or similar via `better-auth`).
-- Time-based One-Time Password (TOTP) for MFA.
-- Device fingerprinting and session revocation.
-- Role-Based Access Control (RBAC) token claims.
+- **Plugin-based Architecture**: Extensible auth system.
+- **Secure Password Hashing**: Managed by `better-auth` (Argon2).
+- **Session Management**: Persistent sessions stored in PostgreSQL.
+- **Multi-Factor Authentication**: TOTP support.
+- **Social Auth**: Native support for Google, GitHub, and Apple.
+- **Email Verification**: Built-in flow for account verification.
   **Internal Responsibilities**:
-- Validating credentials against encrypted storage.
-- Issuing and Verifying JSON Web Tokens (JWT).
-- Interfacing with Email Service for verification/reset links.
+- Configuring `better-auth` instance and plugins.
+- Interfacing with PostgreSQL for auth data storage.
+- Publishing events (e.g., `user.created`) to the Event Bus.
   **Non-functional Expectations**:
-- **Latency**: < 100ms for login/token refresh.
+- **Latency**: < 100ms for session validation.
 - **Reliability**: 99.99% availability (Critical Path).
-- **Scalability**: Stateless apart from Redis session cache; horizontally scalable.
+- **Scalability**: Horizontally scalable; session state persisted in DB.
 
 ## 3. Database Design
 
-**Database Type**: PostgreSQL (Primary) + Redis (Session Cache)
+**Database Type**: PostgreSQL (Primary) + Redis (Cache/Rate Limiting)
 
-### Schema (Key Tables)
+### Schema (Better Auth Tables)
 
-#### `users`
+#### `user`
 
-| Column          | Type      | Constraints      | Description                    |
-| :-------------- | :-------- | :--------------- | :----------------------------- |
-| `id`            | UUID      | PK               | Unique User ID                 |
-| `email`         | VARCHAR   | UNIQUE, NOT NULL | User's primary email           |
-| `password_hash` | VARCHAR   | NULLABLE         | Null if external provider only |
-| `role`          | VARCHAR   | DEFAULT 'user'   | Authorization Scope            |
-| `is_verified`   | BOOLEAN   | DEFAULT FALSE    | Email verification status      |
-| `mfa_enabled`   | BOOLEAN   | DEFAULT FALSE    | MFA status flag                |
-| `created_at`    | TIMESTAMP | DEFAULT NOW()    | Timestamp                      |
+| Column          | Type      | Constraints      | Description               |
+| :-------------- | :-------- | :--------------- | :------------------------ |
+| `id`            | TEXT      | PK               | Unique User ID            |
+| `email`         | TEXT      | UNIQUE, NOT NULL | User's primary email      |
+| `name`          | TEXT      | NOT NULL         | Display Name              |
+| `emailVerified` | BOOLEAN   | DEFAULT FALSE    | Email verification status |
+| `image`         | TEXT      | NULLABLE         | Profile image URL         |
+| `createdAt`     | TIMESTAMP | DEFAULT NOW()    | Creation timestamp        |
+| `updatedAt`     | TIMESTAMP | DEFAULT NOW()    | Update timestamp          |
 
-#### `sessions` (Redis / DB Fallback)
+#### `session`
 
-| Column          | Type      | Description               |
-| :-------------- | :-------- | :------------------------ |
-| `id`            | UUID      | Session ID                |
-| `user_id`       | UUID      | FK -> users.id            |
-| `refresh_token` | TEXT      | Hashed token for rotation |
-| `device_info`   | JSONB     | User Agent, IP            |
-| `expires_at`    | TIMESTAMP | TTL                       |
+| Column      | Type      | Description          |
+| :---------- | :-------- | :------------------- |
+| `id`        | TEXT      | Session ID           |
+| `userId`    | TEXT      | FK -> user.id        |
+| `token`     | TEXT      | Unique session token |
+| `expiresAt` | TIMESTAMP | Expiration timestamp |
+| `ipAddress` | TEXT      | Client IP            |
+| `userAgent` | TEXT      | Client User Agent    |
 
-#### `oauth_accounts`
+#### `account`
 
-| Column             | Type    | Description               |
-| :----------------- | :------ | :------------------------ |
-| `provider_id`      | VARCHAR | e.g. "google", "facebook" |
-| `provider_user_id` | VARCHAR | External ID               |
-| `user_id`          | UUID    | FK -> users.id            |
+| Column                 | Type      | Description               |
+| :--------------------- | :-------- | :------------------------ |
+| `id`                   | TEXT      | ID                        |
+| `userId`               | TEXT      | FK -> user.id             |
+| `accountId`            | TEXT      | Provider-specific User ID |
+| `providerId`           | TEXT      | e.g., "google", "github"  |
+| `accessToken`          | TEXT      | OAuth Access Token        |
+| `refreshToken`         | TEXT      | OAuth Refresh Token       |
+| `accessTokenExpiresAt` | TIMESTAMP | Token Expiry              |
 
-**Data Lifecycle**: Users created on register. Soft-deleted on account closure (compliance retention may apply).
+#### `verification`
+
+| Column       | Type      | Description             |
+| :----------- | :-------- | :---------------------- |
+| `id`         | TEXT      | ID                      |
+| `identifier` | TEXT      | email or phone          |
+| `value`      | TEXT      | verification token/code |
+| `expiresAt`  | TIMESTAMP | Expiry                  |
+
+**Data Lifecycle**: Managed by `better-auth` and Prisma.
 **Migration Strategy**: Prisma Migrations.
 
 ## 4. Use Cases
 
 **User-Driven**:
 
-- "As a user, I want to sign up with email/password."
+- "As a user, I want to sign up with email/password or Google."
+- "As a user, I want to verify my email before accessing certain features."
 - "As a user, I want to enable 2FA for extra security."
-- "As a user, I want to see all devices logged into my account."
   **System-Driven**:
-- "Revoke session when password is changed."
-- "Lock account after 5 failed login attempts."
+- "Revoke all sessions when password is changed."
+- "Cleanup expired verification tokens automatically."
   **Edge Cases**:
-- Token expiry during active usage (Auto-refresh).
-- OAuth provider downtime.
+- Social login account linking (same email).
+- Session hijacking prevention (IP/UA tracking).
 
 ## 5. API Design (Port 3001)
 
-### Authentication
+`better-auth` endpoints are typically prefixed with `/api/auth` (configurable).
 
-#### Register
+### Authentication Endpoints
 
-**Endpoint**: `POST /api/v1/auth/register`
+- `POST /api/auth/signup/email`: Register with email/password.
+- `POST /api/auth/signin/email`: Login with email/password.
+- `GET /api/auth/signin/:provider`: Initiate OAuth flow (Google/Github).
+- `POST /api/auth/signout`: Terminate session.
+- `GET /api/auth/get-session`: Retrieve current session and user info.
 
-- **Auth**: Public
-- **Body**:
-  ```json
-  {
-    "email": "user@example.com",
-    "password": "StrongPassword123!",
-    "firstName": "John",
-    "lastName": "Doe"
-  }
-  ```
-- **Response (201)**:
-  ```json
-  {
-    "user": { "id": "uuid", "email": "..." },
-    "accessToken": "jwt...",
-    "refreshToken": "jwt..."
-  }
-  ```
-- **Validation**: Email format, Password complexity.
+### Account Management
 
-#### Login
-
-**Endpoint**: `POST /api/v1/auth/login`
-
-- **Auth**: Public
-- **Body**: `{ "email": "...", "password": "..." }`
-- **Response (200)**: `{ "user": ..., "accessToken": ..., "refreshToken": ... }`
-- **Error (401)**: `{ "message": "Invalid credentials" }`
-
-#### Logout
-
-**Endpoint**: `POST /api/v1/auth/logout`
-
-- **Auth**: Bearer Token
-- **Response (200)**: `{ "success": true }`
-
-#### Refresh Token
-
-**Endpoint**: `POST /api/v1/auth/refresh`
-
-- **Auth**: Public (Cookie/Body)
-- **Body**: `{ "refreshToken": "..." }`
-- **Response (200)**: `{ "accessToken": "new...", "refreshToken": "new..." }`
-
-### Password Management
-
-#### Forgot Password
-
-**Endpoint**: `POST /api/v1/auth/forgot-password`
-
-- **Body**: `{ "email": "..." }`
-- **Response (200)**: `{ "message": "If email exists, link sent." }`
-
-#### Reset Password
-
-**Endpoint**: `POST /api/v1/auth/reset-password`
-
-- **Body**: `{ "token": "...", "newPassword": "..." }`
-- **Response**: `{ "success": true }`
+- `POST /api/auth/change-password`: Update password.
+- `POST /api/auth/forget-password`: Request reset link.
+- `POST /api/auth/reset-password`: Reset password with token.
+- `POST /api/auth/verify-email`: Verify email with token.
 
 ### MFA
 
-#### Enable MFA
-
-**Endpoint**: `POST /api/v1/auth/mfa/enable`
-
-- **Auth**: Bearer Token
-- **Body**: `{ "method": "totp" }`
-- **Response**: `{ "secret": "...", "qrCode": "data:image..." }`
-
-#### Verify MFA
-
-**Endpoint**: `POST /api/v1/auth/mfa/verify`
-
-- **Body**: `{ "code": "123456" }`
-- **Response**: `{ "verified": true, "backupCodes": [...] }`
+- `POST /api/auth/two-factor/enable`: Enable MFA.
+- `POST /api/auth/two-factor/verify`: Verify MFA code.
 
 ## 6. Inter-Service Communication
 
 **Calls**:
 
-- `notification-service` (Async/Event): To send verification emails, password reset links.
-- `user-service` (Sync/Event): To create initial profile (Name, Preferences) on registration.
-  **Called By**:
-- **API Gateway**: All auth traffic.
-- All Services: Validate tokens (via library/middleware, not direct API call ideally, but `auth-service` generates the keys).
-  **Events Published**:
-- `user.created` (RabbitMQ): Trigger profile creation, welcome email.
-- `user.login`: Security audit.
-- `user.password_changed`: Revoke other sessions.
+- `notification-service` (Async/Event): To send verification emails and reset links.
+- `user-service` (Async/Event): To sync basic profile data.
+
+**Called By**:
+
+- **API Gateway**: Routes all `/api/auth/*` traffic.
+- **Other Services**: Validate sessions via `better-auth` client or middleware.
+
+**Events Published**:
+
+- `user.created`: Triggered on successful registration.
+- `session.created`: Security audit logs.
+- `password.reset`: Security notification.
 
 ## 7. Third-Party Dependencies
 
-1.  **Google/Facebook/Apple IDs**:
-    - **Purpose**: OAuth Sign-in.
-    - **Auth**: Client ID/Secret.
-    - **Failure**: Fallback to email/pass.
-2.  **Redis**:
-    - **Purpose**: Session storage.
-    - **Security**: Internal VPC only.
+1. **OAuth Providers**: Google, GitHub, Apple.
+2. **PostgreSQL**: Persistence for all auth data.
+3. **Redis**: Caching and potential rate limiting.
 
 ## 8. Security Considerations
 
-- **Passwords**: Never stored plain. Hashed with Salt.
-- **Tokens**: Short-lived Access Tokens (15m), Long-lived Refresh Tokens (7d).
-- **MFA**: Encouraged/Enforced for critical actions.
-- **Rate Limiting**: Aggressive on Login/Register endpoints to prevent brute-force (implemented at Gateway or Service middleware).
-- **Secrets**: Stored in Vault/Env Vars.
+- **Password Hashing**: Argon2 (managed by `better-auth`).
+- **CSRF Protection**: Built-in to `better-auth`.
+- **Session Security**: HttpOnly, Secure, SameSite cookies.
+- **Rate Limiting**: Applied to sensitive endpoints (login, forgot-password).
 
 ## 9. Configuration & Environment
 
-- `DATABASE_URL`: Postgres.
-- `REDIS_URL`: Session store.
-- `JWT_SECRET` / `JWT_PUBLIC_KEY`: Token signing.
+Configuration is managed via `@pfms/config` and the `AuthService` Config.
+
+- `BETTER_AUTH_SECRET`: Used for encryption and CSRF.
+- `BETTER_AUTH_DATABASE_URL`: Connection string for auth tables.
+- `BETTER_AUTH_COOKIE_NAME`: Default `better-auth-session`.
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`: OAuth.
-- `FRONTEND_URL`: For callback redirects.
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`: OAuth.
 
 ## 10. Observability & Monitoring
 
-- **Logs**: JSON format (Pino). Log Login Success/Failure (exclude PII/Passwords).
-- **Metrics**:
-  - `auth_login_total{status="success|failure"}`
-  - `auth_register_total`
-- **Health Check**: `/health` endpoint checks DB and Redis connectivity.
+- **Logs**: Winston/Pino integration.
+- **Metrics**: Authentication success/failure rates.
+- **Health**: `/health` checks DB connectivity.
 
-## 11. Error Handling & Edge Cases
+## 11. Error Handling
 
-- **Invalid Token**: 401 Unauthorized.
-- **Expired Token**: 401 (Client must call Refresh).
-- **Account Locked**: 403 Forbidden.
-- **DB Down**: 500 Internal Server Error (Retry safe for reads).
+- **401 Unauthorized**: Invalid credentials or expired session.
+- **403 Forbidden**: Invalid verification token or MFA required.
+- **422 Unprocessable Entity**: Validation errors (e.g., weak password).
 
 ## 12. Assumptions & Open Questions
 
-- **Assumption**: `better-auth` handles the complexity of OAuth flow and session management.
-- **Open**: Do we strictly enforce email verification before allowing login? (Currently assumed Yes).
+- **Assumption**: `better-auth` is the source of truth for all authentication logic.
+- **Assumption**: The `user-service` handles extended profile data (address, etc.) while `auth-service` handles core credentials.
