@@ -42,7 +42,7 @@ export class TemplateService {
     try {
       const content = await fs.readFile(templateFile, 'utf-8');
       return content;
-    } catch (error) {
+    } catch {
       throw new Error(`Template '${templateName}' not found at ${templateFile}`);
     }
   }
