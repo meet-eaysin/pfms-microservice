@@ -1,0 +1,91 @@
+// This is your Prisma schema file for user-service
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserProfile {
+  userId      String   @id @db.Uuid
+  firstName   String   @db.VarChar(100)
+  lastName    String?  @db.VarChar(100)
+  avatarUrl   String?  @db.VarChar(500)
+  phone       String?  @db.VarChar(20)
+  dateOfBirth DateTime? @db.Date
+  bio         String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  financialPreferences FinancialPreferences?
+  notificationSettings NotificationSettings?
+  familyAsHead         FamilyMember[]        @relation("FamilyHead")
+  familyAsMember       FamilyMember[]        @relation("FamilyMember")
+
+  @@map("user_profiles")
+  @@index([userId])
+}
+
+model FinancialPreferences {
+  userId          String        @id @db.Uuid
+  baseCurrency    String        @default("USD") @db.Char(3)
+  fiscalYearStart DateTime      @default(dbgenerated("'2024-01-01'::date")) @db.Date
+  riskTolerance   RiskTolerance @default(MEDIUM)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  userProfile UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("financial_preferences")
+  @@index([userId])
+}
+
+model NotificationSettings {
+  userId            String   @id @db.Uuid
+  emailDailyDigest  Boolean  @default(true)
+  pushTransactions  Boolean  @default(true)
+  emailWeeklyReport Boolean  @default(true)
+  pushBudgetAlerts  Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  userProfile UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("notification_settings")
+  @@index([userId])
+}
+
+model FamilyMember {
+  headUserId   String       @db.Uuid
+  memberUserId String       @db.Uuid
+  relationship String       @db.VarChar(50)
+  inviteStatus InviteStatus @default(PENDING)
+  invitedAt    DateTime     @default(now())
+  acceptedAt   DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  head   UserProfile @relation("FamilyHead", fields: [headUserId], references: [userId], onDelete: Cascade)
+  member UserProfile @relation("FamilyMember", fields: [memberUserId], references: [userId], onDelete: Cascade)
+
+  @@id([headUserId, memberUserId])
+  @@map("family_members")
+  @@index([headUserId])
+  @@index([memberUserId])
+}
+
+enum RiskTolerance {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
