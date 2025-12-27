@@ -1,51 +1,57 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { PrismaRepository } from '../../../src/infrastructure/database/prisma.repository';
-import { User, Session } from '../../../src/domain/entities/user.entity';
+
+// Create mock functions that will be reused
+const mockUserFindUnique = jest.fn();
+const mockSessionFindMany = jest.fn();
+const mockSessionDeleteMany = jest.fn();
+const mockDisconnect = jest.fn();
 
 // Mock PrismaClient
 jest.mock('@prisma/client', () => {
   return {
     PrismaClient: jest.fn().mockImplementation(() => ({
       user: {
-        findUnique: jest.fn(),
+        findUnique: mockUserFindUnique,
       },
       session: {
-        findMany: jest.fn(),
-        deleteMany: jest.fn(),
+        findMany: mockSessionFindMany,
+        deleteMany: mockSessionDeleteMany,
       },
-      $disconnect: jest.fn(),
+      $disconnect: mockDisconnect,
     })),
   };
 });
 
 describe('PrismaRepository', () => {
   let repository: PrismaRepository;
-  let configService: ConfigService;
-  let prisma: any;
 
   const mockUser = {
     id: 'user-123',
     email: 'test@example.com',
-    email_verified: true,
+    emailVerified: true,
     name: 'Test User',
     image: null,
-    created_at: new Date(),
-    updated_at: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const mockSession = {
     id: 'session-123',
-    user_id: 'user-123',
+    userId: 'user-123',
     token: 'token',
-    expires_at: new Date(),
-    ip_address: '127.0.0.1',
-    user_agent: 'Test Agent',
-    created_at: new Date(),
-    updated_at: new Date(),
+    expiresAt: new Date(),
+    ipAddress: '127.0.0.1',
+    userAgent: 'Test Agent',
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   beforeEach(async () => {
+    // Clear all mocks before each test
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PrismaRepository,
@@ -59,29 +65,27 @@ describe('PrismaRepository', () => {
     }).compile();
 
     repository = module.get(PrismaRepository);
-    configService = module.get(ConfigService);
-    prisma = (repository as any).prisma;
   });
 
   describe('findUserById', () => {
     it('should return user by ID', async () => {
-      prisma.user.findUnique.mockResolvedValue(mockUser);
+      mockUserFindUnique.mockResolvedValue(mockUser);
 
       const result = await repository.findUserById('user-123');
 
       expect(result).toEqual({
         id: mockUser.id,
         email: mockUser.email,
-        emailVerified: mockUser.email_verified,
+        emailVerified: mockUser.emailVerified,
         name: mockUser.name,
         image: mockUser.image,
-        createdAt: mockUser.created_at,
-        updatedAt: mockUser.updated_at,
+        createdAt: mockUser.createdAt,
+        updatedAt: mockUser.updatedAt,
       });
     });
 
     it('should return null when user not found', async () => {
-      prisma.user.findUnique.mockResolvedValue(null);
+      mockUserFindUnique.mockResolvedValue(null);
 
       const result = await repository.findUserById('invalid-id');
 
@@ -91,31 +95,31 @@ describe('PrismaRepository', () => {
 
   describe('getUserSessions', () => {
     it('should return user sessions', async () => {
-      prisma.session.findMany.mockResolvedValue([mockSession]);
+      mockSessionFindMany.mockResolvedValue([mockSession]);
 
       const result = await repository.getUserSessions('user-123');
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
         id: mockSession.id,
-        userId: mockSession.user_id,
+        userId: mockSession.userId,
         token: mockSession.token,
-        expiresAt: mockSession.expires_at,
-        ipAddress: mockSession.ip_address,
-        userAgent: mockSession.user_agent,
-        createdAt: mockSession.created_at,
-        updatedAt: mockSession.updated_at,
+        expiresAt: mockSession.expiresAt,
+        ipAddress: mockSession.ipAddress,
+        userAgent: mockSession.userAgent,
+        createdAt: mockSession.createdAt,
+        updatedAt: mockSession.updatedAt,
       });
     });
   });
 
   describe('revokeSession', () => {
     it('should revoke a session', async () => {
-      prisma.session.deleteMany.mockResolvedValue({ count: 1 });
+      mockSessionDeleteMany.mockResolvedValue({ count: 1 });
 
       await repository.revokeSession('session-123', 'user-123');
 
-      expect(prisma.session.deleteMany).toHaveBeenCalledWith({
+      expect(mockSessionDeleteMany).toHaveBeenCalledWith({
         where: {
           id: 'session-123',
           userId: 'user-123',
@@ -126,11 +130,11 @@ describe('PrismaRepository', () => {
 
   describe('revokeAllSessions', () => {
     it('should revoke all sessions for user', async () => {
-      prisma.session.deleteMany.mockResolvedValue({ count: 5 });
+      mockSessionDeleteMany.mockResolvedValue({ count: 5 });
 
       await repository.revokeAllSessions('user-123');
 
-      expect(prisma.session.deleteMany).toHaveBeenCalledWith({
+      expect(mockSessionDeleteMany).toHaveBeenCalledWith({
         where: {
           userId: 'user-123',
         },
@@ -138,11 +142,11 @@ describe('PrismaRepository', () => {
     });
 
     it('should revoke all sessions except one', async () => {
-      prisma.session.deleteMany.mockResolvedValue({ count: 4 });
+      mockSessionDeleteMany.mockResolvedValue({ count: 4 });
 
       await repository.revokeAllSessions('user-123', 'current-session');
 
-      expect(prisma.session.deleteMany).toHaveBeenCalledWith({
+      expect(mockSessionDeleteMany).toHaveBeenCalledWith({
         where: {
           userId: 'user-123',
           id: { not: 'current-session' },
