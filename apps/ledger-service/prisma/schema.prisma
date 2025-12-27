@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum Direction {
+  DEBIT
+  CREDIT
+}
+
+enum EntrySource {
+  MANUAL
+  EXPENSE_SERVICE
+  INCOME_SERVICE
+  INVESTMENT_SERVICE
+}
+
+model Account {
+  id        String      @id @default(uuid())
+  userId    String
+  name      String
+  type      AccountType
+  subtype   String?
+  currency  String      @default("USD")
+  balance   Decimal     @db.Decimal(15, 2) @default(0)
+  isMutable Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  
+  postingLines PostingLine[]
+  
+  @@index([userId, type])
+  @@map("accounts")
+}
+
+model JournalEntry {
+  id          String      @id @default(uuid())
+  userId      String
+  date        DateTime
+  description String
+  reference   String?
+  source      EntrySource
+  createdAt   DateTime    @default(now())
+  
+  lines PostingLine[]
+  
+  @@index([userId, date])
+  @@map("journal_entries")
+}
+
+model PostingLine {
+  id        String    @id @default(uuid())
+  entryId   String
+  accountId String
+  amount    Decimal   @db.Decimal(15, 2)
+  direction Direction
+  
+  entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  account Account      @relation(fields: [accountId], references: [id])
+  
+  @@index([entryId])
+  @@index([accountId])
+  @@map("posting_lines")
+}
