@@ -1,12 +1,11 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as amqp from 'amqplib';
-import { Connection, Channel } from 'amqplib';
+import { connect, Channel, ChannelModel } from 'amqplib';
 
 @Injectable()
 export class EventPublisher implements OnModuleInit, OnModuleDestroy {
-  private connection: any;
-  private channel: any;
+  private connection: ChannelModel;
+  private channel: Channel;
   private readonly logger = new Logger(EventPublisher.name);
   private readonly exchange = 'pfms.events';
 
@@ -29,7 +28,7 @@ export class EventPublisher implements OnModuleInit, OnModuleDestroy {
       const vhost = this.configService.get<string>('RABBITMQ_VHOST');
 
       const url = `amqp://${user}:${pass}@${host}:${port}${vhost}`;
-      this.connection = await amqp.connect(url);
+      this.connection = await connect(url);
       this.channel = await this.connection.createChannel();
       await this.channel.assertExchange(this.exchange, 'topic', { durable: true });
 
