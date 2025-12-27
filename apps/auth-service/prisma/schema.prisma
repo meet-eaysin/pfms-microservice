@@ -1,6 +1,3 @@
-// Auth Service Database Schema
-// Based on better-auth requirements
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User table - core authentication data
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
@@ -27,7 +23,6 @@ model User {
   @@map("user")
 }
 
-// Session table - manage user sessions
 model Session {
   id        String   @id @default(uuid())
   userId    String   @map("user_id")
@@ -45,19 +40,18 @@ model Session {
   @@map("session")
 }
 
-// Account table - OAuth providers
 model Account {
   id                      String    @id @default(uuid())
   userId                  String    @map("user_id")
-  accountId               String    @map("account_id") // Provider-specific user ID
-  providerId              String    @map("provider_id") // "google", "github", etc.
+  accountId               String    @map("account_id")
+  providerId              String    @map("provider_id")
   accessToken             String?   @map("access_token") @db.Text
   refreshToken            String?   @map("refresh_token") @db.Text
   idToken                 String?   @map("id_token") @db.Text
   accessTokenExpiresAt    DateTime? @map("access_token_expires_at")
   refreshTokenExpiresAt   DateTime? @map("refresh_token_expires_at")
   scope                   String?
-  password                String? // For email/password accounts
+  password                String?
   createdAt               DateTime  @default(now()) @map("created_at")
   updatedAt               DateTime  @updatedAt @map("updated_at")
 
@@ -68,11 +62,10 @@ model Account {
   @@map("account")
 }
 
-// Verification table - email verification and password reset
 model Verification {
   id         String   @id @default(uuid())
-  identifier String // email or phone
-  value      String // verification token/code
+  identifier String
+  value      String
   expiresAt  DateTime @map("expires_at")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
