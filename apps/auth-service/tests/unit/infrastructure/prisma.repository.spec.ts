@@ -118,7 +118,7 @@ describe('PrismaRepository', () => {
       expect(prisma.session.deleteMany).toHaveBeenCalledWith({
         where: {
           id: 'session-123',
-          user_id: 'user-123',
+          userId: 'user-123',
         },
       });
     });
@@ -132,7 +132,7 @@ describe('PrismaRepository', () => {
 
       expect(prisma.session.deleteMany).toHaveBeenCalledWith({
         where: {
-          user_id: 'user-123',
+          userId: 'user-123',
         },
       });
     });
@@ -144,7 +144,7 @@ describe('PrismaRepository', () => {
 
       expect(prisma.session.deleteMany).toHaveBeenCalledWith({
         where: {
-          user_id: 'user-123',
+          userId: 'user-123',
           id: { not: 'current-session' },
         },
       });
