@@ -181,7 +181,6 @@ async function bootstrap(): Promise<void> {
         message: 'Route not found',
         timestamp: new Date().toISOString(),
       });
-      d;
     });
 
     // Global Error Handler
