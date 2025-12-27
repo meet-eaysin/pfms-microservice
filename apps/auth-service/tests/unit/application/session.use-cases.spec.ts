@@ -101,7 +101,10 @@ describe('Session Use Cases', () => {
 
       await revokeSessionUseCase.execute('session-123', 'user-123');
 
-      expect(authRepository.revokeSession).toHaveBeenCalledWith('session-123', 'user-123');
+      expect(authRepository.revokeSession).toHaveBeenCalledWith(
+        'session-123',
+        'user-123',
+      );
     });
   });
 
@@ -111,7 +114,10 @@ describe('Session Use Cases', () => {
 
       await revokeAllSessionsUseCase.execute('user-123');
 
-      expect(authRepository.revokeAllSessions).toHaveBeenCalledWith('user-123', undefined);
+      expect(authRepository.revokeAllSessions).toHaveBeenCalledWith(
+        'user-123',
+        undefined,
+      );
     });
 
     it('should revoke all sessions except one', async () => {
@@ -119,7 +125,10 @@ describe('Session Use Cases', () => {
 
       await revokeAllSessionsUseCase.execute('user-123', 'current-session');
 
-      expect(authRepository.revokeAllSessions).toHaveBeenCalledWith('user-123', 'current-session');
+      expect(authRepository.revokeAllSessions).toHaveBeenCalledWith(
+        'user-123',
+        'current-session',
+      );
     });
   });
 });

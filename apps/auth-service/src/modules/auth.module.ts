@@ -17,13 +17,13 @@ import { AuthGuard } from '../presentation/guards/auth.guard';
   providers: [
     // Application Services
     AuthApplicationService,
-    
+
     // Use Cases
     GetUserByIdUseCase,
     GetUserSessionsUseCase,
     RevokeSessionUseCase,
     RevokeAllSessionsUseCase,
-    
+
     // Infrastructure
     BetterAuthAdapter,
     {
@@ -32,14 +32,10 @@ import { AuthGuard } from '../presentation/guards/auth.guard';
     },
     PrismaRepository,
     EventPublisher,
-    
+
     // Guards
     AuthGuard,
   ],
-  exports: [
-    AuthApplicationService,
-    BetterAuthAdapter,
-    AuthGuard,
-  ],
+  exports: [AuthApplicationService, BetterAuthAdapter, AuthGuard],
 })
 export class AuthModule {}

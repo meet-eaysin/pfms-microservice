@@ -75,9 +75,11 @@ service-name/
 ## Layer Responsibilities
 
 ### 1. Domain Layer (`src/domain/`)
+
 **Purpose**: Contains pure business logic, independent of frameworks and infrastructure.
 
 #### Entities (`entities/`)
+
 - Core business objects with identity
 - Contain business logic and invariants
 - Examples: `User`, `Transaction`, `Account`
@@ -95,6 +97,7 @@ export interface User {
 ```
 
 #### Value Objects (`value-objects/`)
+
 - Immutable objects defined by their attributes
 - Contain validation logic
 - Examples: `Email`, `Money`, `UserId`
@@ -126,6 +129,7 @@ export class Email {
 ```
 
 #### Interfaces (`interfaces/`)
+
 - Contracts for repositories and services
 - Define operations without implementation
 - Examples: `IUserRepository`, `IAuthService`
@@ -141,15 +145,18 @@ export interface IUserRepository {
 ```
 
 **Rules**:
+
 - No dependencies on outer layers
 - No framework-specific code
 - No database or HTTP knowledge
 - Pure TypeScript/JavaScript
 
 ### 2. Application Layer (`src/application/`)
+
 **Purpose**: Orchestrates domain logic and implements use cases.
 
 #### Use Cases (`use-cases/`)
+
 - Single-purpose business operations
 - Coordinate domain entities and services
 - Examples: `CreateUserUseCase`, `AuthenticateUserUseCase`
@@ -173,6 +180,7 @@ export class CreateUserUseCase {
 ```
 
 #### DTOs (`dto/`)
+
 - Request and response data structures
 - Input validation using class-validator
 - Swagger/OpenAPI decorators
@@ -204,6 +212,7 @@ export class UserResponseDto {
 ```
 
 #### Services (`services/`)
+
 - Application-level services
 - Orchestrate multiple use cases
 - Handle transactions and cross-cutting concerns
@@ -214,7 +223,7 @@ export class UserResponseDto {
 export class UserApplicationService {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
-    private readonly eventPublisher: EventPublisher,
+    private readonly eventPublisher: EventPublisher
   ) {}
 
   async registerUser(dto: CreateUserDto): Promise<UserResponseDto> {
@@ -226,15 +235,18 @@ export class UserApplicationService {
 ```
 
 **Rules**:
+
 - Can depend on domain layer
 - No dependencies on infrastructure or presentation
 - No framework-specific code (except DI decorators)
 - Coordinates domain logic
 
 ### 3. Infrastructure Layer (`src/infrastructure/`)
+
 **Purpose**: Implements technical capabilities and external integrations.
 
 #### Database (`database/`)
+
 - Repository implementations
 - Database access logic
 - ORM/Query builders
@@ -263,6 +275,7 @@ export class PrismaUserRepository implements IUserRepository {
 ```
 
 #### Messaging (`messaging/`)
+
 - Event publishers and subscribers
 - Message queue integration
 - Event handlers
@@ -284,23 +297,28 @@ export class EventPublisher {
 ```
 
 #### Cache (`cache/`)
+
 - Redis implementations
 - Caching strategies
 
 #### External (`external/`)
+
 - Third-party API clients
 - External service adapters
 
 **Rules**:
+
 - Implements domain interfaces
 - Can depend on domain and application layers
 - Contains all framework-specific code
 - Handles technical concerns
 
 ### 4. Presentation Layer (`src/presentation/`)
+
 **Purpose**: Handles HTTP requests and maps them to application layer.
 
 #### Controllers (`controllers/`)
+
 - HTTP endpoint definitions
 - Request/response handling
 - Swagger documentation
@@ -322,6 +340,7 @@ export class UserController {
 ```
 
 #### Guards (`guards/`)
+
 - Authentication guards
 - Authorization guards
 - Route protection
@@ -335,7 +354,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const session = await this.authService.getSession(request.headers);
-    
+
     if (!session) {
       throw new UnauthorizedException();
     }
@@ -347,20 +366,20 @@ export class AuthGuard implements CanActivate {
 ```
 
 #### Decorators (`decorators/`)
+
 - Custom parameter decorators
 - Route metadata decorators
 
 ```typescript
 // current-user.decorator.ts
-export const CurrentUser = createParamDecorator(
-  (_data: unknown, ctx: ExecutionContext): User => {
-    const request = ctx.switchToHttp().getRequest();
-    return request.user;
-  },
-);
+export const CurrentUser = createParamDecorator((_data: unknown, ctx: ExecutionContext): User => {
+  const request = ctx.switchToHttp().getRequest();
+  return request.user;
+});
 ```
 
 #### Filters (`filters/`)
+
 - Exception handling
 - Error formatting
 
@@ -371,9 +390,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
-    const status = exception instanceof HttpException
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
+    const status =
+      exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
     response.status(status).json({
       statusCode: status,
@@ -385,15 +403,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
 ```
 
 **Rules**:
+
 - Depends on application layer only
 - Contains NestJS/Express-specific code
 - Maps HTTP to use cases
 - No business logic
 
 ### 5. Common Layer (`src/common/`)
+
 **Purpose**: Shared utilities and constants.
 
 #### Types (`types/`)
+
 - Shared TypeScript types
 - Utility types
 
@@ -413,6 +434,7 @@ export interface PaginatedResponse<T> {
 ```
 
 #### Constants (`constants/`)
+
 - Application-wide constants
 - Configuration values
 
@@ -426,6 +448,7 @@ export const AUTH_CONSTANTS = {
 ```
 
 #### Enums (`enums/`)
+
 - Shared enumerations
 
 ```typescript
@@ -438,6 +461,7 @@ export enum UserStatus {
 ```
 
 **Rules**:
+
 - No dependencies on any layer
 - Pure utility code
 - Reusable across layers
@@ -471,6 +495,7 @@ test/
 ## Naming Conventions
 
 ### Files
+
 - **Entities**: `user.entity.ts`
 - **Value Objects**: `email.value-object.ts`
 - **Use Cases**: `create-user.use-case.ts`
@@ -481,6 +506,7 @@ test/
 - **Filters**: `http-exception.filter.ts`
 
 ### Classes
+
 - **Entities**: `User`, `Transaction`
 - **Value Objects**: `Email`, `Money`
 - **Use Cases**: `CreateUserUseCase`, `AuthenticateUserUseCase`
@@ -489,6 +515,7 @@ test/
 - **Interfaces**: `IUserRepository`, `IAuthService`
 
 ### Variables
+
 - **camelCase**: `userId`, `emailAddress`
 - **PascalCase**: Class names, interfaces, types
 - **UPPER_SNAKE_CASE**: Constants
@@ -496,6 +523,7 @@ test/
 ## Best Practices
 
 ### 1. Dependency Flow
+
 ```
 Presentation → Application → Domain
      ↓              ↓
@@ -507,24 +535,28 @@ Infrastructure → Domain
 - Use dependency injection for all dependencies
 
 ### 2. Type Safety
+
 - **NO `any` types** - Use proper TypeScript types
 - Use strict TypeScript configuration
 - Define interfaces for all contracts
 - Use generics where appropriate
 
 ### 3. Separation of Concerns
+
 - Each layer has specific responsibilities
 - No mixing of concerns
 - Business logic only in domain layer
 - Technical details only in infrastructure
 
 ### 4. Testing
+
 - Unit tests for each layer independently
 - Mock dependencies using interfaces
 - Integration tests for infrastructure
 - E2E tests for critical flows
 
 ### 5. Error Handling
+
 - Domain errors for business rule violations
 - Application errors for use case failures
 - Infrastructure errors for technical issues
@@ -559,12 +591,14 @@ When migrating existing services to this structure:
 While maintaining the core structure, services can add specific directories:
 
 ### Auth Service
+
 ```
 infrastructure/
 ├── auth/          # Better-Auth adapter
 ```
 
 ### Expense Service
+
 ```
 infrastructure/
 ├── ocr/           # Receipt OCR service
@@ -572,6 +606,7 @@ infrastructure/
 ```
 
 ### Intelligence Service
+
 ```
 infrastructure/
 ├── ml/            # Machine learning models

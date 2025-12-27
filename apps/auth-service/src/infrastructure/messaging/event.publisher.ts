@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RabbitMQEventBus, BaseEvent } from '@pfms/event-bus';
 import { User, Session } from '../../domain/entities/user.entity';
@@ -30,7 +35,7 @@ export class EventPublisher implements OnModuleInit, OnModuleDestroy {
 
   constructor(private readonly configService: ConfigService) {
     const rabbitmqConfig = this.configService.get('rabbitmq');
-    
+
     this.eventBus = new RabbitMQEventBus({
       rabbitmq: {
         host: rabbitmqConfig.RABBITMQ_HOST,
@@ -105,7 +110,9 @@ export class EventPublisher implements OnModuleInit, OnModuleDestroy {
       };
 
       await this.eventBus.publish('session.created', event);
-      this.logger.log(`Published session.created event for user ${session.userId}`);
+      this.logger.log(
+        `Published session.created event for user ${session.userId}`,
+      );
     } catch (error) {
       this.logger.error('Failed to publish session.created event', error);
     }

@@ -8,11 +8,14 @@ export interface ExtendedAuthConfig extends AuthConfig {
 
 export default registerAs('auth', (): ExtendedAuthConfig => {
   const authConfig = loadAuthConfig();
-  const databaseUrl = process.env.DATABASE_URL || process.env.BETTER_AUTH_DATABASE_URL || '';
-  
+  const databaseUrl =
+    process.env.DATABASE_URL || process.env.BETTER_AUTH_DATABASE_URL || '';
+
   return {
     ...authConfig,
     databaseUrl,
-    betterAuthUrl: process.env.BETTER_AUTH_URL || `http://localhost:${process.env.SERVICE_PORT || 3001}/api/auth`,
+    betterAuthUrl:
+      process.env.BETTER_AUTH_URL ||
+      `http://localhost:${process.env.SERVICE_PORT || 3001}/api/auth`,
   };
 });

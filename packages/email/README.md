@@ -79,14 +79,14 @@ Example template (`welcome.hbs`):
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Welcome to PFMS</title>
-</head>
-<body>
-  <h1>Welcome, {{userName}}!</h1>
-  <p>Thank you for joining our platform.</p>
-  <a href="{{activationLink}}">Activate your account</a>
-</body>
+  <head>
+    <title>Welcome to PFMS</title>
+  </head>
+  <body>
+    <h1>Welcome, {{userName}}!</h1>
+    <p>Thank you for joining our platform.</p>
+    <a href="{{activationLink}}">Activate your account</a>
+  </body>
 </html>
 ```
 

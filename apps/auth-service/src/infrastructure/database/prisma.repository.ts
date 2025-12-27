@@ -60,7 +60,7 @@ export class PrismaRepository implements IAuthRepository, OnModuleDestroy {
       orderBy: { createdAt: 'desc' },
     });
 
-    return sessions.map(session => ({
+    return sessions.map((session) => ({
       id: session.id,
       userId: session.userId,
       token: session.token,
@@ -81,7 +81,10 @@ export class PrismaRepository implements IAuthRepository, OnModuleDestroy {
     });
   }
 
-  async revokeAllSessions(userId: string, exceptSessionId?: string): Promise<void> {
+  async revokeAllSessions(
+    userId: string,
+    exceptSessionId?: string,
+  ): Promise<void> {
     await this.prisma.session.deleteMany({
       where: {
         userId,

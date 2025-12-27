@@ -1,4 +1,8 @@
-import { Email, Password, UserId } from '../../../src/domain/value-objects/auth.value-objects';
+import {
+  Email,
+  Password,
+  UserId,
+} from '../../../src/domain/value-objects/auth.value-objects';
 
 describe('Email Value Object', () => {
   describe('create', () => {
@@ -13,7 +17,9 @@ describe('Email Value Object', () => {
     });
 
     it('should throw error for invalid email', () => {
-      expect(() => Email.create('invalid-email')).toThrow('Invalid email format');
+      expect(() => Email.create('invalid-email')).toThrow(
+        'Invalid email format',
+      );
     });
 
     it('should throw error for empty email', () => {

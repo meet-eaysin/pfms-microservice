@@ -9,7 +9,13 @@ export interface IAuthRepository {
 }
 
 export interface IAuthService {
-  validateSession(token: string): Promise<{ user: User; session: Session } | null>;
-  getSession(headers: Record<string, string | string[] | undefined>): Promise<{ user: User; session: Session } | null>;
-  signOut(headers: Record<string, string | string[] | undefined>): Promise<void>;
+  validateSession(
+    token: string,
+  ): Promise<{ user: User; session: Session } | null>;
+  getSession(
+    headers: Record<string, string | string[] | undefined>,
+  ): Promise<{ user: User; session: Session } | null>;
+  signOut(
+    headers: Record<string, string | string[] | undefined>,
+  ): Promise<void>;
 }

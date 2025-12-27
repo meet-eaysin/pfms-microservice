@@ -12,7 +12,13 @@ import { HealthModule } from './modules/health.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [authConfig, databaseConfig, serverConfig, redisConfig, rabbitmqConfig],
+      load: [
+        authConfig,
+        databaseConfig,
+        serverConfig,
+        redisConfig,
+        rabbitmqConfig,
+      ],
       envFilePath: ['.env.local', '.env'],
     }),
     AuthModule,

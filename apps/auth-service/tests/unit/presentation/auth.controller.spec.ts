@@ -144,7 +144,10 @@ describe('AuthController', () => {
 
       await controller.revokeSession('session-123', mockUser);
 
-      expect(revokeSessionUseCase.execute).toHaveBeenCalledWith('session-123', 'user-123');
+      expect(revokeSessionUseCase.execute).toHaveBeenCalledWith(
+        'session-123',
+        'user-123',
+      );
     });
   });
 });

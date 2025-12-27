@@ -40,7 +40,9 @@ export class BetterAuthAdapter {
       },
     });
 
-    const authSecret = this.configService.get<string>('auth.BETTER_AUTH_SECRET');
+    const authSecret = this.configService.get<string>(
+      'auth.BETTER_AUTH_SECRET',
+    );
     const databaseUrl = this.configService.get<string>('auth.databaseUrl');
 
     if (!authSecret || authSecret.length < 32) {
@@ -56,29 +58,59 @@ export class BetterAuthAdapter {
       secret: authSecret,
       emailAndPassword: {
         enabled: true,
-        minPasswordLength: this.configService.get<number>('auth.PASSWORD_MIN_LENGTH', 8),
+        minPasswordLength: this.configService.get<number>(
+          'auth.PASSWORD_MIN_LENGTH',
+          8,
+        ),
         maxPasswordLength: 128,
-        requireEmailVerification: this.configService.get<boolean>('auth.EMAIL_VERIFICATION_ENABLED', true),
+        requireEmailVerification: this.configService.get<boolean>(
+          'auth.EMAIL_VERIFICATION_ENABLED',
+          true,
+        ),
       },
       socialProviders: this.configureSocialProviders(),
       session: {
-        expiresIn: this.configService.get<number>('auth.SESSION_ABSOLUTE_TIMEOUT_HOURS', 24) * 60 * 60,
-        updateAge: this.configService.get<number>('auth.SESSION_IDLE_TIMEOUT_HOURS', 2) * 60 * 60,
+        expiresIn:
+          this.configService.get<number>(
+            'auth.SESSION_ABSOLUTE_TIMEOUT_HOURS',
+            24,
+          ) *
+          60 *
+          60,
+        updateAge:
+          this.configService.get<number>('auth.SESSION_IDLE_TIMEOUT_HOURS', 2) *
+          60 *
+          60,
         cookieCache: {
           enabled: true,
-          maxAge: this.configService.get<number>('auth.BETTER_AUTH_COOKIE_MAX_AGE', 2592000),
+          maxAge: this.configService.get<number>(
+            'auth.BETTER_AUTH_COOKIE_MAX_AGE',
+            2592000,
+          ),
         },
       },
       advanced: {
-        cookiePrefix: this.configService.get<string>('auth.BETTER_AUTH_COOKIE_NAME', 'better-auth'),
+        cookiePrefix: this.configService.get<string>(
+          'auth.BETTER_AUTH_COOKIE_NAME',
+          'better-auth',
+        ),
         crossSubDomainCookies: {
           enabled: false,
         },
-        useSecureCookies: this.configService.get<boolean>('auth.BETTER_AUTH_COOKIE_SECURE', true),
+        useSecureCookies: this.configService.get<boolean>(
+          'auth.BETTER_AUTH_COOKIE_SECURE',
+          true,
+        ),
         defaultCookieAttributes: {
-          sameSite: this.configService.get<'strict' | 'lax' | 'none'>('auth.BETTER_AUTH_COOKIE_SAME_SITE', 'lax'),
+          sameSite: this.configService.get<'strict' | 'lax' | 'none'>(
+            'auth.BETTER_AUTH_COOKIE_SAME_SITE',
+            'lax',
+          ),
           httpOnly: true,
-          secure: this.configService.get<boolean>('auth.BETTER_AUTH_COOKIE_SECURE', true),
+          secure: this.configService.get<boolean>(
+            'auth.BETTER_AUTH_COOKIE_SECURE',
+            true,
+          ),
           path: '/',
         },
       },
@@ -89,8 +121,12 @@ export class BetterAuthAdapter {
     const providers: Record<string, unknown> = {};
 
     // Google OAuth
-    const googleClientId = this.configService.get<string>('auth.GOOGLE_CLIENT_ID');
-    const googleClientSecret = this.configService.get<string>('auth.GOOGLE_CLIENT_SECRET');
+    const googleClientId = this.configService.get<string>(
+      'auth.GOOGLE_CLIENT_ID',
+    );
+    const googleClientSecret = this.configService.get<string>(
+      'auth.GOOGLE_CLIENT_SECRET',
+    );
     if (googleClientId && googleClientSecret) {
       providers.google = {
         clientId: googleClientId,
@@ -100,8 +136,12 @@ export class BetterAuthAdapter {
     }
 
     // GitHub OAuth
-    const githubClientId = this.configService.get<string>('auth.GITHUB_CLIENT_ID');
-    const githubClientSecret = this.configService.get<string>('auth.GITHUB_CLIENT_SECRET');
+    const githubClientId = this.configService.get<string>(
+      'auth.GITHUB_CLIENT_ID',
+    );
+    const githubClientSecret = this.configService.get<string>(
+      'auth.GITHUB_CLIENT_SECRET',
+    );
     if (githubClientId && githubClientSecret) {
       providers.github = {
         clientId: githubClientId,
@@ -111,10 +151,14 @@ export class BetterAuthAdapter {
     }
 
     // Apple OAuth
-    const appleClientId = this.configService.get<string>('auth.APPLE_CLIENT_ID');
+    const appleClientId = this.configService.get<string>(
+      'auth.APPLE_CLIENT_ID',
+    );
     const appleTeamId = this.configService.get<string>('auth.APPLE_TEAM_ID');
     const appleKeyId = this.configService.get<string>('auth.APPLE_KEY_ID');
-    const applePrivateKey = this.configService.get<string>('auth.APPLE_PRIVATE_KEY');
+    const applePrivateKey = this.configService.get<string>(
+      'auth.APPLE_PRIVATE_KEY',
+    );
     if (appleClientId && appleTeamId && appleKeyId && applePrivateKey) {
       providers.apple = {
         clientId: appleClientId,
@@ -132,9 +176,11 @@ export class BetterAuthAdapter {
     await this.auth.handler(req as Parameters<typeof this.auth.handler>[0]);
   }
 
-  async getSession(headers: Record<string, string | string[] | undefined>): Promise<{ user: User; session: Session } | null> {
+  async getSession(
+    headers: Record<string, string | string[] | undefined>,
+  ): Promise<{ user: User; session: Session } | null> {
     const session = await this.auth.api.getSession({ headers });
-    
+
     if (!session || !this.isBetterAuthSession(session)) {
       return null;
     }
@@ -142,11 +188,13 @@ export class BetterAuthAdapter {
     return this.mapToEntities(session);
   }
 
-  async getSessionByToken(token: string): Promise<{ user: User; session: Session } | null> {
-    const session = await this.auth.api.getSession({ 
-      headers: { 
-        cookie: `better-auth-session=${token}` 
-      } 
+  async getSessionByToken(
+    token: string,
+  ): Promise<{ user: User; session: Session } | null> {
+    const session = await this.auth.api.getSession({
+      headers: {
+        cookie: `better-auth-session=${token}`,
+      },
     });
 
     if (!session || !this.isBetterAuthSession(session)) {
@@ -156,7 +204,9 @@ export class BetterAuthAdapter {
     return this.mapToEntities(session);
   }
 
-  async signOut(headers: Record<string, string | string[] | undefined>): Promise<void> {
+  async signOut(
+    headers: Record<string, string | string[] | undefined>,
+  ): Promise<void> {
     await this.auth.api.signOut({ headers });
   }
 
@@ -169,7 +219,10 @@ export class BetterAuthAdapter {
     );
   }
 
-  private mapToEntities(betterAuthSession: BetterAuthSession): { user: User; session: Session } {
+  private mapToEntities(betterAuthSession: BetterAuthSession): {
+    user: User;
+    session: Session;
+  } {
     return {
       user: {
         id: betterAuthSession.user.id,

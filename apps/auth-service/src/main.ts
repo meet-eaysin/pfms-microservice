@@ -8,7 +8,7 @@ import { HttpExceptionFilter } from './presentation/filters/http-exception.filte
 
 async function bootstrap(): Promise<void> {
   const logger = new Logger('Bootstrap');
-  
+
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
@@ -19,9 +19,11 @@ async function bootstrap(): Promise<void> {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   // Security
-  app.use(helmet({
-    crossOriginResourcePolicy: { policy: 'cross-origin' },
-  }));
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
 
   // CORS
   const corsOrigin = configService.get<string>('server.CORS_ORIGIN', '*');
@@ -43,11 +45,16 @@ async function bootstrap(): Promise<void> {
   );
 
   // Swagger Documentation
-  const enableSwagger = configService.get<boolean>('server.ENABLE_SWAGGER', false);
+  const enableSwagger = configService.get<boolean>(
+    'server.ENABLE_SWAGGER',
+    false,
+  );
   if (enableSwagger) {
     const config = new DocumentBuilder()
       .setTitle('PFMS Auth Service API')
-      .setDescription('Authentication service using better-auth with DDD architecture')
+      .setDescription(
+        'Authentication service using better-auth with DDD architecture',
+      )
       .setVersion('1.0')
       .addBearerAuth()
       .addTag('Authentication', 'Authentication endpoints')
@@ -66,7 +73,9 @@ async function bootstrap(): Promise<void> {
   logger.log(`🚀 Auth Service is running on: http://localhost:${port}`);
   logger.log(`📋 Health check available at: http://localhost:${port}/health`);
   if (enableSwagger) {
-    logger.log(`📚 API Documentation available at: http://localhost:${port}/api/docs`);
+    logger.log(
+      `📚 API Documentation available at: http://localhost:${port}/api/docs`,
+    );
   }
 }
 

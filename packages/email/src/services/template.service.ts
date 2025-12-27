@@ -7,8 +7,7 @@ export class TemplateService {
   private templatePath: string;
 
   constructor(templatePath?: string) {
-    this.templatePath =
-      templatePath ?? path.join(process.cwd(), 'templates', 'email');
+    this.templatePath = templatePath ?? path.join(process.cwd(), 'templates', 'email');
   }
 
   /**
@@ -29,9 +28,12 @@ export class TemplateService {
     });
 
     // Conditional helper
-    Handlebars.registerHelper('ifEquals', function (this: unknown, arg1: unknown, arg2: unknown, options: Handlebars.HelperOptions) {
-      return arg1 === arg2 ? options.fn(this) : options.inverse(this);
-    });
+    Handlebars.registerHelper(
+      'ifEquals',
+      function (this: unknown, arg1: unknown, arg2: unknown, options: Handlebars.HelperOptions) {
+        return arg1 === arg2 ? options.fn(this) : options.inverse(this);
+      }
+    );
   }
 
   /**
@@ -50,9 +52,7 @@ export class TemplateService {
   /**
    * Compile and cache a template
    */
-  private async compileTemplate(
-    templateName: string
-  ): Promise<HandlebarsTemplateDelegate> {
+  private async compileTemplate(templateName: string): Promise<HandlebarsTemplateDelegate> {
     const cached = this.templateCache.get(templateName);
     if (cached) {
       return cached;

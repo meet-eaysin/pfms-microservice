@@ -31,7 +31,6 @@ module.exports = {
   // Setup files
   setupFilesAfterEnv: ['<rootDir>/tests/unit/setup.ts'],
 
-
   // Coverage
   collectCoverageFrom: [
     'src/**/*.ts',

@@ -57,7 +57,9 @@ describe('AuthGuard', () => {
     authService = module.get(AuthApplicationService);
   });
 
-  const createMockContext = (headers: Record<string, string>): ExecutionContext => {
+  const createMockContext = (
+    headers: Record<string, string>,
+  ): ExecutionContext => {
     return {
       switchToHttp: () => ({
         getRequest: () => ({
@@ -73,7 +75,9 @@ describe('AuthGuard', () => {
       session: mockSession,
     });
 
-    const context = createMockContext({ cookie: 'better-auth-session=valid-token' });
+    const context = createMockContext({
+      cookie: 'better-auth-session=valid-token',
+    });
     const result = await guard.canActivate(context);
 
     expect(result).toBe(true);
@@ -85,14 +89,20 @@ describe('AuthGuard', () => {
 
     const context = createMockContext({});
 
-    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
 
   it('should deny access on authentication error', async () => {
     authService.getSession.mockRejectedValue(new Error('Auth failed'));
 
-    const context = createMockContext({ cookie: 'better-auth-session=invalid-token' });
+    const context = createMockContext({
+      cookie: 'better-auth-session=invalid-token',
+    });
 
-    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
 });

@@ -1,11 +1,7 @@
 import nodemailer, { Transporter, SentMessageInfo } from 'nodemailer';
 import type { Options as SMTPOptions } from 'nodemailer/lib/smtp-transport';
 import { EmailConfig } from '../config';
-import {
-  EmailOptions,
-  TemplateEmailOptions,
-  EmailResult,
-} from '../types';
+import { EmailOptions, TemplateEmailOptions, EmailResult } from '../types';
 import { TemplateService } from './template.service';
 
 export class EmailService {
@@ -15,7 +11,7 @@ export class EmailService {
 
   constructor(config: EmailConfig, templatePath?: string) {
     this.config = config;
-    
+
     const transportOptions: SMTPOptions = {
       host: config.host,
       port: config.port,
@@ -25,7 +21,7 @@ export class EmailService {
         pass: config.auth.pass,
       },
     };
-    
+
     this.transporter = nodemailer.createTransport(transportOptions);
     this.templateService = new TemplateService(templatePath);
   }
@@ -72,14 +68,9 @@ export class EmailService {
   /**
    * Send an email using a template
    */
-  async sendTemplateEmail(
-    options: TemplateEmailOptions
-  ): Promise<EmailResult> {
+  async sendTemplateEmail(options: TemplateEmailOptions): Promise<EmailResult> {
     try {
-      const html = await this.templateService.render(
-        options.template,
-        options.context
-      );
+      const html = await this.templateService.render(options.template, options.context);
 
       return this.sendEmail({
         to: options.to,

@@ -7,9 +7,11 @@ import { BetterAuthAdapter } from '../../infrastructure/auth/better-auth.adapter
 export class AuthApplicationService implements IAuthService {
   constructor(private readonly betterAuthAdapter: BetterAuthAdapter) {}
 
-  async validateSession(token: string): Promise<{ user: User; session: Session } | null> {
+  async validateSession(
+    token: string,
+  ): Promise<{ user: User; session: Session } | null> {
     const session = await this.betterAuthAdapter.getSessionByToken(token);
-    
+
     if (!session) {
       throw new UnauthorizedException('Invalid session');
     }
@@ -17,9 +19,11 @@ export class AuthApplicationService implements IAuthService {
     return session;
   }
 
-  async getSession(headers: Record<string, string | string[] | undefined>): Promise<{ user: User; session: Session } | null> {
+  async getSession(
+    headers: Record<string, string | string[] | undefined>,
+  ): Promise<{ user: User; session: Session } | null> {
     const session = await this.betterAuthAdapter.getSession(headers);
-    
+
     if (!session) {
       throw new UnauthorizedException('No active session');
     }
@@ -27,7 +31,9 @@ export class AuthApplicationService implements IAuthService {
     return session;
   }
 
-  async signOut(headers: Record<string, string | string[] | undefined>): Promise<void> {
+  async signOut(
+    headers: Record<string, string | string[] | undefined>,
+  ): Promise<void> {
     await this.betterAuthAdapter.signOut(headers);
   }
 }

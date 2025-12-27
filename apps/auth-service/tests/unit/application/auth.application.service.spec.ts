@@ -75,7 +75,9 @@ describe('AuthApplicationService', () => {
       const result = await service.validateSession('valid-token');
 
       expect(result).toEqual({ user: mockUser, session: mockSession });
-      expect(betterAuthAdapter.getSessionByToken).toHaveBeenCalledWith('valid-token');
+      expect(betterAuthAdapter.getSessionByToken).toHaveBeenCalledWith(
+        'valid-token',
+      );
     });
 
     it('should throw UnauthorizedException for invalid token', async () => {
@@ -104,7 +106,9 @@ describe('AuthApplicationService', () => {
     it('should throw UnauthorizedException when no session found', async () => {
       betterAuthAdapter.getSession.mockResolvedValue(null);
 
-      await expect(service.getSession({})).rejects.toThrow(UnauthorizedException);
+      await expect(service.getSession({})).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 

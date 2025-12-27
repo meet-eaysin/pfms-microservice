@@ -45,24 +45,28 @@ test/
 ## Layer Responsibilities
 
 ### Domain Layer
+
 - **Entities**: Core business objects (User, Session, Account)
 - **Value Objects**: Immutable types with validation (Email, Password, UserId)
 - **Interfaces**: Contracts for repositories and services
 - **Rules**: No dependencies on outer layers, frameworks, or databases
 
 ### Application Layer
+
 - **Use Cases**: Single-purpose business operations (GetUserById, RevokeSession)
 - **DTOs**: Request/response objects for API
 - **Services**: Orchestrate use cases and coordinate between layers
 - **Rules**: Can depend on domain layer only
 
 ### Infrastructure Layer
+
 - **Database**: Prisma repository implementation
 - **Messaging**: RabbitMQ event publishing
 - **Auth**: Better-Auth adapter for authentication
 - **Rules**: Implements domain interfaces, depends on domain layer
 
 ### Presentation Layer
+
 - **Controllers**: HTTP endpoints and request handling
 - **Guards**: Authentication/authorization
 - **Decorators**: Custom parameter decorators
@@ -72,21 +76,25 @@ test/
 ## Key Features
 
 ### 1. Type Safety
+
 - No `any` types - strict TypeScript throughout
 - Proper typing for all Better-Auth interactions
 - Type-safe Prisma queries with snake_case field mapping
 
 ### 2. Dependency Injection
+
 - Constructor injection for all dependencies
 - Interface-based abstractions
 - Easy to test and mock
 
 ### 3. Separation of Concerns
+
 - Each layer has clear responsibilities
 - Business logic isolated in domain layer
 - Infrastructure details hidden behind interfaces
 
 ### 4. Testability
+
 - Unit tests for each layer
 - Mocked dependencies
 - Test structure mirrors source structure
@@ -130,11 +138,13 @@ RABBITMQ_PASSWORD=guest
 ## Getting Started
 
 ### 1. Install Dependencies
+
 ```bash
 yarn install
 ```
 
 ### 2. Setup Database
+
 ```bash
 # Generate Prisma client
 yarn prisma:generate
@@ -147,17 +157,20 @@ yarn prisma:studio
 ```
 
 ### 3. Configure Environment
+
 ```bash
 cp .env.example .env
 # Edit .env with your configuration
 ```
 
 ### 4. Start Development Server
+
 ```bash
 yarn dev
 ```
 
 The service will be available at:
+
 - API: http://localhost:3001
 - Docs: http://localhost:3001/api/docs
 - Health: http://localhost:3001/health
@@ -165,6 +178,7 @@ The service will be available at:
 ## API Endpoints
 
 ### Authentication
+
 - `POST /auth/signup` - Register new user
 - `POST /auth/signin` - Sign in
 - `POST /auth/signout` - Sign out
@@ -176,14 +190,17 @@ The service will be available at:
 - `GET /auth/oauth/github` - GitHub OAuth
 
 ### Session Management
+
 - `GET /auth/sessions` - List all sessions
 - `DELETE /auth/sessions/:id` - Revoke specific session
 - `DELETE /auth/sessions` - Revoke all sessions (except current)
 
 ### User
+
 - `GET /auth/user/:id` - Get user by ID
 
 ### Health
+
 - `GET /health` - Health check
 - `GET /health/ready` - Readiness probe
 - `GET /health/live` - Liveness probe
@@ -205,6 +222,7 @@ yarn test:watch
 ```
 
 Test structure:
+
 ```
 test/unit/
 ├── application/        # Application service tests
@@ -218,6 +236,7 @@ test/unit/
 The service publishes these events to RabbitMQ:
 
 ### user.created
+
 ```typescript
 {
   eventId: string;
@@ -230,11 +249,12 @@ The service publishes these events to RabbitMQ:
     name: string | null;
     emailVerified: boolean;
     createdAt: Date;
-  };
+  }
 }
 ```
 
 ### session.created
+
 ```typescript
 {
   eventId: string;
@@ -246,11 +266,12 @@ The service publishes these events to RabbitMQ:
     userId: string;
     ipAddress: string | null;
     userAgent: string | null;
-  };
+  }
 }
 ```
 
 ### password.reset
+
 ```typescript
 {
   eventId: string;
@@ -260,7 +281,7 @@ The service publishes these events to RabbitMQ:
   data: {
     userId: string;
     email: string;
-  };
+  }
 }
 ```
 
@@ -347,6 +368,7 @@ service-name/
 ## Troubleshooting
 
 ### Database Connection Issues
+
 ```bash
 # Check DATABASE_URL is correct
 echo $DATABASE_URL
@@ -356,11 +378,13 @@ yarn prisma db pull
 ```
 
 ### Better-Auth Configuration
+
 - Ensure BETTER_AUTH_SECRET is at least 32 characters
 - Generate with: `openssl rand -hex 32`
 - Check cookie settings match your environment
 
 ### RabbitMQ Connection
+
 ```bash
 # Check RabbitMQ is running
 docker ps | grep rabbitmq

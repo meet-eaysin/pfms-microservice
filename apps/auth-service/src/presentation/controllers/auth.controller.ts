@@ -11,7 +11,12 @@ import {
   UseGuards,
   Logger,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { AuthApplicationService } from '../../application/services/auth.application.service';
 import {
   GetUserByIdUseCase,
@@ -45,7 +50,9 @@ export class AuthController {
 
   @Post('*')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Handle Better Auth requests (signup, signin, etc.)' })
+  @ApiOperation({
+    summary: 'Handle Better Auth requests (signup, signin, etc.)',
+  })
   @ApiResponse({ status: 200, description: 'Auth request successful' })
   async handleAuthPost(@Req() req: unknown): Promise<void> {
     try {
@@ -58,7 +65,9 @@ export class AuthController {
 
   @Get('*')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Handle Better Auth GET requests (OAuth callbacks, etc.)' })
+  @ApiOperation({
+    summary: 'Handle Better Auth GET requests (OAuth callbacks, etc.)',
+  })
   @ApiResponse({ status: 200, description: 'Auth request successful' })
   async handleAuthGet(@Req() req: unknown): Promise<void> {
     try {
@@ -73,10 +82,16 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current session' })
-  @ApiResponse({ status: 200, description: 'Current session', type: AuthResponseDto })
-  async getSession(@Headers() headers: Record<string, string>): Promise<AuthResponseDto> {
+  @ApiResponse({
+    status: 200,
+    description: 'Current session',
+    type: AuthResponseDto,
+  })
+  async getSession(
+    @Headers() headers: Record<string, string>,
+  ): Promise<AuthResponseDto> {
     const session = await this.authService.getSession(headers);
-    
+
     if (!session) {
       throw new Error('No active session');
     }
@@ -101,7 +116,11 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get user by ID' })
-  @ApiResponse({ status: 200, description: 'User details', type: UserResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'User details',
+    type: UserResponseDto,
+  })
   async getUserById(@Param('id') id: string): Promise<UserResponseDto | null> {
     return this.getUserByIdUseCase.execute(id);
   }
@@ -110,8 +129,14 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all sessions for current user' })
-  @ApiResponse({ status: 200, description: 'List of sessions', type: [SessionResponseDto] })
-  async getUserSessions(@CurrentUser() user: User): Promise<SessionResponseDto[]> {
+  @ApiResponse({
+    status: 200,
+    description: 'List of sessions',
+    type: [SessionResponseDto],
+  })
+  async getUserSessions(
+    @CurrentUser() user: User,
+  ): Promise<SessionResponseDto[]> {
     return this.getUserSessionsUseCase.execute(user.id);
   }
 
