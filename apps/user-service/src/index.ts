@@ -9,7 +9,7 @@ import * as promClient from 'prom-client';
 import { loadUserServiceConfig } from '@/config';
 
 // Container
-import { createServiceContainer } from '@/container';
+import { createServiceContainer } from '@/infrastructure/di/container';
 
 // Routes
 import { createHealthRouter } from '@/interfaces/http/routes/health.routes';
