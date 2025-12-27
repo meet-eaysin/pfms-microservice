@@ -4,6 +4,17 @@ import { BetterAuthAdapter } from '../../../src/infrastructure/auth/better-auth.
 import { UnauthorizedException } from '@nestjs/common';
 import { User, Session } from '../../../src/domain/entities/user.entity';
 
+// Mock better-auth before importing the adapter
+jest.mock('better-auth', () => ({
+  betterAuth: jest.fn(() => ({
+    handler: jest.fn(),
+    api: {
+      getSession: jest.fn(),
+      signOut: jest.fn(),
+    },
+  })),
+}));
+
 describe('AuthApplicationService', () => {
   let service: AuthApplicationService;
   let betterAuthAdapter: jest.Mocked<BetterAuthAdapter>;

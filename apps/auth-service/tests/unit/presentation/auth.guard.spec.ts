@@ -4,6 +4,17 @@ import { AuthGuard } from '../../../src/presentation/guards/auth.guard';
 import { AuthApplicationService } from '../../../src/application/services/auth.application.service';
 import { User, Session } from '../../../src/domain/entities/user.entity';
 
+// Mock better-auth before importing the adapter
+jest.mock('better-auth', () => ({
+  betterAuth: jest.fn(() => ({
+    handler: jest.fn(),
+    api: {
+      getSession: jest.fn(),
+      signOut: jest.fn(),
+    },
+  })),
+}));
+
 describe('AuthGuard', () => {
   let guard: AuthGuard;
   let authService: jest.Mocked<AuthApplicationService>;

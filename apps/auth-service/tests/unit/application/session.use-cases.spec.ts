@@ -52,7 +52,7 @@ describe('Session Use Cases', () => {
         RevokeSessionUseCase,
         RevokeAllSessionsUseCase,
         {
-          provide: IAuthRepository,
+          provide: 'IAuthRepository',
           useValue: mockAuthRepository,
         },
       ],
@@ -62,7 +62,7 @@ describe('Session Use Cases', () => {
     getUserSessionsUseCase = module.get(GetUserSessionsUseCase);
     revokeSessionUseCase = module.get(RevokeSessionUseCase);
     revokeAllSessionsUseCase = module.get(RevokeAllSessionsUseCase);
-    authRepository = module.get(IAuthRepository);
+    authRepository = module.get('IAuthRepository');
   });
 
   describe('GetUserByIdUseCase', () => {

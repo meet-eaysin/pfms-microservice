@@ -10,6 +10,17 @@ import {
 } from '../../../src/application/use-cases/session.use-cases';
 import { User, Session } from '../../../src/domain/entities/user.entity';
 
+// Mock better-auth before importing the adapter
+jest.mock('better-auth', () => ({
+  betterAuth: jest.fn(() => ({
+    handler: jest.fn(),
+    api: {
+      getSession: jest.fn(),
+      signOut: jest.fn(),
+    },
+  })),
+}));
+
 describe('AuthController', () => {
   let controller: AuthController;
   let authService: jest.Mocked<AuthApplicationService>;

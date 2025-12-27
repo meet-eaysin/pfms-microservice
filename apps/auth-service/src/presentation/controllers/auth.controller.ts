@@ -82,8 +82,8 @@ export class AuthController {
     }
 
     return {
-      user: session.user as UserResponseDto,
-      session: session.session as SessionResponseDto,
+      user: session.user,
+      session: session.session,
     };
   }
 
@@ -102,14 +102,8 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiResponse({ status: 200, description: 'User details', type: UserResponseDto })
-  async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
-    const user = await this.getUserByIdUseCase.execute(id);
-    
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    return user as UserResponseDto;
+  async getUserById(@Param('id') id: string): Promise<UserResponseDto | null> {
+    return this.getUserByIdUseCase.execute(id);
   }
 
   @Get('sessions')
@@ -118,8 +112,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Get all sessions for current user' })
   @ApiResponse({ status: 200, description: 'List of sessions', type: [SessionResponseDto] })
   async getUserSessions(@CurrentUser() user: User): Promise<SessionResponseDto[]> {
-    const sessions = await this.getUserSessionsUseCase.execute(user.id);
-    return sessions as SessionResponseDto[];
+    return this.getUserSessionsUseCase.execute(user.id);
   }
 
   @Delete('sessions/:sessionId')
