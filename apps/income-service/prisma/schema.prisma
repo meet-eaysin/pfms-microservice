@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum IncomeType {
+  SALARY
+  FREELANCE
+  PASSIVE
+  GIFT
+}
+
+model IncomeSource {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  type        IncomeType
+  currency    String   @default("USD")
+  paySchedule Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  transactions IncomeTransaction[]
+  
+  @@index([userId])
+  @@map("income_sources")
+}
+
+model IncomeTransaction {
+  id        String   @id @default(uuid())
+  sourceId  String
+  amount    Decimal  @db.Decimal(12, 2)
+  date      DateTime
+  isTaxable Boolean  @default(true)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  source IncomeSource @relation(fields: [sourceId], references: [id])
+  
+  @@index([sourceId])
+  @@index([date])
+  @@map("income_transactions")
+}

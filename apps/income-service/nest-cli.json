@@ -1,0 +1,10 @@
+{
+  "name": "income-service",
+  "version": "1.0.0",
+  "description": "Income Service",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "nest build"
+  },
+  "dependencies": {}
+}
