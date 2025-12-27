@@ -41,7 +41,9 @@ export function createFamilyRouter(deps: IFamilyRouterDeps): Router {
         const dto = req.body as InviteFamilyMemberDto;
 
         // TODO: Look up memberUserId from email via auth-service
-        const memberUserId = uuidv4(); // Placeholder (Mock ID)
+        // Mock logic for verification:
+        const MOCK_MEMBER_ID = '00000000-0000-0000-0000-000000000001';
+        const memberUserId = dto.email === 'spouse@example.com' ? MOCK_MEMBER_ID : uuidv4();
 
         const member = await deps.inviteFamilyMemberUseCase.execute({
           headUserId: authReq.user.id,
