@@ -1,7 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { createLogger } from '@pfms/utils';
 
 const logger = createLogger('ErrorHandler');
+
+interface IErrorWithStatusCode extends Error {
+  statusCode?: number;
+}
 
 export function errorHandler(
   err: Error,
@@ -16,8 +20,10 @@ export function errorHandler(
     method: req.method,
   });
 
-  const statusCode = (err as { statusCode?: number }).statusCode || 500;
-  const message = err.message || 'Internal server error';
+  const errorWithStatus = err as IErrorWithStatusCode;
+  const statusCode = errorWithStatus.statusCode ?? 500;
+  const message =
+    err.message.length > 0 ? err.message : 'Internal server error';
 
   res.status(statusCode).json({
     statusCode,

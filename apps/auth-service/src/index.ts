@@ -192,7 +192,7 @@ async function bootstrap(): Promise<void> {
     // ============================================
     // Mount Other Routes
     // ============================================
-    app.use('/health', createHealthRouter(prisma));
+    app.use('/health', createHealthRouter({ prisma }));
 
     // Metrics endpoint
     app.get('/metrics', async (_req: Request, res: Response) => {

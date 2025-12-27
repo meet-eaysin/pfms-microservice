@@ -1,51 +1,40 @@
-import { IAuthService } from '../../domain/interfaces/auth.interface';
-import { User, Session } from '../../domain/entities/user.entity';
-import { BetterAuthAdapter } from '../../infrastructure/auth/better-auth.adapter';
+import type { IAuthService } from '../../domain/interfaces/auth.interface';
+import type { User, Session } from '../../domain/entities/user.entity';
+import type { BetterAuthAdapter } from '../../infrastructure/auth/better-auth.adapter';
+
+interface ISessionResult {
+  user: User;
+  session: Session;
+}
+
+type HeadersInput =
+  | { headers: Headers }
+  | Record<string, string | string[] | undefined>;
 
 export class AuthApplicationService implements IAuthService {
   constructor(private readonly betterAuthAdapter: BetterAuthAdapter) {}
 
-  async validateSession(
-    token: string,
-  ): Promise<{ user: User; session: Session } | null> {
+  async validateSession(token: string): Promise<ISessionResult | null> {
     const session = await this.betterAuthAdapter.getSessionByToken(token);
 
-    if (!session) {
+    if (session === null) {
       throw new Error('Invalid session');
     }
 
     return session;
   }
 
-  async getSession(
-    headersOrRecord:
-      | { headers: Headers }
-      | Record<string, string | string[] | undefined>,
-  ): Promise<{ user: User; session: Session } | null> {
-    // Handle both Headers object and Record format
-    const headers =
-      'headers' in headersOrRecord
-        ? headersOrRecord
-        : { headers: headersOrRecord as any };
-    const session = await this.betterAuthAdapter.getSession(headers as any);
+  async getSession(headersInput: HeadersInput): Promise<ISessionResult | null> {
+    const session = await this.betterAuthAdapter.getSession(headersInput);
 
-    if (!session) {
+    if (session === null) {
       throw new Error('No active session');
     }
 
     return session;
   }
 
-  async signOut(
-    headersOrRecord:
-      | { headers: Headers }
-      | Record<string, string | string[] | undefined>,
-  ): Promise<void> {
-    // Handle both Headers object and Record format
-    const headers =
-      'headers' in headersOrRecord
-        ? headersOrRecord
-        : { headers: headersOrRecord as any };
-    await this.betterAuthAdapter.signOut(headers as any);
+  async signOut(headersInput: HeadersInput): Promise<void> {
+    await this.betterAuthAdapter.signOut(headersInput);
   }
 }

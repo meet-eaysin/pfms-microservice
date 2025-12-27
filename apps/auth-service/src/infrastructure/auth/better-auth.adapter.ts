@@ -1,11 +1,11 @@
 import { betterAuth } from 'better-auth';
-import { PrismaClient } from '@prisma/client';
-import { User, Session } from '../../domain/entities/user.entity';
-import { AuthConfig } from '../../config';
+import type { PrismaClient } from '@prisma/client';
+import type { User, Session } from '../../domain/entities/user.entity';
+import type { AuthConfig } from '../../config';
 import { toNodeHandler } from 'better-auth/node';
 import type { Request, Response } from 'express';
 
-interface BetterAuthSession {
+interface IBetterAuthSession {
   user: {
     id: string;
     email: string;
@@ -26,6 +26,10 @@ interface BetterAuthSession {
     updatedAt: Date;
   };
 }
+
+type HeadersInput =
+  | { headers: Headers }
+  | Record<string, string | string[] | undefined>;
 
 export class BetterAuthAdapter {
   public readonly auth: ReturnType<typeof betterAuth>;
@@ -87,7 +91,10 @@ export class BetterAuthAdapter {
     const providers: Record<string, unknown> = {};
 
     // Google OAuth
-    if (this.config.GOOGLE_CLIENT_ID && this.config.GOOGLE_CLIENT_SECRET) {
+    if (
+      this.config.GOOGLE_CLIENT_ID !== undefined &&
+      this.config.GOOGLE_CLIENT_SECRET !== undefined
+    ) {
       providers.google = {
         clientId: this.config.GOOGLE_CLIENT_ID,
         clientSecret: this.config.GOOGLE_CLIENT_SECRET,
@@ -96,7 +103,10 @@ export class BetterAuthAdapter {
     }
 
     // GitHub OAuth
-    if (this.config.GITHUB_CLIENT_ID && this.config.GITHUB_CLIENT_SECRET) {
+    if (
+      this.config.GITHUB_CLIENT_ID !== undefined &&
+      this.config.GITHUB_CLIENT_SECRET !== undefined
+    ) {
       providers.github = {
         clientId: this.config.GITHUB_CLIENT_ID,
         clientSecret: this.config.GITHUB_CLIENT_SECRET,
@@ -106,10 +116,10 @@ export class BetterAuthAdapter {
 
     // Apple OAuth
     if (
-      this.config.APPLE_CLIENT_ID &&
-      this.config.APPLE_TEAM_ID &&
-      this.config.APPLE_KEY_ID &&
-      this.config.APPLE_PRIVATE_KEY
+      this.config.APPLE_CLIENT_ID !== undefined &&
+      this.config.APPLE_TEAM_ID !== undefined &&
+      this.config.APPLE_KEY_ID !== undefined &&
+      this.config.APPLE_PRIVATE_KEY !== undefined
     ) {
       providers.apple = {
         clientId: this.config.APPLE_CLIENT_ID,
@@ -132,11 +142,17 @@ export class BetterAuthAdapter {
   }
 
   async getSession(
-    headers: Record<string, string | string[] | undefined>,
+    headersInput: HeadersInput,
   ): Promise<{ user: User; session: Session } | null> {
+    const headers =
+      'headers' in headersInput ? headersInput.headers : headersInput;
     const session = await this.auth.api.getSession({ headers });
 
-    if (!session || !this.isBetterAuthSession(session)) {
+    if (
+      session === null ||
+      session === undefined ||
+      !this.isBetterAuthSession(session)
+    ) {
       return null;
     }
 
@@ -152,20 +168,24 @@ export class BetterAuthAdapter {
       },
     });
 
-    if (!session || !this.isBetterAuthSession(session)) {
+    if (
+      session === null ||
+      session === undefined ||
+      !this.isBetterAuthSession(session)
+    ) {
       return null;
     }
 
     return this.mapToEntities(session);
   }
 
-  async signOut(
-    headers: Record<string, string | string[] | undefined>,
-  ): Promise<void> {
+  async signOut(headersInput: HeadersInput): Promise<void> {
+    const headers =
+      'headers' in headersInput ? headersInput.headers : headersInput;
     await this.auth.api.signOut({ headers });
   }
 
-  private isBetterAuthSession(obj: unknown): obj is BetterAuthSession {
+  private isBetterAuthSession(obj: unknown): obj is IBetterAuthSession {
     return (
       typeof obj === 'object' &&
       obj !== null &&
@@ -174,7 +194,7 @@ export class BetterAuthAdapter {
     );
   }
 
-  private mapToEntities(betterAuthSession: BetterAuthSession): {
+  private mapToEntities(betterAuthSession: IBetterAuthSession): {
     user: User;
     session: Session;
   } {

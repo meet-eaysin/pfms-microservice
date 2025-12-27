@@ -1,9 +1,9 @@
-import { config as baseConfig } from '@pfms/eslint-config/base';
+import { strictConfig } from '@pfms/eslint-config/strict';
 
 export default [
-  ...baseConfig,
+  ...strictConfig,
   {
     files: ['**/*.ts'],
-    ignores: ['dist/**', 'node_modules/**', '**/*.spec.ts'],
+    ignores: ['dist/**', 'node_modules/**', '**/*.spec.ts', '**/*.test.ts'],
   },
 ];

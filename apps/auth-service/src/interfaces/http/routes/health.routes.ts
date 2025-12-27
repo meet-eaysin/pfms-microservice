@@ -1,16 +1,21 @@
-import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import type { Router, Request, Response } from 'express';
+import { Router as ExpressRouter } from 'express';
+import type { PrismaClient } from '@prisma/client';
 import { createLogger } from '@pfms/utils';
 
 const logger = createLogger('HealthRoutes');
 
-export function createHealthRouter(prisma: PrismaClient): Router {
-  const router = Router();
+interface IHealthRouterOptions {
+  prisma: PrismaClient;
+}
 
-  router.get('/', async (_req: Request, res: Response) => {
+export function createHealthRouter(options: IHealthRouterOptions): Router {
+  const router = ExpressRouter();
+
+  router.get('/', async (_req: Request, res: Response): Promise<void> => {
     try {
       // Check database connectivity
-      await prisma.$queryRaw`SELECT 1`;
+      await options.prisma.$queryRaw`SELECT 1`;
 
       res.json({
         status: 'healthy',
@@ -31,7 +36,7 @@ export function createHealthRouter(prisma: PrismaClient): Router {
     }
   });
 
-  router.get('/ready', (_req: Request, res: Response) => {
+  router.get('/ready', (_req: Request, res: Response): void => {
     res.json({
       ready: true,
       timestamp: new Date().toISOString(),
