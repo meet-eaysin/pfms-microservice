@@ -1,12 +1,7 @@
-import {
-  Injectable,
-  OnModuleInit,
-  OnModuleDestroy,
-  Logger,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { RabbitMQEventBus, BaseEvent } from '@pfms/event-bus';
 import { User, Session } from '../../domain/entities/user.entity';
+import { RabbitMQConfig } from '../../config';
+import { createLogger } from '@pfms/utils';
 
 interface UserCreatedEventData {
   userId: string;
@@ -28,40 +23,38 @@ interface PasswordResetEventData {
   email: string;
 }
 
-@Injectable()
-export class EventPublisher implements OnModuleInit, OnModuleDestroy {
-  private readonly logger = new Logger(EventPublisher.name);
+export class EventPublisher {
+  private readonly logger = createLogger('EventPublisher');
   private readonly eventBus: RabbitMQEventBus;
 
-  constructor(private readonly configService: ConfigService) {
-    const rabbitmqConfig = this.configService.get('rabbitmq');
-
+  constructor(config: RabbitMQConfig) {
     this.eventBus = new RabbitMQEventBus({
       rabbitmq: {
-        host: rabbitmqConfig.RABBITMQ_HOST,
-        port: rabbitmqConfig.RABBITMQ_PORT,
-        username: rabbitmqConfig.RABBITMQ_USER || 'guest',
-        password: rabbitmqConfig.RABBITMQ_PASSWORD || 'guest',
+        host: config.RABBITMQ_HOST,
+        port: config.RABBITMQ_PORT,
+        username: config.RABBITMQ_USER,
+        password: config.RABBITMQ_PASSWORD,
       },
       serviceName: 'auth-service',
     });
   }
 
-  async onModuleInit(): Promise<void> {
+  async connect(): Promise<void> {
     try {
       await this.eventBus.connect();
-      this.logger.log('Event bus connected successfully');
+      this.logger.info('Event bus connected successfully');
     } catch (error) {
-      this.logger.error('Failed to connect to event bus', error);
+      this.logger.error('Failed to connect to event bus', { error });
+      throw error;
     }
   }
 
-  async onModuleDestroy(): Promise<void> {
+  async close(): Promise<void> {
     try {
       await this.eventBus.close();
-      this.logger.log('Event bus disconnected');
+      this.logger.info('Event bus disconnected');
     } catch (error) {
-      this.logger.error('Error disconnecting from event bus', error);
+      this.logger.error('Error disconnecting from event bus', { error });
     }
   }
 
@@ -85,9 +78,9 @@ export class EventPublisher implements OnModuleInit, OnModuleDestroy {
       };
 
       await this.eventBus.publish('user.created', event);
-      this.logger.log(`Published user.created event for user ${user.id}`);
+      this.logger.info(`Published user.created event for user ${user.id}`);
     } catch (error) {
-      this.logger.error('Failed to publish user.created event', error);
+      this.logger.error('Failed to publish user.created event', { error });
     }
   }
 
@@ -110,11 +103,11 @@ export class EventPublisher implements OnModuleInit, OnModuleDestroy {
       };
 
       await this.eventBus.publish('session.created', event);
-      this.logger.log(
+      this.logger.info(
         `Published session.created event for user ${session.userId}`,
       );
     } catch (error) {
-      this.logger.error('Failed to publish session.created event', error);
+      this.logger.error('Failed to publish session.created event', { error });
     }
   }
 
@@ -135,9 +128,14 @@ export class EventPublisher implements OnModuleInit, OnModuleDestroy {
       };
 
       await this.eventBus.publish('password.reset', event);
-      this.logger.log(`Published password.reset event for user ${userId}`);
+      this.logger.info(`Published password.reset event for user ${userId}`);
     } catch (error) {
-      this.logger.error('Failed to publish password.reset event', error);
+      this.logger.error('Failed to publish password.reset event', { error });
     }
   }
+}
+
+// Factory function
+export function createEventPublisher(config: RabbitMQConfig): EventPublisher {
+  return new EventPublisher(config);
 }

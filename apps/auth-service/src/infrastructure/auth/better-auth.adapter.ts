@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { betterAuth } from 'better-auth';
 import { PrismaClient } from '@prisma/client';
 import { User, Session } from '../../domain/entities/user.entity';
+import { AuthConfig } from '../../config';
+import { toNodeHandler } from 'better-auth/node';
+import type { Request, Response } from 'express';
 
 interface BetterAuthSession {
   user: {
@@ -26,154 +27,108 @@ interface BetterAuthSession {
   };
 }
 
-@Injectable()
 export class BetterAuthAdapter {
-  private readonly auth: ReturnType<typeof betterAuth>;
-  private readonly prisma: PrismaClient;
+  public readonly auth: ReturnType<typeof betterAuth>;
+  private readonly nodeHandler: ReturnType<typeof toNodeHandler>;
 
-  constructor(private readonly configService: ConfigService) {
-    this.prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: this.configService.get<string>('auth.databaseUrl'),
-        },
-      },
-    });
-
-    const authSecret = this.configService.get<string>(
-      'auth.BETTER_AUTH_SECRET',
-    );
-    const databaseUrl = this.configService.get<string>('auth.databaseUrl');
-
-    if (!authSecret || authSecret.length < 32) {
+  constructor(
+    private readonly config: AuthConfig,
+    private readonly prisma: PrismaClient,
+  ) {
+    if (
+      !this.config.BETTER_AUTH_SECRET ||
+      this.config.BETTER_AUTH_SECRET.length < 32
+    ) {
       throw new Error('BETTER_AUTH_SECRET must be at least 32 characters long');
     }
 
-    if (!databaseUrl) {
+    if (!this.config.DATABASE_URL) {
       throw new Error('Database URL is required for better-auth');
     }
 
     this.auth = betterAuth({
       database: this.prisma,
-      secret: authSecret,
+      secret: this.config.BETTER_AUTH_SECRET,
       emailAndPassword: {
         enabled: true,
-        minPasswordLength: this.configService.get<number>(
-          'auth.PASSWORD_MIN_LENGTH',
-          8,
-        ),
+        minPasswordLength: this.config.PASSWORD_MIN_LENGTH,
         maxPasswordLength: 128,
-        requireEmailVerification: this.configService.get<boolean>(
-          'auth.EMAIL_VERIFICATION_ENABLED',
-          true,
-        ),
+        requireEmailVerification: this.config.EMAIL_VERIFICATION_ENABLED,
       },
       socialProviders: this.configureSocialProviders(),
       session: {
-        expiresIn:
-          this.configService.get<number>(
-            'auth.SESSION_ABSOLUTE_TIMEOUT_HOURS',
-            24,
-          ) *
-          60 *
-          60,
-        updateAge:
-          this.configService.get<number>('auth.SESSION_IDLE_TIMEOUT_HOURS', 2) *
-          60 *
-          60,
+        expiresIn: this.config.SESSION_ABSOLUTE_TIMEOUT_HOURS * 60 * 60,
+        updateAge: this.config.SESSION_IDLE_TIMEOUT_HOURS * 60 * 60,
         cookieCache: {
           enabled: true,
-          maxAge: this.configService.get<number>(
-            'auth.BETTER_AUTH_COOKIE_MAX_AGE',
-            2592000,
-          ),
+          maxAge: this.config.BETTER_AUTH_COOKIE_MAX_AGE,
         },
       },
       advanced: {
-        cookiePrefix: this.configService.get<string>(
-          'auth.BETTER_AUTH_COOKIE_NAME',
-          'better-auth',
-        ),
+        cookiePrefix: this.config.BETTER_AUTH_COOKIE_NAME,
         crossSubDomainCookies: {
           enabled: false,
         },
-        useSecureCookies: this.configService.get<boolean>(
-          'auth.BETTER_AUTH_COOKIE_SECURE',
-          true,
-        ),
+        useSecureCookies: this.config.BETTER_AUTH_COOKIE_SECURE,
         defaultCookieAttributes: {
-          sameSite: this.configService.get<'strict' | 'lax' | 'none'>(
-            'auth.BETTER_AUTH_COOKIE_SAME_SITE',
-            'lax',
-          ),
+          sameSite: this.config.BETTER_AUTH_COOKIE_SAME_SITE,
           httpOnly: true,
-          secure: this.configService.get<boolean>(
-            'auth.BETTER_AUTH_COOKIE_SECURE',
-            true,
-          ),
+          secure: this.config.BETTER_AUTH_COOKIE_SECURE,
           path: '/',
         },
       },
     });
+
+    // Create Node.js handler for Express
+    this.nodeHandler = toNodeHandler(this.auth);
   }
 
   private configureSocialProviders(): Record<string, unknown> {
     const providers: Record<string, unknown> = {};
 
     // Google OAuth
-    const googleClientId = this.configService.get<string>(
-      'auth.GOOGLE_CLIENT_ID',
-    );
-    const googleClientSecret = this.configService.get<string>(
-      'auth.GOOGLE_CLIENT_SECRET',
-    );
-    if (googleClientId && googleClientSecret) {
+    if (this.config.GOOGLE_CLIENT_ID && this.config.GOOGLE_CLIENT_SECRET) {
       providers.google = {
-        clientId: googleClientId,
-        clientSecret: googleClientSecret,
-        redirectURI: this.configService.get<string>('auth.GOOGLE_REDIRECT_URI'),
+        clientId: this.config.GOOGLE_CLIENT_ID,
+        clientSecret: this.config.GOOGLE_CLIENT_SECRET,
+        redirectURI: this.config.GOOGLE_REDIRECT_URI,
       };
     }
 
     // GitHub OAuth
-    const githubClientId = this.configService.get<string>(
-      'auth.GITHUB_CLIENT_ID',
-    );
-    const githubClientSecret = this.configService.get<string>(
-      'auth.GITHUB_CLIENT_SECRET',
-    );
-    if (githubClientId && githubClientSecret) {
+    if (this.config.GITHUB_CLIENT_ID && this.config.GITHUB_CLIENT_SECRET) {
       providers.github = {
-        clientId: githubClientId,
-        clientSecret: githubClientSecret,
-        redirectURI: this.configService.get<string>('auth.GITHUB_REDIRECT_URI'),
+        clientId: this.config.GITHUB_CLIENT_ID,
+        clientSecret: this.config.GITHUB_CLIENT_SECRET,
+        redirectURI: this.config.GITHUB_REDIRECT_URI,
       };
     }
 
     // Apple OAuth
-    const appleClientId = this.configService.get<string>(
-      'auth.APPLE_CLIENT_ID',
-    );
-    const appleTeamId = this.configService.get<string>('auth.APPLE_TEAM_ID');
-    const appleKeyId = this.configService.get<string>('auth.APPLE_KEY_ID');
-    const applePrivateKey = this.configService.get<string>(
-      'auth.APPLE_PRIVATE_KEY',
-    );
-    if (appleClientId && appleTeamId && appleKeyId && applePrivateKey) {
+    if (
+      this.config.APPLE_CLIENT_ID &&
+      this.config.APPLE_TEAM_ID &&
+      this.config.APPLE_KEY_ID &&
+      this.config.APPLE_PRIVATE_KEY
+    ) {
       providers.apple = {
-        clientId: appleClientId,
-        teamId: appleTeamId,
-        keyId: appleKeyId,
-        privateKey: applePrivateKey,
-        redirectURI: this.configService.get<string>('auth.APPLE_REDIRECT_URI'),
+        clientId: this.config.APPLE_CLIENT_ID,
+        teamId: this.config.APPLE_TEAM_ID,
+        keyId: this.config.APPLE_KEY_ID,
+        privateKey: this.config.APPLE_PRIVATE_KEY,
+        redirectURI: this.config.APPLE_REDIRECT_URI,
       };
     }
 
     return providers;
   }
 
-  async handleRequest(req: unknown): Promise<void> {
-    await this.auth.handler(req as Parameters<typeof this.auth.handler>[0]);
+  /**
+   * Handle Better Auth requests using the official toNodeHandler
+   * This should be used for the catch-all route: app.all('/api/auth/*', ...)
+   */
+  async handleRequest(req: Request, res: Response): Promise<void> {
+    return this.nodeHandler(req, res);
   }
 
   async getSession(
@@ -245,8 +200,12 @@ export class BetterAuthAdapter {
       },
     };
   }
+}
 
-  getPrisma(): PrismaClient {
-    return this.prisma;
-  }
+// Factory function for creating adapter
+export function createBetterAuthAdapter(
+  config: AuthConfig,
+  prisma: PrismaClient,
+): BetterAuthAdapter {
+  return new BetterAuthAdapter(config, prisma);
 }

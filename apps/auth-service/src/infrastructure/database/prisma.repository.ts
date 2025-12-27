@@ -1,22 +1,9 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
 import { IAuthRepository } from '../../domain/interfaces/auth.interface';
 import { User, Session } from '../../domain/entities/user.entity';
 
-@Injectable()
-export class PrismaRepository implements IAuthRepository, OnModuleDestroy {
-  private readonly prisma: PrismaClient;
-
-  constructor(private readonly configService: ConfigService) {
-    this.prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: this.configService.get<string>('database.url'),
-        },
-      },
-    });
-  }
+export class PrismaRepository implements IAuthRepository {
+  constructor(private readonly prisma: PrismaClient) {}
 
   async findUserById(userId: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
@@ -93,7 +80,12 @@ export class PrismaRepository implements IAuthRepository, OnModuleDestroy {
     });
   }
 
-  async onModuleDestroy(): Promise<void> {
+  async disconnect(): Promise<void> {
     await this.prisma.$disconnect();
   }
+}
+
+// Factory function for creating repository
+export function createPrismaRepository(prisma: PrismaClient): PrismaRepository {
+  return new PrismaRepository(prisma);
 }
