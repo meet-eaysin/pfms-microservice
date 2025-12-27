@@ -1,12 +1,18 @@
 import type { Router, Request, Response, NextFunction } from 'express';
 import { Router as ExpressRouter } from 'express';
-import type { GetProfileUseCase } from '../../../application/use-cases/profile/get-profile.use-case';
-import type { UpdateProfileUseCase } from '../../../application/use-cases/profile/update-profile.use-case';
-import type { UploadAvatarUseCase } from '../../../application/use-cases/profile/upload-avatar.use-case';
-import { authMiddleware, type IAuthenticatedRequest } from '../middleware/auth.middleware';
-import { validateBody } from '../middleware/validation.middleware';
-import { uploadSingle, handleMulterError } from '../middleware/file-upload.middleware';
-import { UpdateProfileDto } from '../../../application/dto/user.dto';
+import type { GetProfileUseCase } from '@/application/use-cases/profile/get-profile.use-case';
+import type { UpdateProfileUseCase } from '@/application/use-cases/profile/update-profile.use-case';
+import type { UploadAvatarUseCase } from '@/application/use-cases/profile/upload-avatar.use-case';
+import {
+  authMiddleware,
+  type IAuthenticatedRequest,
+} from '@/interfaces/http/middleware/auth.middleware';
+import { validateBody } from '@/interfaces/http/middleware/validation.middleware';
+import {
+  uploadSingle,
+  handleMulterError,
+} from '@/interfaces/http/middleware/file-upload.middleware';
+import { UpdateProfileDto } from '@/application/dto/user.dto';
 
 interface IProfileRouterDeps {
   getProfileUseCase: GetProfileUseCase;

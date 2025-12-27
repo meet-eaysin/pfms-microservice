@@ -1,5 +1,5 @@
-import type { IUserRepository } from '../../../domain/interfaces/repository.interface';
-import type { IFinancialPreferences } from '../../../domain/entities/user.entity';
+import type { IUserRepository } from '@/domain/interfaces/repository.interface';
+import type { IFinancialPreferences } from '@/domain/entities/user.entity';
 
 export class GetFinancialPreferencesUseCase {
   constructor(private readonly repository: IUserRepository) {}

@@ -2,7 +2,7 @@ import type {
   IUserRepository,
   IStorageService,
   ICacheService,
-} from '../../../domain/interfaces/repository.interface';
+} from '@/domain/interfaces/repository.interface';
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 

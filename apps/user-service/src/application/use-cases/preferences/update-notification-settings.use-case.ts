@@ -1,8 +1,8 @@
 import type {
   IUserRepository,
   ICacheService,
-} from '../../../domain/interfaces/repository.interface';
-import type { INotificationSettings } from '../../../domain/entities/user.entity';
+} from '@/domain/interfaces/repository.interface';
+import type { INotificationSettings } from '@/domain/entities/user.entity';
 
 interface IUpdateNotificationSettingsOptions {
   userId: string;

@@ -5,8 +5,8 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import type { IStorageService } from '../../domain/interfaces/repository.interface';
-import type { StorageConfig } from '../../config';
+import type { IStorageService } from '@/domain/interfaces/repository.interface';
+import type { StorageConfig } from '@/config';
 import { createLogger } from '@pfms/utils';
 
 const logger = createLogger('S3Storage');

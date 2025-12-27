@@ -1,10 +1,10 @@
 import type { Router, Request, Response, NextFunction } from 'express';
 import { Router as ExpressRouter } from 'express';
-import type { ListFamilyMembersUseCase } from '../../../application/use-cases/family/list-family-members.use-case';
-import type { InviteFamilyMemberUseCase } from '../../../application/use-cases/family/invite-family-member.use-case';
+import type { ListFamilyMembersUseCase } from '@/application/use-cases/family/list-family-members.use-case';
+import type { InviteFamilyMemberUseCase } from '@/application/use-cases/family/invite-family-member.use-case';
 import { authMiddleware, type IAuthenticatedRequest } from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validation.middleware';
-import { InviteFamilyMemberDto } from '../../../application/dto/user.dto';
+import { InviteFamilyMemberDto } from '@/application/dto/user.dto';
 
 interface IFamilyRouterDeps {
   listFamilyMembersUseCase: ListFamilyMembersUseCase;

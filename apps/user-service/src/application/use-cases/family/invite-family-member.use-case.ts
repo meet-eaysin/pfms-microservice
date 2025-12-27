@@ -1,6 +1,6 @@
-import type { IUserRepository } from '../../../domain/interfaces/repository.interface';
-import type { IFamilyMember } from '../../../domain/entities/user.entity';
-import type { EventPublisher } from '../../../infrastructure/messaging/event.publisher';
+import type { IUserRepository } from '@/domain/interfaces/repository.interface';
+import type { IFamilyMember } from '@/domain/entities/user.entity';
+import type { EventPublisher } from '@/infrastructure/messaging/event.publisher';
 
 interface IInviteFamilyMemberOptions {
   headUserId: string;

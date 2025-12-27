@@ -1,19 +1,22 @@
 import { PrismaClient } from '@prisma/client';
 import { createLogger } from '@pfms/utils';
-import type { UserServiceConfig } from '../config';
+import type { UserServiceConfig } from '@/config';
 
 // Infrastructure Factories
-import { createPrismaUserRepository } from './database/prisma.repository';
-import { createRedisCacheService } from './cache/redis-cache.service';
-import { createS3StorageService } from './storage/s3-storage.service';
-import { createEventPublisher, type EventPublisher } from './messaging/event.publisher';
+import { createPrismaUserRepository } from '@/infrastructure/database/prisma.repository';
+import { createRedisCacheService } from '@/infrastructure/cache/redis-cache.service';
+import { createS3StorageService } from '@/infrastructure/storage/s3-storage.service';
+import {
+  createEventPublisher,
+  type EventPublisher,
+} from '@/infrastructure/messaging/event.publisher';
 
 // Repository Interfaces
 import type {
   IUserRepository,
   ICacheService,
   IStorageService,
-} from '../domain/interfaces/repository.interface';
+} from '@/domain/interfaces/repository.interface';
 
 // Use Cases
 import {
@@ -26,7 +29,7 @@ import {
   UpdateNotificationSettingsUseCase,
   ListFamilyMembersUseCase,
   InviteFamilyMemberUseCase,
-} from '../application/use-cases';
+} from '@/application/use-cases';
 
 const logger = createLogger('ServiceContainer');
 

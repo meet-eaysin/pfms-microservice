@@ -1,5 +1,5 @@
 import { RabbitMQEventBus } from '@pfms/event-bus';
-import type { RabbitMQConfig } from '../../config';
+import type { RabbitMQConfig } from '@/config';
 import { createLogger } from '@pfms/utils';
 import { v4 as uuidv4 } from 'uuid';
 

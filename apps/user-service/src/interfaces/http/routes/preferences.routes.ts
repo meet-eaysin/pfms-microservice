@@ -1,15 +1,15 @@
 import type { Router, Request, Response, NextFunction } from 'express';
 import { Router as ExpressRouter } from 'express';
-import type { GetFinancialPreferencesUseCase } from '../../../application/use-cases/preferences/get-financial-preferences.use-case';
-import type { UpdateFinancialPreferencesUseCase } from '../../../application/use-cases/preferences/update-financial-preferences.use-case';
-import type { GetNotificationSettingsUseCase } from '../../../application/use-cases/preferences/get-notification-settings.use-case';
-import type { UpdateNotificationSettingsUseCase } from '../../../application/use-cases/preferences/update-notification-settings.use-case';
+import type { GetFinancialPreferencesUseCase } from '@/application/use-cases/preferences/get-financial-preferences.use-case';
+import type { UpdateFinancialPreferencesUseCase } from '@/application/use-cases/preferences/update-financial-preferences.use-case';
+import type { GetNotificationSettingsUseCase } from '@/application/use-cases/preferences/get-notification-settings.use-case';
+import type { UpdateNotificationSettingsUseCase } from '@/application/use-cases/preferences/update-notification-settings.use-case';
 import { authMiddleware, type IAuthenticatedRequest } from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validation.middleware';
 import {
   UpdateFinancialPreferencesDto,
   UpdateNotificationSettingsDto,
-} from '../../../application/dto/user.dto';
+} from '@/application/dto/user.dto';
 
 interface IPreferencesRouterDeps {
   getFinancialPreferencesUseCase: GetFinancialPreferencesUseCase;

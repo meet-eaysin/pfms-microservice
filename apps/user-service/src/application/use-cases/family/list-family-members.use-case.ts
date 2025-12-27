@@ -1,5 +1,5 @@
-import type { IUserRepository } from '../../../domain/interfaces/repository.interface';
-import type { IFamilyMember } from '../../../domain/entities/user.entity';
+import type { IUserRepository } from '@/domain/interfaces/repository.interface';
+import type { IFamilyMember } from '@/domain/entities/user.entity';
 
 export class ListFamilyMembersUseCase {
   constructor(private readonly repository: IUserRepository) {}

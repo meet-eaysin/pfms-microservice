@@ -6,17 +6,17 @@ import { createLogger, HttpStatus } from '@pfms/utils';
 import * as promClient from 'prom-client';
 
 // Configuration
-import { loadUserServiceConfig } from './config';
+import { loadUserServiceConfig } from '@/config';
 
 // Container
-import { createServiceContainer } from './infrastructure/container';
+import { createServiceContainer } from '@/container';
 
 // Routes
-import { createHealthRouter } from './interfaces/http/routes/health.routes';
-import { createProfileRouter } from './interfaces/http/routes/profile.routes';
-import { createPreferencesRouter } from './interfaces/http/routes/preferences.routes';
-import { createFamilyRouter } from './interfaces/http/routes/family.routes';
-import { errorHandler } from './interfaces/http/middleware/error-handler.middleware';
+import { createHealthRouter } from '@/interfaces/http/routes/health.routes';
+import { createProfileRouter } from '@/interfaces/http/routes/profile.routes';
+import { createPreferencesRouter } from '@/interfaces/http/routes/preferences.routes';
+import { createFamilyRouter } from '@/interfaces/http/routes/family.routes';
+import { errorHandler } from '@/interfaces/http/middleware/error-handler.middleware';
 
 // Load environment variables
 dotenv.config();

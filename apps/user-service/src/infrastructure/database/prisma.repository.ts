@@ -1,11 +1,11 @@
 import type { PrismaClient } from '@prisma/client';
-import type { IUserRepository } from '../../domain/interfaces/repository.interface';
+import type { IUserRepository } from '@/domain/interfaces/repository.interface';
 import type {
   IUserProfile,
   IFinancialPreferences,
   INotificationSettings,
   IFamilyMember,
-} from '../../domain/entities/user.entity';
+} from '@/domain/entities/user.entity';
 
 export class PrismaUserRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaClient) {}
