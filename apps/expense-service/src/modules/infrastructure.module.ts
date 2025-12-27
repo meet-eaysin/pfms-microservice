@@ -1,10 +1,10 @@
 import { Module, Global } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PrismaService } from '../../infrastructure/persistence/prisma.service';
-import { PrismaExpenseRepository } from '../../infrastructure/persistence/repositories/expense.repository.impl';
-import { PrismaCategoryRepository } from '../../infrastructure/persistence/repositories/category.repository.impl';
-import { PrismaHabitRepository } from '../../infrastructure/persistence/repositories/habit.repository.impl';
-import { PrismaRecurringRepository } from '../../infrastructure/persistence/repositories/recurring.repository.impl';
+import { PrismaService } from '../infrastructure/persistence/prisma.service';
+import { PrismaExpenseRepository } from '../infrastructure/persistence/repositories/expense.repository.impl';
+import { PrismaCategoryRepository } from '../infrastructure/persistence/repositories/category.repository.impl';
+import { PrismaHabitRepository } from '../infrastructure/persistence/repositories/habit.repository.impl';
+import { PrismaRecurringRepository } from '../infrastructure/persistence/repositories/recurring.repository.impl';
 
 @Global()
 @Module({

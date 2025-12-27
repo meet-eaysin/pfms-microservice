@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { InfrastructureModule } from './shared/modules/infrastructure.module';
-import { ExpenseModule } from './shared/modules/expense.module';
-import { CategoryModule } from './shared/modules/category.module';
-import { HabitModule } from './shared/modules/habit.module';
-import { RecurringModule } from './shared/modules/recurring.module';
+import { InfrastructureModule } from './modules/infrastructure.module';
+import { ExpenseModule } from './modules/expense.module';
+import { CategoryModule } from './modules/category.module';
+import { HabitModule } from './modules/habit.module';
+import { RecurringModule } from './modules/recurring.module';
 
 @Module({
   imports: [
