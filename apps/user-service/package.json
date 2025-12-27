@@ -27,12 +27,12 @@
     "prisma:reset": "prisma migrate reset"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.709.0",
+    "@aws-sdk/s3-request-presigner": "^3.709.0",
     "@pfms/config": "workspace:*",
     "@pfms/event-bus": "workspace:*",
     "@pfms/types": "workspace:*",
     "@pfms/utils": "workspace:*",
-    "@aws-sdk/client-s3": "^3.709.0",
-    "@aws-sdk/s3-request-presigner": "^3.709.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "cors": "^2.8.5",

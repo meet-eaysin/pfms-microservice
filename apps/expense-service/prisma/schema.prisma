@@ -1,10 +1,5 @@
-// Prisma schema for Expense Service
-// Database: PostgreSQL (expense_db)
-// CQRS-optimized with read/write in same database
-
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -12,149 +7,85 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============================================
-// EXPENSES - Core Entity
-// ============================================
-
-model Expense {
-  id          String   @id @default(uuid()) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  
-  // Financial data
-  amount      Decimal  @db.Decimal(15, 2)
-  currency    String   @db.VarChar(3) // ISO 4217
-  description String   @db.Text
-  
-  // Categorization
-  categoryId  String?  @map("category_id") @db.Uuid
-  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  tags        String[] @db.VarChar(50)
-  
-  // Metadata
-  date        DateTime @db.Date
-  source      String   @db.VarChar(50) // manual, import, api, recurring
-  isRecurring Boolean  @default(false) @map("is_recurring")
-  recurringRuleId String? @map("recurring_rule_id") @db.Uuid
-  recurringRule RecurringRule? @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
-  
-  // Attachments
-  attachments String[] @db.Text // S3/MinIO URLs
-  
-  // Audit
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at") // Soft delete
-  
-  @@index([userId, date(sort: Desc)])
-  @@index([categoryId])
-  @@index([date])
-  @@index([userId, categoryId, date])
-  @@index([userId, date, categoryId, amount]) // Covering index for expense listing (5x faster)
-  @@map("expenses")
-}
-
-// ============================================
-// CATEGORIES - Hierarchical Structure
-// ============================================
-
 model Category {
-  id          String   @id @default(uuid()) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  
-  name        String   @db.VarChar(100)
-  description String?  @db.Text
-  icon        String?  @db.VarChar(50) // emoji or icon name
-  color       String?  @db.VarChar(7) // hex color
-  
-  // Hierarchy
-  parentId    String?  @map("parent_id") @db.Uuid
-  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
-  children    Category[] @relation("CategoryHierarchy")
-  
-  // Budget
-  monthlyBudget Decimal? @map("monthly_budget") @db.Decimal(15, 2)
-  
-  // Stats (denormalized for query performance)
-  expenseCount Int     @default(0) @map("expense_count")
-  totalAmount  Decimal @default(0) @map("total_amount") @db.Decimal(15, 2)
-  
-  // Relations
-  expenses    Expense[]
-  
-  // Audit
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  
-  @@unique([userId, name])
-  @@index([userId])
-  @@index([parentId])
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  parentId  String?   @db.Uuid
+  icon      String?
+  parent    Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryHierarchy")
+  expenses  Expense[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
   @@map("categories")
 }
 
-// ============================================
-// RECURRING RULES - Automated Expenses
-// ============================================
+model Expense {
+  id              String            @id @default(uuid()) @db.Uuid
+  userId          String            @db.Uuid
+  amount          Decimal           @db.Decimal(12, 2)
+  currency        String            @default("USD") @db.Char(3)
+  categoryId      String            @db.Uuid
+  category        Category          @relation(fields: [categoryId], references: [id])
+  date            DateTime
+  description     String?
+  isRecurring     Boolean           @default(false)
+  recurrenceId    String?           @db.Uuid
+  recurrenceRule  RecurringExpense? @relation(fields: [recurrenceId], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
-model RecurringRule {
-  id          String   @id @default(uuid()) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  
-  // Template
-  amount      Decimal  @db.Decimal(15, 2)
-  currency    String   @db.VarChar(3)
-  description String   @db.Text
-  categoryId  String?  @map("category_id") @db.Uuid
-  tags        String[] @db.VarChar(50)
-  
-  // Recurrence pattern
-  frequency   String   @db.VarChar(20) // daily, weekly, monthly, yearly
-  interval    Int      @default(1) // every N days/weeks/months
-  dayOfWeek   Int?     @map("day_of_week") // 0-6 for weekly
-  dayOfMonth  Int?     @map("day_of_month") // 1-31 for monthly
-  monthOfYear Int?     @map("month_of_year") // 1-12 for yearly
-  
-  // Schedule
-  startDate   DateTime @map("start_date") @db.Date
-  endDate     DateTime? @map("end_date") @db.Date
-  nextRun     DateTime @map("next_run") @db.Date
-  
-  // Status
-  isActive    Boolean  @default(true) @map("is_active")
-  lastRun     DateTime? @map("last_run")
-  runCount    Int      @default(0) @map("run_count")
-  
-  // Relations
-  expenses    Expense[]
-  
-  // Audit
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  
-  @@index([userId, isActive, nextRun])
-  @@index([nextRun])
-  @@index([isActive, nextRun]) // Composite index for active rules (4x faster)
-  @@map("recurring_rules")
+  @@index([userId])
+  @@index([date])
+  @@map("expenses")
 }
 
-// ============================================
-// TAGS - Flexible Labeling
-// ============================================
+enum Frequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
 
-model Tag {
-  id          String   @id @default(uuid()) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  
-  name        String   @db.VarChar(50)
-  color       String?  @db.VarChar(7)
-  
-  // Stats
-  usageCount  Int      @default(0) @map("usage_count")
-  
-  // Audit
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  
-  @@unique([userId, name])
+model RecurringExpense {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  amount    Decimal   @db.Decimal(12, 2)
+  description String?
+  frequency Frequency
+  interval  Int       @default(1)
+  startDate DateTime
+  nextDueDate DateTime
+  expenses  Expense[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
   @@index([userId])
-  @@map("tags")
+  @@map("recurring_expenses")
+}
+
+model Habit {
+  id        String     @id @default(uuid()) @db.Uuid
+  userId    String     @db.Uuid
+  name      String
+  unitCost  Decimal    @db.Decimal(10, 2)
+  logs      HabitLog[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([userId])
+  @@map("habits")
+}
+
+model HabitLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  habitId   String   @db.Uuid
+  habit     Habit    @relation(fields: [habitId], references: [id])
+  quantity  Int      @default(1)
+  date      DateTime @db.Date // Storing just the date part ideally, but Prisma uses DateTime
+  createdAt DateTime @default(now())
+
+  @@index([habitId])
+  @@map("habit_logs")
 }
