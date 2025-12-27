@@ -5,11 +5,11 @@ import {
   UnauthorizedException,
   Logger,
 } from '@nestjs/common';
-import type { Request } from 'express';
 import { AuthApplicationService } from '../../application/services/auth.application.service';
 import type { User, Session } from '../../domain/entities/user.entity';
 
-interface AuthenticatedRequest extends Request {
+interface AuthenticatedRequest {
+  headers: Record<string, string | string[] | undefined>;
   user: User;
   session: Session;
 }

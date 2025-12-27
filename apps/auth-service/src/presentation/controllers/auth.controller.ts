@@ -6,14 +6,12 @@ import {
   Param,
   Headers,
   Req,
-  Res,
   HttpCode,
   HttpStatus,
   UseGuards,
   Logger,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import type { Request, Response } from 'express';
 import { AuthApplicationService } from '../../application/services/auth.application.service';
 import {
   GetUserByIdUseCase,
@@ -22,7 +20,6 @@ import {
   RevokeAllSessionsUseCase,
 } from '../../application/use-cases/session.use-cases';
 import { BetterAuthAdapter } from '../../infrastructure/auth/better-auth.adapter';
-import { EventPublisher } from '../../infrastructure/messaging/event.publisher';
 import { AuthGuard } from '../guards/auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import type { User } from '../../domain/entities/user.entity';
@@ -44,19 +41,18 @@ export class AuthController {
     private readonly getUserSessionsUseCase: GetUserSessionsUseCase,
     private readonly revokeSessionUseCase: RevokeSessionUseCase,
     private readonly revokeAllSessionsUseCase: RevokeAllSessionsUseCase,
-    _eventPublisher: EventPublisher,
   ) {}
 
   @Post('*')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Handle Better Auth requests (signup, signin, etc.)' })
   @ApiResponse({ status: 200, description: 'Auth request successful' })
-  async handleAuthPost(@Req() req: Request, @Res() res: Response): Promise<void> {
+  async handleAuthPost(@Req() req: unknown): Promise<void> {
     try {
-      await this.betterAuthAdapter.handleRequest(req, res);
+      await this.betterAuthAdapter.handleRequest(req);
     } catch (error) {
       this.logger.error('Auth request failed', error);
-      res.status(500).json({ message: 'Authentication failed' });
+      throw error;
     }
   }
 
@@ -64,12 +60,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Handle Better Auth GET requests (OAuth callbacks, etc.)' })
   @ApiResponse({ status: 200, description: 'Auth request successful' })
-  async handleAuthGet(@Req() req: Request, @Res() res: Response): Promise<void> {
+  async handleAuthGet(@Req() req: unknown): Promise<void> {
     try {
-      await this.betterAuthAdapter.handleRequest(req, res);
+      await this.betterAuthAdapter.handleRequest(req);
     } catch (error) {
       this.logger.error('Auth request failed', error);
-      res.status(500).json({ message: 'Authentication failed' });
+      throw error;
     }
   }
 

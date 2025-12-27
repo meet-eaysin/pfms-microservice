@@ -21,15 +21,6 @@ export class PrismaRepository implements IAuthRepository, OnModuleDestroy {
   async findUserById(userId: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        email_verified: true,
-        name: true,
-        image: true,
-        created_at: true,
-        updated_at: true,
-      },
     });
 
     if (!user) return null;
@@ -37,26 +28,17 @@ export class PrismaRepository implements IAuthRepository, OnModuleDestroy {
     return {
       id: user.id,
       email: user.email,
-      emailVerified: user.email_verified,
+      emailVerified: user.emailVerified,
       name: user.name,
       image: user.image,
-      createdAt: user.created_at,
-      updatedAt: user.updated_at,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
-      select: {
-        id: true,
-        email: true,
-        email_verified: true,
-        name: true,
-        image: true,
-        created_at: true,
-        updated_at: true,
-      },
     });
 
     if (!user) return null;
@@ -64,29 +46,29 @@ export class PrismaRepository implements IAuthRepository, OnModuleDestroy {
     return {
       id: user.id,
       email: user.email,
-      emailVerified: user.email_verified,
+      emailVerified: user.emailVerified,
       name: user.name,
       image: user.image,
-      createdAt: user.created_at,
-      updatedAt: user.updated_at,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 
   async getUserSessions(userId: string): Promise<Session[]> {
     const sessions = await this.prisma.session.findMany({
-      where: { user_id: userId },
-      orderBy: { created_at: 'desc' },
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
     });
 
     return sessions.map(session => ({
       id: session.id,
-      userId: session.user_id,
+      userId: session.userId,
       token: session.token,
-      expiresAt: session.expires_at,
-      ipAddress: session.ip_address,
-      userAgent: session.user_agent,
-      createdAt: session.created_at,
-      updatedAt: session.updated_at,
+      expiresAt: session.expiresAt,
+      ipAddress: session.ipAddress,
+      userAgent: session.userAgent,
+      createdAt: session.createdAt,
+      updatedAt: session.updatedAt,
     }));
   }
 
@@ -94,7 +76,7 @@ export class PrismaRepository implements IAuthRepository, OnModuleDestroy {
     await this.prisma.session.deleteMany({
       where: {
         id: sessionId,
-        user_id: userId,
+        userId,
       },
     });
   }
@@ -102,7 +84,7 @@ export class PrismaRepository implements IAuthRepository, OnModuleDestroy {
   async revokeAllSessions(userId: string, exceptSessionId?: string): Promise<void> {
     await this.prisma.session.deleteMany({
       where: {
-        user_id: userId,
+        userId,
         ...(exceptSessionId && { id: { not: exceptSessionId } }),
       },
     });

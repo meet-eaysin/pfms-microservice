@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from '../../../src/presentation/controllers/auth.controller';
 import { AuthApplicationService } from '../../../src/application/services/auth.application.service';
 import { BetterAuthAdapter } from '../../../src/infrastructure/auth/better-auth.adapter';
-import { EventPublisher } from '../../../src/infrastructure/messaging/event.publisher';
 import {
   GetUserByIdUseCase,
   GetUserSessionsUseCase,
@@ -10,7 +9,6 @@ import {
   RevokeAllSessionsUseCase,
 } from '../../../src/application/use-cases/session.use-cases';
 import { User, Session } from '../../../src/domain/entities/user.entity';
-import type { Request, Response } from 'express';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -80,12 +78,6 @@ describe('AuthController', () => {
           provide: RevokeAllSessionsUseCase,
           useValue: {
             execute: jest.fn(),
-          },
-        },
-        {
-          provide: EventPublisher,
-          useValue: {
-            publishUserCreated: jest.fn(),
           },
         },
       ],

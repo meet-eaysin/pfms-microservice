@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { betterAuth } from 'better-auth';
 import { PrismaClient } from '@prisma/client';
-import type { Request, Response } from 'express';
 import { User, Session } from '../../domain/entities/user.entity';
 
 interface BetterAuthSession {
@@ -129,13 +128,12 @@ export class BetterAuthAdapter {
     return providers;
   }
 
-  async handleRequest(req: Request, _res: Response): Promise<void> {
-    await this.auth.handler(req as never);
-    return Promise.resolve();
+  async handleRequest(req: unknown): Promise<void> {
+    await this.auth.handler(req as Parameters<typeof this.auth.handler>[0]);
   }
 
   async getSession(headers: Record<string, string | string[] | undefined>): Promise<{ user: User; session: Session } | null> {
-    const session = await this.auth.api.getSession({ headers: headers as never });
+    const session = await this.auth.api.getSession({ headers });
     
     if (!session || !this.isBetterAuthSession(session)) {
       return null;
@@ -148,7 +146,7 @@ export class BetterAuthAdapter {
     const session = await this.auth.api.getSession({ 
       headers: { 
         cookie: `better-auth-session=${token}` 
-      } as never 
+      } 
     });
 
     if (!session || !this.isBetterAuthSession(session)) {
@@ -159,7 +157,7 @@ export class BetterAuthAdapter {
   }
 
   async signOut(headers: Record<string, string | string[] | undefined>): Promise<void> {
-    await this.auth.api.signOut({ headers: headers as never });
+    await this.auth.api.signOut({ headers });
   }
 
   private isBetterAuthSession(obj: unknown): obj is BetterAuthSession {
