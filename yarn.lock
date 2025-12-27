@@ -3741,7 +3741,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@pfms/event-bus@workspace:*, @pfms/event-bus@workspace:packages/event-bus":
+"@pfms/event-bus@workspace:*, @pfms/event-bus@workspace:^, @pfms/event-bus@workspace:packages/event-bus":
   version: 0.0.0-use.local
   resolution: "@pfms/event-bus@workspace:packages/event-bus"
   dependencies:
@@ -3874,6 +3874,47 @@ __metadata:
     ts-node: "npm:^10.9.1"
     tsconfig-paths: "npm:^4.2.0"
     typescript: "npm:^5.1.3"
+  languageName: unknown
+  linkType: soft
+
+"@pfms/planning-service@workspace:apps/planning-service":
+  version: 0.0.0-use.local
+  resolution: "@pfms/planning-service@workspace:apps/planning-service"
+  dependencies:
+    "@nestjs/cli": "npm:^10.0.0"
+    "@nestjs/common": "npm:^10.0.0"
+    "@nestjs/config": "npm:^3.1.1"
+    "@nestjs/core": "npm:^10.0.0"
+    "@nestjs/platform-express": "npm:^10.0.0"
+    "@nestjs/schematics": "npm:^10.0.0"
+    "@nestjs/swagger": "npm:^7.1.16"
+    "@nestjs/testing": "npm:^10.0.0"
+    "@pfms/date": "workspace:^"
+    "@pfms/eslint-config": "workspace:*"
+    "@pfms/event-bus": "workspace:^"
+    "@pfms/typescript-config": "workspace:*"
+    "@pfms/utils": "workspace:*"
+    "@prisma/client": "npm:^5.22.0"
+    "@types/express": "npm:^4.17.17"
+    "@types/jest": "npm:^29.5.2"
+    "@types/node": "npm:^20.3.1"
+    "@types/supertest": "npm:^2.0.12"
+    "@types/uuid": "npm:^9.0.0"
+    class-transformer: "npm:^0.5.1"
+    class-validator: "npm:^0.14.0"
+    eslint: "npm:^9.18.0"
+    jest: "npm:^29.5.0"
+    prisma: "npm:^5.22.0"
+    reflect-metadata: "npm:^0.1.13"
+    rxjs: "npm:^7.8.1"
+    source-map-support: "npm:^0.5.21"
+    supertest: "npm:^6.3.3"
+    ts-jest: "npm:^29.1.0"
+    ts-loader: "npm:^9.4.3"
+    ts-node: "npm:^10.9.1"
+    tsconfig-paths: "npm:^4.2.0"
+    typescript: "npm:^5.1.3"
+    uuid: "npm:^9.0.0"
   languageName: unknown
   linkType: soft
 
@@ -5705,7 +5746,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^9.0.8":
+"@types/uuid@npm:^9.0.0, @types/uuid@npm:^9.0.8":
   version: 9.0.8
   resolution: "@types/uuid@npm:9.0.8"
   checksum: 10c0/b411b93054cb1d4361919579ef3508a1f12bf15b5fdd97337d3d351bece6c921b52b6daeef89b62340fd73fd60da407878432a1af777f40648cbe53a01723489
@@ -16562,7 +16603,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^9.0.1":
+"uuid@npm:^9.0.0, uuid@npm:^9.0.1":
   version: 9.0.1
   resolution: "uuid@npm:9.0.1"
   bin:
