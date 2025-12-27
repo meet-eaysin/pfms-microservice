@@ -1,0 +1,29 @@
+{
+  "name": "@pfms/email",
+  "version": "1.0.0",
+  "description": "Email service for PFMS microservices",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@pfms/utils": "workspace:*",
+    "nodemailer": "^6.9.8",
+    "handlebars": "^4.7.8"
+  },
+  "devDependencies": {
+    "@pfms/eslint-config": "workspace:*",
+    "@pfms/typescript-config": "workspace:*",
+    "@types/nodemailer": "^6.4.14",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
