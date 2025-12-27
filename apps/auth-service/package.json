@@ -23,7 +23,12 @@
     "test:cov": "jest --config jest.config.js --coverage",
     "test:coverage": "jest --config jest.config.js --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --config jest.config.js",
-    "test:ci": "jest --config jest.config.js --ci --maxWorkers=2 --coverage"
+    "test:ci": "jest --config jest.config.js --ci --maxWorkers=2 --coverage",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:studio": "prisma studio",
+    "prisma:reset": "prisma migrate reset"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

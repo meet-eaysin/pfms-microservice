@@ -1,32 +1,31 @@
-import { DeviceInfo } from '../value-objects/device-info';
-
-export class User {
-  constructor(
-    public readonly id: string,
-    public readonly email: string,
-    public readonly role: string,
-    public readonly isVerified: boolean,
-    public readonly mfaEnabled: boolean,
-    public readonly createdAt: Date,
-    public readonly passwordHash?: string | null, // Optional for OAuth users
-    public readonly mfaSecret?: string | null,
-  ) {}
+export interface User {
+  id: string;
+  email: string;
+  emailVerified: boolean;
+  name: string | null;
+  image: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export class Session {
-  constructor(
-    public readonly id: string,
-    public readonly userId: string,
-    public readonly refreshToken: string,
-    public readonly expiresAt: Date,
-    public readonly deviceInfo?: DeviceInfo | null,
-  ) {}
+export interface Session {
+  id: string;
+  userId: string;
+  token: string;
+  expiresAt: Date;
+  ipAddress: string | null;
+  userAgent: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export class OAuthAccount {
-  constructor(
-    public readonly providerId: string,
-    public readonly providerUserId: string,
-    public readonly userId: string,
-  ) {}
+export interface Account {
+  id: string;
+  userId: string;
+  accountId: string;
+  providerId: string;
+  accessToken: string | null;
+  refreshToken: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }

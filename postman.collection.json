@@ -5,10 +5,10 @@
   },
   "item": [
     {
-      "name": "Identity Service",
+      "name": "Auth Service (Better-Auth)",
       "item": [
         {
-          "name": "Register",
+          "name": "Sign Up (Email/Password)",
           "request": {
             "method": "POST",
             "header": [
@@ -18,19 +18,19 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/auth/register",
+              "raw": "{{base_url}}/api/auth/signup/email",
               "host": ["{{base_url}}"],
-              "path": ["auth", "register"]
+              "path": ["api", "auth", "signup", "email"]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password123!\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"role\": \"USER\"\n}"
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password123!\",\n  \"name\": \"John Doe\"\n}"
             }
           },
           "response": []
         },
         {
-          "name": "Login",
+          "name": "Sign In (Email/Password)",
           "request": {
             "method": "POST",
             "header": [
@@ -40,9 +40,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/auth/login",
+              "raw": "{{base_url}}/api/auth/signin/email",
               "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
+              "path": ["api", "auth", "signin", "email"]
             },
             "body": {
               "mode": "raw",
@@ -51,6 +51,317 @@
           },
           "response": []
         },
+        {
+          "name": "Sign In with Google",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/signin/google",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signin", "google"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sign In with GitHub",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/signin/github",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signin", "github"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sign Out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/signout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signout"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current Session",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/get-session",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "get-session"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/forget-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "forget-password"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/reset-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "reset-password"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"RESET_TOKEN\",\n  \"newPassword\": \"NewPassword123!\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "change-password"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Password123!\",\n  \"newPassword\": \"NewPassword456!\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/verify-email",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "verify-email"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"VERIFICATION_TOKEN\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enable Two-Factor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/two-factor/enable",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "two-factor", "enable"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Two-Factor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/two-factor/verify",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "two-factor", "verify"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"123456\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Sessions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/sessions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "sessions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke Session",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/sessions/:sessionId",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "sessions", ":sessionId"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke All Other Sessions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/sessions/revoke-all",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "sessions", "revoke-all"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Readiness",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/ready",
+              "host": ["{{base_url}}"],
+              "path": ["health", "ready"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Liveness",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/live",
+              "host": ["{{base_url}}"],
+              "path": ["health", "live"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Legacy Identity Service (Deprecated)",
+      "item": [
         {
           "name": "Logout",
           "request": {
