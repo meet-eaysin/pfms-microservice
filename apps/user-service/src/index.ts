@@ -21,6 +21,8 @@ import { UpdateProfileUseCase } from './application/use-cases/profile/update-pro
 import { UploadAvatarUseCase } from './application/use-cases/profile/upload-avatar.use-case';
 import { GetFinancialPreferencesUseCase } from './application/use-cases/preferences/get-financial-preferences.use-case';
 import { UpdateFinancialPreferencesUseCase } from './application/use-cases/preferences/update-financial-preferences.use-case';
+import { GetNotificationSettingsUseCase } from './application/use-cases/preferences/get-notification-settings.use-case';
+import { UpdateNotificationSettingsUseCase } from './application/use-cases/preferences/update-notification-settings.use-case';
 import { ListFamilyMembersUseCase } from './application/use-cases/family/list-family-members.use-case';
 import { InviteFamilyMemberUseCase } from './application/use-cases/family/invite-family-member.use-case';
 
@@ -99,6 +101,11 @@ async function bootstrap(): Promise<void> {
       repository,
       cache,
       eventPublisher
+    );
+    const getNotificationSettingsUseCase = new GetNotificationSettingsUseCase(repository);
+    const updateNotificationSettingsUseCase = new UpdateNotificationSettingsUseCase(
+      repository,
+      cache
     );
     const listFamilyMembersUseCase = new ListFamilyMembersUseCase(repository);
     const inviteFamilyMemberUseCase = new InviteFamilyMemberUseCase(repository, eventPublisher);
@@ -189,6 +196,8 @@ async function bootstrap(): Promise<void> {
       createPreferencesRouter({
         getFinancialPreferencesUseCase,
         updateFinancialPreferencesUseCase,
+        getNotificationSettingsUseCase,
+        updateNotificationSettingsUseCase,
       })
     );
 
@@ -258,6 +267,8 @@ async function bootstrap(): Promise<void> {
   Preferences:
   GET    /api/v1/user/preferences/financial   (Get financial preferences)
   PUT    /api/v1/user/preferences/financial   (Update financial preferences)
+  GET    /api/v1/user/preferences/notifications (Get notification settings)
+  PUT    /api/v1/user/preferences/notifications (Update notification settings)
   
   Family:
   GET    /api/v1/user/family                  (List family members)
