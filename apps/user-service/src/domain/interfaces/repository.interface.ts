@@ -59,4 +59,5 @@ export interface ICacheService {
   set(options: { key: string; value: unknown; ttl?: number }): Promise<void>;
   del(key: string): Promise<void>;
   flush(): Promise<void>;
+  disconnect(): Promise<void>;
 }

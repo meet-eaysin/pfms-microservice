@@ -2,29 +2,14 @@ import express, { type Express, type Request, type Response, type NextFunction }
 import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
 import { createLogger, HttpStatus } from '@pfms/utils';
 import * as promClient from 'prom-client';
 
 // Configuration
 import { loadUserServiceConfig } from './config';
 
-// Infrastructure
-import { createPrismaUserRepository } from './infrastructure/database/prisma.repository';
-import { createRedisCacheService } from './infrastructure/cache/redis-cache.service';
-import { createS3StorageService } from './infrastructure/storage/s3-storage.service';
-import { createEventPublisher } from './infrastructure/messaging/event.publisher';
-
-// Use Cases
-import { GetProfileUseCase } from './application/use-cases/profile/get-profile.use-case';
-import { UpdateProfileUseCase } from './application/use-cases/profile/update-profile.use-case';
-import { UploadAvatarUseCase } from './application/use-cases/profile/upload-avatar.use-case';
-import { GetFinancialPreferencesUseCase } from './application/use-cases/preferences/get-financial-preferences.use-case';
-import { UpdateFinancialPreferencesUseCase } from './application/use-cases/preferences/update-financial-preferences.use-case';
-import { GetNotificationSettingsUseCase } from './application/use-cases/preferences/get-notification-settings.use-case';
-import { UpdateNotificationSettingsUseCase } from './application/use-cases/preferences/update-notification-settings.use-case';
-import { ListFamilyMembersUseCase } from './application/use-cases/family/list-family-members.use-case';
-import { InviteFamilyMemberUseCase } from './application/use-cases/family/invite-family-member.use-case';
+// Container
+import { createServiceContainer } from './infrastructure/container';
 
 // Routes
 import { createHealthRouter } from './interfaces/http/routes/health.routes';
@@ -68,49 +53,16 @@ async function bootstrap(): Promise<void> {
     });
 
     // ============================================
-    // Initialize Infrastructure
+    // Initialize Container (DI)
     // ============================================
-    const prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: config.database.DATABASE_URL,
-        },
-      },
-      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-    });
+    const container = await createServiceContainer(config);
 
-    await prisma.$connect();
+    // Connect to external services
+    await container.prisma.$connect();
     logger.info('✅ Database connected');
 
-    const repository = createPrismaUserRepository(prisma);
-    const cache = createRedisCacheService(config.redis);
-    const storage = createS3StorageService(config.storage);
-    const eventPublisher = createEventPublisher(config.rabbitmq);
-    await eventPublisher.connect();
-
-    logger.info('✅ Infrastructure initialized');
-
-    // ============================================
-    // Initialize Use Cases
-    // ============================================
-    const getProfileUseCase = new GetProfileUseCase(repository);
-    const updateProfileUseCase = new UpdateProfileUseCase(repository, cache, eventPublisher);
-    const uploadAvatarUseCase = new UploadAvatarUseCase(repository, storage, cache);
-    const getFinancialPreferencesUseCase = new GetFinancialPreferencesUseCase(repository);
-    const updateFinancialPreferencesUseCase = new UpdateFinancialPreferencesUseCase(
-      repository,
-      cache,
-      eventPublisher
-    );
-    const getNotificationSettingsUseCase = new GetNotificationSettingsUseCase(repository);
-    const updateNotificationSettingsUseCase = new UpdateNotificationSettingsUseCase(
-      repository,
-      cache
-    );
-    const listFamilyMembersUseCase = new ListFamilyMembersUseCase(repository);
-    const inviteFamilyMemberUseCase = new InviteFamilyMemberUseCase(repository, eventPublisher);
-
-    logger.info('✅ Use cases initialized');
+    await container.eventPublisher.connect();
+    logger.info('✅ Event bus connected');
 
     // ============================================
     // Create Express App
@@ -180,32 +132,32 @@ async function bootstrap(): Promise<void> {
     // ============================================
     // Mount Routes
     // ============================================
-    app.use('/health', createHealthRouter({ prisma }));
+    app.use('/health', createHealthRouter({ prisma: container.prisma }));
 
     app.use(
       '/api/v1/user/profile',
       createProfileRouter({
-        getProfileUseCase,
-        updateProfileUseCase,
-        uploadAvatarUseCase,
+        getProfileUseCase: container.useCases.getProfile,
+        updateProfileUseCase: container.useCases.updateProfile,
+        uploadAvatarUseCase: container.useCases.uploadAvatar,
       })
     );
 
     app.use(
       '/api/v1/user/preferences',
       createPreferencesRouter({
-        getFinancialPreferencesUseCase,
-        updateFinancialPreferencesUseCase,
-        getNotificationSettingsUseCase,
-        updateNotificationSettingsUseCase,
+        getFinancialPreferencesUseCase: container.useCases.getFinancialPreferences,
+        updateFinancialPreferencesUseCase: container.useCases.updateFinancialPreferences,
+        getNotificationSettingsUseCase: container.useCases.getNotificationSettings,
+        updateNotificationSettingsUseCase: container.useCases.updateNotificationSettings,
       })
     );
 
     app.use(
       '/api/v1/user/family',
       createFamilyRouter({
-        listFamilyMembersUseCase,
-        inviteFamilyMemberUseCase,
+        listFamilyMembersUseCase: container.useCases.listFamilyMembers,
+        inviteFamilyMemberUseCase: container.useCases.inviteFamilyMember,
       })
     );
 
@@ -229,6 +181,7 @@ async function bootstrap(): Promise<void> {
         message: 'Route not found',
         timestamp: new Date().toISOString(),
       });
+      d;
     });
 
     // Global Error Handler
@@ -253,27 +206,7 @@ async function bootstrap(): Promise<void> {
 🗄️  Database: Connected to PostgreSQL
 💾 Cache: Connected to Redis
 📦 Storage: Connected to S3/MinIO
-
-📚 API Endpoints:
-  GET    /health                              (Health check)
-  GET    /health/ready                        (Readiness check)
-  GET    /metrics                             (Prometheus metrics)
-  
-  Profile:
-  GET    /api/v1/user/profile                 (Get profile)
-  PUT    /api/v1/user/profile                 (Update profile)
-  POST   /api/v1/user/profile/avatar          (Upload avatar)
-  
-  Preferences:
-  GET    /api/v1/user/preferences/financial   (Get financial preferences)
-  PUT    /api/v1/user/preferences/financial   (Update financial preferences)
-  GET    /api/v1/user/preferences/notifications (Get notification settings)
-  PUT    /api/v1/user/preferences/notifications (Update notification settings)
-  
-  Family:
-  GET    /api/v1/user/family                  (List family members)
-  POST   /api/v1/user/family/invite           (Invite family member)
-      `);
+`);
     });
 
     // ============================================
@@ -286,9 +219,9 @@ async function bootstrap(): Promise<void> {
         logger.info('✅ HTTP server closed');
       });
 
-      await eventPublisher.close();
-      await cache.disconnect();
-      await prisma.$disconnect();
+      await container.eventPublisher.close();
+      await container.cache.disconnect();
+      await container.prisma.$disconnect();
 
       logger.info('✅ Shutdown complete');
       process.exit(0);
