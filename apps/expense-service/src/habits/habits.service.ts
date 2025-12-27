@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { CreateHabitDto } from './dto/create-habit.dto';
 import { LogHabitDto } from './dto/log-habit.dto';
+import { parseISO } from '@pfms/date';
 
 @Injectable()
 export class HabitsService {
@@ -34,7 +35,7 @@ export class HabitsService {
       data: {
         habitId,
         quantity: dto.quantity,
-        date: new Date(dto.date),
+        date: parseISO(dto.date),
       },
     });
   }

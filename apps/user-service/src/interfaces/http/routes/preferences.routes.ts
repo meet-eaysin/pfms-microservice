@@ -1,4 +1,5 @@
-import type { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
+import { parseISO } from '@pfms/date';
 import { Router as ExpressRouter } from 'express';
 import type { GetFinancialPreferencesUseCase } from '@/application/use-cases/preferences/get-financial-preferences.use-case';
 import type { UpdateFinancialPreferencesUseCase } from '@/application/use-cases/preferences/update-financial-preferences.use-case';
@@ -56,7 +57,7 @@ export function createPreferencesRouter(deps: IPreferencesRouterDeps): Router {
         const updates = {
           ...dto,
           fiscalYearStart:
-            dto.fiscalYearStart !== undefined ? new Date(dto.fiscalYearStart) : undefined,
+            dto.fiscalYearStart !== undefined ? parseISO(dto.fiscalYearStart) : undefined,
         };
 
         const updated = await deps.updateFinancialPreferencesUseCase.execute({

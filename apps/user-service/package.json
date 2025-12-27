@@ -30,6 +30,7 @@
     "@aws-sdk/client-s3": "^3.709.0",
     "@aws-sdk/s3-request-presigner": "^3.709.0",
     "@pfms/config": "workspace:*",
+    "@pfms/date": "workspace:^",
     "@pfms/event-bus": "workspace:*",
     "@pfms/types": "workspace:*",
     "@pfms/utils": "workspace:*",

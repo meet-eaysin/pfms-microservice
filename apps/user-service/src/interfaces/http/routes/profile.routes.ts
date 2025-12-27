@@ -1,5 +1,6 @@
 import type { Router, Request, Response, NextFunction } from 'express';
 import { Router as ExpressRouter } from 'express';
+import { parseISO } from '@pfms/date';
 import type { GetProfileUseCase } from '@/application/use-cases/profile/get-profile.use-case';
 import type { UpdateProfileUseCase } from '@/application/use-cases/profile/update-profile.use-case';
 import type { UploadAvatarUseCase } from '@/application/use-cases/profile/upload-avatar.use-case';
@@ -57,7 +58,7 @@ export function createProfileRouter(deps: IProfileRouterDeps): Router {
         // Convert date string to Date if provided
         const updates = {
           ...dto,
-          dateOfBirth: dto.dateOfBirth !== undefined ? new Date(dto.dateOfBirth) : undefined,
+          dateOfBirth: dto.dateOfBirth !== undefined ? parseISO(dto.dateOfBirth) : undefined,
         };
 
         const updated = await deps.updateProfileUseCase.execute({

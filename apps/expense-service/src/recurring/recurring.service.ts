@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { CreateRecurringExpenseDto } from './dto/create-recurring.dto';
-import { addDays, addMonths, addWeeks, addYears } from 'date-fns';
+import { addTime, parseISO } from '@pfms/date';
 import { Frequency } from '@prisma/client';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class RecurringService {
 
   async create(userId: string, dto: CreateRecurringExpenseDto) {
     const nextDueDate = this.calculateNextDueDate(
-      new Date(dto.startDate),
+      parseISO(dto.startDate),
       dto.frequency,
       dto.interval
     );
@@ -31,7 +31,7 @@ export class RecurringService {
         description: dto.description,
         frequency: dto.frequency,
         interval: dto.interval || 1,
-        startDate: new Date(dto.startDate),
+        startDate: parseISO(dto.startDate),
         nextDueDate,
       },
     });

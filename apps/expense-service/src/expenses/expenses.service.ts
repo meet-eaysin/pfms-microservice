@@ -3,6 +3,7 @@ import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { EventPublisher } from '@/infrastructure/messaging/event.publisher';
+import { parseISO } from '@pfms/date';
 
 interface IUserRequest {
   user: {
@@ -29,7 +30,7 @@ export class ExpensesService {
         amount: dto.amount,
         currency: dto.currency || 'USD',
         categoryId: dto.categoryId,
-        date: new Date(dto.date),
+        date: parseISO(dto.date),
         description: dto.description,
         isRecurring: dto.isRecurring || false,
       },
@@ -48,8 +49,8 @@ export class ExpensesService {
 
     if (filters.startDate && filters.endDate) {
       where.date = {
-        gte: new Date(filters.startDate),
-        lte: new Date(filters.endDate),
+        gte: parseISO(filters.startDate),
+        lte: parseISO(filters.endDate),
       };
     }
 

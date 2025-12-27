@@ -1,0 +1,25 @@
+{
+  "name": "@pfms/date",
+  "version": "1.0.0",
+  "description": "Shared date manipulation utilities for PFMS",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "lint": "eslint \"src/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0"
+  },
+  "devDependencies": {
+    "@pfms/typescript-config": "workspace:*",
+    "@types/node": "^20.3.1",
+    "typescript": "^5.1.3"
+  }
+}
