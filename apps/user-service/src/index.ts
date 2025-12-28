@@ -2,7 +2,8 @@ import express, { type Express, type Request, type Response, type NextFunction }
 import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { createLogger, HttpStatus } from '@pfms/utils';
+import { createLogger } from '@pfms/config';
+import { HttpStatus } from '@pfms/http';
 import * as promClient from 'prom-client';
 
 // Configuration

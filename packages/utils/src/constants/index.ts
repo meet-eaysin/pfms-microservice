@@ -1,5 +1,4 @@
-export * from './http-status';
-export * from './error-messages';
-export * from './queues.constant';
-export * from './exchanges.constant';
-export * from './routing-keys.constant';
+// All constants have been moved to their respective packages:
+// - Event-bus constants (RoutingKeys, Queues, Exchanges) → @packages/event-bus
+// - HTTP status codes → @packages/http
+// - Error messages → Removed (violates DDD-lite)

@@ -1,4 +1,4 @@
-import { createLogger } from '@pfms/utils';
+import { createLogger } from '@pfms/config';
 
 const logger = createLogger('CircuitBreaker');
 

@@ -1,7 +1,7 @@
 {
-  "name": "@pfms/api-client",
+  "name": "@pfms/http",
   "version": "1.0.0",
-  "description": "Type-safe HTTP client for inter-service communication",
+  "description": "HTTP communication utilities with client, circuit breaker, retry logic, and status codes",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -12,7 +12,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@pfms/utils": "workspace:*",
+    "@pfms/config": "workspace:*",
     "axios": "^1.6.5"
   },
   "devDependencies": {

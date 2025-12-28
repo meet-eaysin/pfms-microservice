@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { createLogger } from '@pfms/utils';
+import { createLogger } from '@pfms/config';
 import { ApiClientConfig, ApiResponse, ApiError } from './types';
 import { CircuitBreaker } from './circuit-breaker';
 

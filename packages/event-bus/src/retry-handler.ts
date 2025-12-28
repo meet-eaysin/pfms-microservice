@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { createLogger } from '@pfms/utils';
+import { createLogger } from '@pfms/config';
 import { BaseEvent, EventHandler } from './types';
 
 const logger = createLogger('RetryHandler');

@@ -1,6 +1,6 @@
 import * as amqp from 'amqplib/callback_api';
 import { EventEmitter } from 'events';
-import { createLogger } from '@pfms/utils';
+import { createLogger } from '@pfms/config';
 import { BaseEvent, EventHandler, EventBusConfig } from './types';
 import { RetryHandler } from './retry-handler';
 

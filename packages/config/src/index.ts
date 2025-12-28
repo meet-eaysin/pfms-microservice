@@ -5,6 +5,7 @@ export { z };
 
 dotenv.config();
 
+export * from './logger';
 export { loadConfig } from './utils';
 
 // ============================================
