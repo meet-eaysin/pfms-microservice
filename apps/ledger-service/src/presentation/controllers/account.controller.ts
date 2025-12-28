@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Query, Headers, BadRequestException } from '@nestjs/common';
-import { CreateAccountUseCase } from '../../../application/use-cases/account/create-account.use-case';
-import { GetAccountsUseCase } from '../../../application/use-cases/account/get-accounts.use-case';
+import { CreateAccountUseCase } from '../../application/use-cases/account/create-account.use-case';
+import { GetAccountsUseCase } from '../../application/use-cases/account/get-accounts.use-case';
 import { AccountType } from '@/domain/entities/account.model';
 import { CreateAccountDto } from '@/application/dto';
 

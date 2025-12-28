@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Query, Headers, BadRequestException } from '@nestjs/common';
-import { PostEntryUseCase } from '../../../application/use-cases/entry/post-entry.use-case';
-import { GetEntriesUseCase } from '../../../application/use-cases/entry/get-entries.use-case';
+import { PostEntryUseCase } from '../../application/use-cases/entry/post-entry.use-case';
+import { GetEntriesUseCase } from '../../application/use-cases/entry/get-entries.use-case';
 import { parseISO } from '@pfms/date';
 import { PostJournalEntryDto } from '@/application/dto';
 

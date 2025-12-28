@@ -1,6 +1,6 @@
 import { Controller, Get, Headers, BadRequestException } from '@nestjs/common';
-import { GetBalanceSheetUseCase } from '../../../application/use-cases/analytics/get-balance-sheet.use-case';
-import { GetNetWorthUseCase } from '../../../application/use-cases/analytics/get-net-worth.use-case';
+import { GetBalanceSheetUseCase } from '../../application/use-cases/analytics/get-balance-sheet.use-case';
+import { GetNetWorthUseCase } from '../../application/use-cases/analytics/get-net-worth.use-case';
 
 @Controller('ledger/analytics')
 export class AnalyticsController {
