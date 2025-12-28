@@ -487,6 +487,34 @@ services:
     networks:
       - pfms_network
 
+  postgres-planning:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_planning
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_PLANNING_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PLANNING_PASSWORD:-postgres_dev_password}
+      POSTGRES_DB: planning_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    command: |
+      postgres
+      -c max_connections=100
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c work_mem=16MB
+      -c maintenance_work_mem=64MB
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+    volumes:
+      - postgres_planning_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_PLANNING_USER:-postgres}']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - pfms_network
+
 networks:
   pfms_network:
     driver: bridge
@@ -510,3 +538,4 @@ volumes:
   postgres_investment_data:
   postgres_loan_data:
   postgres_ledger_data:
+  postgres_planning_data:

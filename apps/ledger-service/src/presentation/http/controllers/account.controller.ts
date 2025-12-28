@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Query, Headers, BadRequestException } from '@nestjs/common';
 import { CreateAccountUseCase } from '../../../core/application/use-cases/account/create-account.use-case';
 import { GetAccountsUseCase } from '../../../core/application/use-cases/account/get-accounts.use-case';
-import { CreateAccountDto } from '../../../core/application/dto/account/account.dto';
-import { AccountType } from '../../../core/domain/models/account.model';
+import { AccountType } from '@/core/domain/models/account.model';
+import { CreateAccountDto } from '@/core/application/dto';
 
 @Controller('ledger/accounts')
 export class AccountController {

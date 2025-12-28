@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Query, Headers, BadRequestException } from '@nestjs/common';
 import { PostEntryUseCase } from '../../../core/application/use-cases/entry/post-entry.use-case';
 import { GetEntriesUseCase } from '../../../core/application/use-cases/entry/get-entries.use-case';
-import { PostJournalEntryDto } from '../../../core/application/dto/entry/entry.dto';
 import { parseISO } from '@pfms/date';
+import { PostJournalEntryDto } from '@/core/application/dto';
 
 @Controller('ledger/entries')
 export class EntryController {
