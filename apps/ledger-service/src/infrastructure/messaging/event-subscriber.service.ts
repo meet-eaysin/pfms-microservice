@@ -1,7 +1,7 @@
+import { PostEntryUseCase } from '@/core/application/use-cases';
+import { Direction } from '@/core/domain/models/journal-entry.model';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { RabbitMQEventBus, BaseEvent } from '@pfms/event-bus';
-import { PostEntryUseCase } from '../../core/application/use-cases/entry/post-entry.use-case';
-import { Direction } from '../../core/domain/models/journal-entry.model';
 
 interface ExpenseCreatedEventData {
   expenseId: string;

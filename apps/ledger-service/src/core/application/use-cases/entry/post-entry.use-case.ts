@@ -1,7 +1,7 @@
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
-import { IJournalEntryRepository } from '../../../domain/repositories/journal-entry.repository';
-import { IAccountRepository } from '../../../domain/repositories/account.repository';
-import { JournalEntry, Direction, EntrySource } from '../../../domain/models/journal-entry.model';
+import { IJournalEntryRepository } from '@/core/domain/repositories/journal-entry.repository';
+import { IAccountRepository } from '@/core/domain/repositories/account.repository';
+import { JournalEntry, Direction, EntrySource } from '@/core/domain/models/journal-entry.model';
 import { parseISO } from '@pfms/date';
 
 export interface PostingLineCommand {

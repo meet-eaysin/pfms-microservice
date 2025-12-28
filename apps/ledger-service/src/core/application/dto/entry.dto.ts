@@ -1,6 +1,16 @@
-import { IsNotEmpty, IsString, IsDateString, IsArray, ValidateNested, IsEnum, IsNumber, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsDateString,
+  IsArray,
+  ValidateNested,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
 import { Type } from 'class-transformer';
-import { Direction } from '../../../domain/models/journal-entry.model';
+import { Direction } from '@/core/domain/models/journal-entry.model';
 
 export class PostingLineDto {
   @IsNotEmpty()

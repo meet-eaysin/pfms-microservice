@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsEnum, IsOptional, IsObject } from 'class-validator';
-import { IncomeType, PaySchedule } from '../../../domain/models/income-source.model';
+import { IncomeType, PaySchedule } from '../../domain/models/income-source.model';
 
 export class CreateIncomeSourceDto {
   @IsNotEmpty()

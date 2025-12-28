@@ -1,6 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { RecordIncomeUseCase } from '../../../core/application/use-cases/income-transaction/record-income.use-case';
-import { RecordIncomeDto } from '../../../core/application/dto/income-transaction/income-transaction.dto';
+import { RecordIncomeUseCase } from '@/core/application/use-cases/income-transaction/record-income.use-case';
+import { RecordIncomeDto } from '@/core/application/dto/income-transaction.dto';
 
 @Controller('income/transactions')
 export class IncomeTransactionController {

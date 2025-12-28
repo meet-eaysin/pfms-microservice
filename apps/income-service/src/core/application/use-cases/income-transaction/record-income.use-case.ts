@@ -1,11 +1,11 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { IIncomeTransactionRepository } from '../../../domain/repositories/income-transaction.repository';
-import { IIncomeSourceRepository } from '../../../domain/repositories/income-source.repository';
-import { IncomeTransaction } from '../../../domain/models/income-transaction.model';
+import { IIncomeTransactionRepository } from '@/core/domain/repositories/income-transaction.repository';
+import { IIncomeSourceRepository } from '@/core/domain/repositories/income-source.repository';
+import { IncomeTransaction } from '@/core/domain/models/income-transaction.model';
 import { parseISO, formatDate, DateFormats } from '@pfms/date';
 import { RabbitMQEventBus } from '@pfms/event-bus';
-import { IncomeReceivedEvent } from '../../events/income.events';
 import { v4 as uuidv4 } from 'uuid';
+import { IncomeReceivedEvent } from '../../events/income.events';
 
 export interface RecordIncomeCommand {
   sourceId: string;

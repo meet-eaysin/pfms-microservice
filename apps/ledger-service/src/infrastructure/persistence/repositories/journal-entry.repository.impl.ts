@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IJournalEntryRepository } from '../../../core/domain/repositories/journal-entry.repository';
-import { JournalEntry, PostingLine, Direction, EntrySource } from '../../../core/domain/models/journal-entry.model';
+import { IJournalEntryRepository } from '@/core/domain/repositories/journal-entry.repository';
+import { JournalEntry, PostingLine, Direction, EntrySource } from '@/core/domain/models/journal-entry.model';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()

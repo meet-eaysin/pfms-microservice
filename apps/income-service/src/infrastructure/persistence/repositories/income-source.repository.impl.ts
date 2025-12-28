@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IIncomeSourceRepository } from '../../../core/domain/repositories/income-source.repository';
-import { IncomeSource } from '../../../core/domain/models/income-source.model';
+import { IIncomeSourceRepository } from '@/core/domain/repositories/income-source.repository';
+import { IncomeSource } from '@/core/domain/models/income-source.model';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()

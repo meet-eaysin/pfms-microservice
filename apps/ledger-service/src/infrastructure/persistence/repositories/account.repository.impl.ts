@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IAccountRepository } from '../../../core/domain/repositories/account.repository';
-import { Account, AccountType } from '../../../core/domain/models/account.model';
+import { IAccountRepository } from '@/core/domain/repositories/account.repository';
+import { Account, AccountType } from '@/core/domain/models/account.model';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()

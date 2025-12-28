@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IAccountRepository } from '../../../domain/repositories/account.repository';
-import { AccountType } from '../../../domain/models/account.model';
+import { IAccountRepository } from '@/core/domain/repositories/account.repository';
+import { AccountType } from '@/core/domain/models/account.model';
 
 export interface NetWorth {
   totalAssets: number;

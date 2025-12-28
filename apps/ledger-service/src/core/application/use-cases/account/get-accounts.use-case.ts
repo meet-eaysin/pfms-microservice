@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IAccountRepository } from '../../../domain/repositories/account.repository';
-import { Account, AccountType } from '../../../domain/models/account.model';
+import { IAccountRepository } from '@/core/domain/repositories/account.repository';
+import { Account, AccountType } from '@/core/domain/models/account.model';
 
 @Injectable()
 export class GetAccountsUseCase {

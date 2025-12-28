@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IJournalEntryRepository } from '../../../domain/repositories/journal-entry.repository';
-import { JournalEntry } from '../../../domain/models/journal-entry.model';
+import { IJournalEntryRepository } from '@/core/domain/repositories/journal-entry.repository';
+import { JournalEntry } from '@/core/domain/models/journal-entry.model';
 
 @Injectable()
 export class GetEntriesUseCase {
