@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Headers, BadRequestException } from '@nestjs/common';
-import { CreateHabitUseCase } from '../../../application/use-cases/habit/create-habit.use-case';
-import { LogHabitUseCase } from '../../../application/use-cases/habit/log-habit.use-case';
-import { CreateHabitDto, LogHabitDto } from '../../../application/dto/habit/habit.dto';
+import { CreateHabitUseCase } from '../../application/use-cases/habit/create-habit.use-case';
+import { LogHabitUseCase } from '../../application/use-cases/habit/log-habit.use-case';
+import { CreateHabitDto, LogHabitDto } from '../../application/dto/habit/habit.dto';
 
 @Controller('habits')
 export class HabitController {

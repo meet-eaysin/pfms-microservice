@@ -1,4 +1,4 @@
-import { IncomeSource } from '../models/income-source.model';
+import { IncomeSource } from '../entities/income-source.model';
 
 export interface IIncomeSourceRepository {
   create(source: Omit<IncomeSource, 'id' | 'createdAt' | 'updatedAt'>): Promise<IncomeSource>;

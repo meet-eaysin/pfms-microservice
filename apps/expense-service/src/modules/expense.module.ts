@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ExpenseController } from '../presentation/http/controllers/expense.controller';
+import { ExpenseController } from '../presentation/controllers/expense.controller';
 import { CreateExpenseUseCase } from '../application/use-cases/expense/create-expense.use-case';
 import { GetExpensesUseCase } from '../application/use-cases/expense/get-expenses.use-case';
 import { UpdateExpenseUseCase } from '../application/use-cases/expense/update-expense.use-case';

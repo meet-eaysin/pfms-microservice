@@ -1,5 +1,5 @@
-import { IncomeSource, IncomeType, PaySchedule } from '@/core/domain/models/income-source.model';
-import { IIncomeSourceRepository } from '@/core/domain/repositories/income-source.repository';
+import { IncomeSource, IncomeType, PaySchedule } from '@/domain/entities/income-source.model';
+import { IIncomeSourceRepository } from '@/domain/interfaces/income-source.repository';
 import { Inject, Injectable } from '@nestjs/common';
 
 export interface CreateSourceCommand {

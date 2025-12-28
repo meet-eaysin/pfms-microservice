@@ -1,4 +1,4 @@
-import { IncomeTransaction } from '../models/income-transaction.model';
+import { IncomeTransaction } from '../entities/income-transaction.model';
 
 export interface IIncomeTransactionRepository {
   create(transaction: Omit<IncomeTransaction, 'id' | 'createdAt' | 'updatedAt'>): Promise<IncomeTransaction>;

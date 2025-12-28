@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { HabitController } from '../presentation/http/controllers/habit.controller';
+import { HabitController } from '../presentation/controllers/habit.controller';
 import { CreateHabitUseCase } from '../application/use-cases/habit/create-habit.use-case';
 import { LogHabitUseCase } from '../application/use-cases/habit/log-habit.use-case';
 

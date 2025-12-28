@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { IIncomeTransactionRepository } from '@/core/domain/repositories/income-transaction.repository';
-import { IIncomeSourceRepository } from '@/core/domain/repositories/income-source.repository';
-import { IncomeTransaction } from '@/core/domain/models/income-transaction.model';
+import { IIncomeTransactionRepository } from '@/domain/interfaces/income-transaction.repository';
+import { IIncomeSourceRepository } from '@/domain/interfaces/income-source.repository';
+import { IncomeTransaction } from '@/domain/entities/income-transaction.model';
 import { parseISO, formatDate, DateFormats } from '@pfms/date';
 import { RabbitMQEventBus } from '@pfms/event-bus';
 import { v4 as uuidv4 } from 'uuid';

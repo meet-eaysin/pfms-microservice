@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IIncomeTransactionRepository } from '@/core/domain/repositories/income-transaction.repository';
-import { IncomeTransaction } from '@/core/domain/models/income-transaction.model';
+import { IIncomeTransactionRepository } from '@/domain/interfaces/income-transaction.repository';
+import { IncomeTransaction } from '@/domain/entities/income-transaction.model';
 import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
 

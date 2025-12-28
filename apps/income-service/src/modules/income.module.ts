@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IncomeSourceController } from '../presentation/http/controllers/income-source.controller';
 import { IncomeTransactionController } from '../presentation/http/controllers/income-transaction.controller';
-import { CreateSourceUseCase } from '../core/application/use-cases/income-source/create-source.use-case';
-import { RecordIncomeUseCase } from '../core/application/use-cases/income-transaction/record-income.use-case';
+import { CreateSourceUseCase } from '../application/use-cases/income-source/create-source.use-case';
+import { RecordIncomeUseCase } from '../application/use-cases/income-transaction/record-income.use-case';
 import { RabbitMQEventBus } from '@pfms/event-bus';
 
 @Module({

@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Headers, BadRequestException } from '@nestjs/common';
-import { CreateSourceUseCase } from '../../../core/application/use-cases/income-source/create-source.use-case';
-import { CreateIncomeSourceDto } from '../../../core/application/dto/income-source.dto';
+import { CreateSourceUseCase } from '../../../application/use-cases/income-source/create-source.use-case';
+import { CreateIncomeSourceDto } from '../../../application/dto/income-source.dto';
 
 @Controller('income/sources')
 export class IncomeSourceController {
