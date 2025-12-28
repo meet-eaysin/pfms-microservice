@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { RabbitMQEventBus, BaseEvent } from '@pfms/event-bus';
-import { IAutomationRuleRepository } from '../../domain/interfaces/automation-rule.repository';
-import { AutomationRule } from '../../domain/entities/automation-rule.model';
+import { IAutomationRuleRepository } from '@/domain/interfaces/automation-rule.repository';
+import { AutomationRule } from '@/domain/entities/automation-rule.model';
 import { Inject } from '@nestjs/common';
 
 @Injectable()

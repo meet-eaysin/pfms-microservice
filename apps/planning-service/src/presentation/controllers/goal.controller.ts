@@ -1,8 +1,8 @@
 import { Controller, Post, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateGoalUseCase } from '../../../application/use-cases/goal/create-goal.use-case';
-import { ContributeToGoalUseCase } from '../../../application/use-cases/goal/contribute-to-goal.use-case';
-import { CreateGoalDto, ContributeToGoalDto } from '../../../application/dto/goal/goal.dto';
+import { CreateGoalUseCase } from '@/application/use-cases/goal/create-goal.use-case';
+import { ContributeToGoalUseCase } from '@/application/use-cases/goal/contribute-to-goal.use-case';
+import { CreateGoalDto, ContributeToGoalDto } from '@/application/dto/goal/goal.dto';
 
 @ApiTags('goals')
 @Controller('api/v1/planning/goals')

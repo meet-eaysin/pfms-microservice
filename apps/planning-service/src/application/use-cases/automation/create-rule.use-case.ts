@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IAutomationRuleRepository } from '../../../domain/interfaces/automation-rule.repository';
+import { IAutomationRuleRepository } from '@/domain/interfaces/automation-rule.repository';
 import {
   AutomationRule,
   TriggerType,
   ActionType,
-} from '../../../domain/entities/automation-rule.model';
+} from '@/domain/entities/automation-rule.model';
 
 export interface CreateRuleCommand {
   userId: string;

@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { ISavingsGoalRepository } from '../../../domain/interfaces/savings-goal.repository';
-import { SavingsGoal } from '../../../domain/entities/savings-goal.model';
+import { ISavingsGoalRepository } from '@/domain/interfaces/savings-goal.repository';
+import { SavingsGoal } from '@/domain/entities/savings-goal.model';
 import { parseISO } from '@pfms/date';
 
 export interface ContributeToGoalCommand {

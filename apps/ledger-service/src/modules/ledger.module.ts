@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AccountController } from '../presentation/http/controllers/account.controller';
-import { EntryController } from '../presentation/http/controllers/entry.controller';
-import { AnalyticsController } from '../presentation/http/controllers/analytics.controller';
+import { AccountController } from '../presentation/controllers/account.controller';
+import { EntryController } from '../presentation/controllers/entry.controller';
+import { AnalyticsController } from '../presentation/controllers/analytics.controller';
 import { CreateAccountUseCase } from '../application/use-cases/account/create-account.use-case';
 import { GetAccountsUseCase } from '../application/use-cases/account/get-accounts.use-case';
 import { PostEntryUseCase } from '../application/use-cases/entry/post-entry.use-case';

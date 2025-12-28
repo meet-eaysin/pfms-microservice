@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsNumber, IsOptional, IsEnum, IsDateString } from 'class-validator';
-import { BudgetPeriod } from '../../../domain/entities/budget.model';
+import { BudgetPeriod } from '@/domain/entities/budget.model';
 
 export class CreateBudgetDto {
   @ApiProperty({ example: 'user-123' })

@@ -1,7 +1,7 @@
+import { CreateRuleDto } from '@/application/dto/automation/create-rule.dto';
+import { CreateRuleUseCase } from '@/application/use-cases/automation/create-rule.use-case';
 import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateRuleUseCase } from '../../../application/use-cases/automation/create-rule.use-case';
-import { CreateRuleDto } from '../../../application/dto/automation/create-rule.dto';
 
 @ApiTags('automation')
 @Controller('api/v1/automation/rules')

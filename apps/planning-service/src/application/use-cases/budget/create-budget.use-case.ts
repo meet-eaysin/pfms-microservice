@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IBudgetRepository } from '../../../domain/interfaces/budget.repository';
-import { Budget, BudgetPeriod } from '../../../domain/entities/budget.model';
+import { IBudgetRepository } from '@/domain/interfaces/budget.repository';
+import { Budget, BudgetPeriod } from '@/domain/entities/budget.model';
 import { parseISO } from '@pfms/date';
 
 export interface CreateBudgetCommand {

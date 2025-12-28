@@ -1,6 +1,6 @@
+import { ActionType, TriggerType } from '@/domain/entities/automation-rule.model';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsEnum, IsObject } from 'class-validator';
-import { TriggerType, ActionType } from '../../../domain/entities/automation-rule.model';
 
 export class CreateRuleDto {
   @ApiProperty({ example: 'user-123' })

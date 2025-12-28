@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { InfrastructureModule } from './infrastructure.module';
-import { BudgetController } from '../presentation/http/controllers/budget.controller';
-import { GoalController } from '../presentation/http/controllers/goal.controller';
-import { AutomationController } from '../presentation/http/controllers/automation.controller';
+import { BudgetController } from '../presentation/controllers/budget.controller';
+import { GoalController } from '../presentation/controllers/goal.controller';
+import { AutomationController } from '../presentation/controllers/automation.controller';
 import { CreateBudgetUseCase } from '../application/use-cases/budget/create-budget.use-case';
 import { GetBudgetsUseCase } from '../application/use-cases/budget/get-budgets.use-case';
 import { CreateGoalUseCase } from '../application/use-cases/goal/create-goal.use-case';
