@@ -24,9 +24,9 @@ import {
 } from './application/use-cases/session.use-cases';
 
 // Routes & Middleware
-import { createAuthRouter } from './interfaces/http/routes/auth.routes';
-import { createHealthRouter } from './interfaces/http/routes/health.routes';
-import { errorHandler } from './interfaces/http/middleware/error-handler.middleware';
+import { createAuthRouter } from './presentation/routes/auth.routes';
+import { createHealthRouter } from './presentation/routes/health.routes';
+import { errorHandler } from './presentation/middleware/error-handler.middleware';
 
 // Load environment variables
 dotenv.config();

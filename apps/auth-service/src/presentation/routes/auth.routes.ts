@@ -1,12 +1,12 @@
 import type { Router, Request, Response, NextFunction } from 'express';
-import type { BetterAuthAdapter } from '../../../infrastructure/auth/better-auth.adapter';
-import type { AuthApplicationService } from '../../../application/services/auth.application.service';
+import type { BetterAuthAdapter } from '../../infrastructure/auth/better-auth.adapter';
+import type { AuthApplicationService } from '../../application/services/auth.application.service';
 import type {
   GetUserByIdUseCase,
   GetUserSessionsUseCase,
   RevokeSessionUseCase,
   RevokeAllSessionsUseCase,
-} from '../../../application/use-cases/session.use-cases';
+} from '../../application/use-cases/session.use-cases';
 import { Router as ExpressRouter } from 'express';
 import {
   authMiddleware,

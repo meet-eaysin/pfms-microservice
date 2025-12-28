@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { AuthApplicationService } from '../../../application/services/auth.application.service';
-import type { User, Session } from '../../../domain/entities/user.entity';
+import type { AuthApplicationService } from '../../application/services/auth.application.service';
+import type { User, Session } from '../../domain/entities/user.entity';
 import { fromNodeHeaders } from 'better-auth/node';
 
 export interface IAuthenticatedRequest extends Request {
