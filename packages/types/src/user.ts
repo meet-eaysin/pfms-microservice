@@ -1,4 +1,5 @@
-import { UUID, UserRole, Currency, Language, Timezone, ISODateString } from './common';
+import { UUID, Currency, Language, Timezone, ISODateString } from './common';
+import { UserRole } from './enums';
 
 /**
  * Auth Service Types

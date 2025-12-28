@@ -13,7 +13,7 @@ import {
   type IAuthenticatedRequest,
 } from '../middleware/auth.middleware';
 import { fromNodeHeaders } from 'better-auth/node';
-import { createLogger } from '@pfms/utils';
+import { createLogger } from '@pfms/config';
 
 const logger = createLogger('AuthRoutes');
 

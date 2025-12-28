@@ -79,73 +79,11 @@ export interface AuditLog {
   metadata?: Record<string, any>;
 }
 
-/**
- * Error Types
- */
-export class AppError extends Error {
-  constructor(
-    public message: string,
-    public statusCode: number = 500,
-    public code: string = 'INTERNAL_ERROR',
-    public details?: Record<string, any>
-  ) {
-    super(message);
-    this.name = 'AppError';
-  }
-}
+// Error Types - Moved to @packages/errors
+// AppError, ValidationError, etc. are now imported from @pfms/errors
 
-export class ValidationError extends AppError {
-  constructor(message: string, details?: Record<string, string[]>) {
-    super(message, 400, 'VALIDATION_ERROR', details);
-    this.name = 'ValidationError';
-  }
-}
-
-export class NotFoundError extends AppError {
-  constructor(entity: string, id: string) {
-    super(`${entity} not found: ${id}`, 404, 'NOT_FOUND_ERROR');
-    this.name = 'NotFoundError';
-  }
-}
-
-export class UnauthorizedError extends AppError {
-  constructor(message: string = 'Unauthorized access') {
-    super(message, 401, 'UNAUTHORIZED_ERROR');
-    this.name = 'UnauthorizedError';
-  }
-}
-
-export class ForbiddenError extends AppError {
-  constructor(message: string = 'Access forbidden') {
-    super(message, 403, 'FORBIDDEN_ERROR');
-    this.name = 'ForbiddenError';
-  }
-}
-
-/**
- * Enum Types
- */
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-  VIEWER = 'viewer',
-  MODERATOR = 'moderator',
-}
-
-export enum ExchangeType {
-  FANOUT = 'fanout',
-  DIRECT = 'direct',
-  TOPIC = 'topic',
-  HEADERS = 'headers',
-}
-
-export enum Status {
-  PENDING = 'pending',
-  ACTIVE = 'active',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
-}
+// Enum Types - Moved to src/enums
+// UserRole, ExchangeType, Status are now imported from ./enums
 
 /**
  * Date/Time Utilities

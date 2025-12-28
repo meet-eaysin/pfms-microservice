@@ -1,7 +1,7 @@
 import { RabbitMQEventBus, BaseEvent } from '@pfms/event-bus';
 import { User, Session } from '../../domain/entities/user.entity';
 import { RabbitMQConfig } from '../../config';
-import { createLogger } from '@pfms/utils';
+import { createLogger } from '@pfms/config';
 
 interface UserCreatedEventData {
   userId: string;

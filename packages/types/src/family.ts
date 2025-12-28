@@ -1,4 +1,5 @@
-import { UUID, ISODateString, UserRole } from './common';
+import { UUID, ISODateString } from './common';
+import { UserRole } from './enums';
 
 /**
  * Family Service Types

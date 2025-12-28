@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { createLogger } from '@pfms/utils';
+import { createLogger } from '@pfms/config';
 import type { UserServiceConfig } from '@/config';
 
 // Infrastructure Factories

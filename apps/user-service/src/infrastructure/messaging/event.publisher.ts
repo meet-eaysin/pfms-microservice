@@ -1,7 +1,7 @@
 import { RabbitMQEventBus } from '@pfms/event-bus';
 import type { RabbitMQConfig } from '@/config';
-import { createLogger } from '@pfms/utils';
-import { v4 as uuidv4 } from 'uuid';
+import { createLogger } from '@pfms/config';
+import { generateUUID } from '@pfms/utils';
 
 const logger = createLogger('EventPublisher');
 
@@ -36,7 +36,7 @@ export class EventPublisher {
 
   async publishProfileUpdated(options: { userId: string; changes: string[] }): Promise<void> {
     const event: IBaseEvent = {
-      eventId: uuidv4(),
+      eventId: generateUUID(),
       eventType: 'user.profile.updated',
       timestamp: new Date().toISOString(),
       version: '1.0',
@@ -56,7 +56,7 @@ export class EventPublisher {
     riskTolerance: string;
   }): Promise<void> {
     const event: IBaseEvent = {
-      eventId: uuidv4(),
+      eventId: generateUUID(),
       eventType: 'user.preferences.updated',
       timestamp: new Date().toISOString(),
       version: '1.0',
@@ -77,7 +77,7 @@ export class EventPublisher {
     relationship: string;
   }): Promise<void> {
     const event: IBaseEvent = {
-      eventId: uuidv4(),
+      eventId: generateUUID(),
       eventType: 'user.family.invited',
       timestamp: new Date().toISOString(),
       version: '1.0',

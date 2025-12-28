@@ -1,7 +1,7 @@
 import Redis from 'ioredis';
 import type { ICacheService } from '@/domain/interfaces/repository.interface';
 import type { RedisConfig } from '@/config';
-import { createLogger } from '@pfms/utils';
+import { createLogger } from '@pfms/config';
 
 const logger = createLogger('RedisCache');
 

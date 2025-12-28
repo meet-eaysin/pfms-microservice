@@ -4,7 +4,7 @@ import { IIncomeSourceRepository } from '@/domain/interfaces/income-source.repos
 import { IncomeTransaction } from '@/domain/entities/income-transaction.model';
 import { parseISO, formatDate, DateFormats } from '@pfms/date';
 import { RabbitMQEventBus } from '@pfms/event-bus';
-import { v4 as uuidv4 } from 'uuid';
+import { generateUUID } from '@pfms/utils';
 import { IncomeReceivedEvent } from '../../events/income.events';
 
 export interface RecordIncomeCommand {
@@ -41,7 +41,7 @@ export class RecordIncomeUseCase {
 
     // Publish income.received event
     const event: IncomeReceivedEvent = {
-      eventId: uuidv4(),
+      eventId: generateUUID(),
       eventType: 'income.received',
       timestamp: formatDate(new Date(), DateFormats.ISO_DATETIME),
       version: '1.0',

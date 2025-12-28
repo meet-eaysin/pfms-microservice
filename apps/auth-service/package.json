@@ -31,7 +31,9 @@
   },
   "dependencies": {
     "@pfms/config": "workspace:*",
+    "@pfms/errors": "workspace:*",
     "@pfms/event-bus": "workspace:*",
+    "@pfms/schema": "workspace:*",
     "@pfms/types": "workspace:*",
     "@pfms/utils": "workspace:*",
     "amqplib": "^0.10.9",

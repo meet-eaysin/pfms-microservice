@@ -1,4 +1,5 @@
-import { UUID, Currency, ISODateString, Decimal, Status } from './common';
+import { UUID, Currency, ISODateString, Decimal } from './common';
+import { Status } from './enums';
 
 /**
  * Expense Types

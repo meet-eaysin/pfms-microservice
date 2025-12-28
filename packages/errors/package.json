@@ -1,0 +1,20 @@
+{
+  "name": "@pfms/errors",
+  "version": "1.0.0",
+  "description": "Standardized error handling for PFMS microservices",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@pfms/typescript-config": "workspace:*",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.5.2"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

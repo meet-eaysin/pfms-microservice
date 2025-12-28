@@ -1,7 +1,7 @@
 import type { Router, Request, Response } from 'express';
 import { Router as ExpressRouter } from 'express';
 import type { PrismaClient } from '@prisma/client';
-import { createLogger } from '@pfms/utils';
+import { createLogger } from '@pfms/config';
 
 const logger = createLogger('HealthRoutes');
 
