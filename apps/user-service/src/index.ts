@@ -12,11 +12,11 @@ import { loadUserServiceConfig } from '@/config';
 import { createServiceContainer } from '@/infrastructure/di/container';
 
 // Routes
-import { createHealthRouter } from '@/interfaces/http/routes/health.routes';
-import { createProfileRouter } from '@/interfaces/http/routes/profile.routes';
-import { createPreferencesRouter } from '@/interfaces/http/routes/preferences.routes';
-import { createFamilyRouter } from '@/interfaces/http/routes/family.routes';
-import { errorHandler } from '@/interfaces/http/middleware/error-handler.middleware';
+import { createHealthRouter } from '@/presentation/routes/health.routes';
+import { createProfileRouter } from '@/presentation/routes/profile.routes';
+import { createPreferencesRouter } from '@/presentation/routes/preferences.routes';
+import { createFamilyRouter } from '@/presentation/routes/family.routes';
+import { errorHandler } from '@/presentation/middleware/error-handler.middleware';
 
 // Load environment variables
 dotenv.config();

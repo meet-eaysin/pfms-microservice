@@ -3,7 +3,7 @@ import { IExpenseRepository } from '../../../domain/interfaces/expense.repositor
 import { Expense } from '../../../domain/entities/expense.model';
 import { parseISO, formatDate, DateFormats } from '@pfms/date';
 import { RabbitMQEventBus } from '@pfms/event-bus';
-import { ExpenseCreatedEvent } from '../../events/expense.events';
+import { ExpenseCreatedEvent } from '@/application/events/expense.events';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface CreateExpenseCommand {

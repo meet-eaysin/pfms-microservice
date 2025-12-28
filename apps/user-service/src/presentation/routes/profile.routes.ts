@@ -7,12 +7,9 @@ import type { UploadAvatarUseCase } from '@/application/use-cases/profile/upload
 import {
   authMiddleware,
   type IAuthenticatedRequest,
-} from '@/interfaces/http/middleware/auth.middleware';
-import { validateBody } from '@/interfaces/http/middleware/validation.middleware';
-import {
-  uploadSingle,
-  handleMulterError,
-} from '@/interfaces/http/middleware/file-upload.middleware';
+} from '@/presentation/middleware/auth.middleware';
+import { validateBody } from '@/presentation/middleware/validation.middleware';
+import { uploadSingle, handleMulterError } from '@/presentation/middleware/file-upload.middleware';
 import { UpdateProfileDto } from '@/application/dto/user.dto';
 
 interface IProfileRouterDeps {
