@@ -30,13 +30,6 @@ export function createAuthRouter(deps: IAuthRouterDependencies): Router {
   const router = ExpressRouter();
   const authMw = authMiddleware({ authService: deps.authService });
 
-  // ============================================
-  // Better-Auth Handler (Catch-all)
-  // ============================================
-  // This handles ALL better-auth endpoints (signup, signin, OAuth, etc.)
-  // Must be mounted BEFORE express.json() middleware
-  // See: https://www.better-auth.com/docs/integrations/express
-
   router.all('/*', async (req: Request, res: Response): Promise<void> => {
     try {
       await deps.betterAuthAdapter.handleRequest(req, res);
@@ -45,11 +38,6 @@ export function createAuthRouter(deps: IAuthRouterDependencies): Router {
       res.status(500).json({ error: 'Authentication error' });
     }
   });
-
-  // ============================================
-  // Custom Session Management Endpoints
-  // ============================================
-  // These use fromNodeHeaders to properly convert Express headers
 
   router.get(
     '/session',
