@@ -6,7 +6,7 @@ import { GetNetWorthUseCase } from '../../application/use-cases/analytics/get-ne
 export class AnalyticsController {
   constructor(
     private readonly getBalanceSheetUseCase: GetBalanceSheetUseCase,
-    private readonly getNetWorthUseCase: GetNetWorthUseCase,
+    private readonly getNetWorthUseCase: GetNetWorthUseCase
   ) {}
 
   @Get('balance-sheet')
@@ -24,7 +24,8 @@ export class AnalyticsController {
   private extractUserId(authHeader: string): string {
     if (!authHeader) throw new BadRequestException('Authorization header required');
     const [bearer, token] = authHeader.split(' ');
-    if (bearer !== 'Bearer' || !token) throw new BadRequestException('Invalid authorization header');
+    if (bearer !== 'Bearer' || !token)
+      throw new BadRequestException('Invalid authorization header');
     return token;
   }
 }

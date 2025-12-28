@@ -17,6 +17,6 @@ export class Account {
     public readonly balance: number,
     public readonly isMutable: boolean,
     public readonly createdAt: Date,
-    public readonly updatedAt: Date,
+    public readonly updatedAt: Date
   ) {}
 }

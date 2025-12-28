@@ -24,7 +24,7 @@ export class PostEntryUseCase {
     @Inject('IJournalEntryRepository')
     private readonly entryRepository: IJournalEntryRepository,
     @Inject('IAccountRepository')
-    private readonly accountRepository: IAccountRepository,
+    private readonly accountRepository: IAccountRepository
   ) {}
 
   async execute(command: PostEntryCommand): Promise<JournalEntry> {
@@ -42,7 +42,7 @@ export class PostEntryUseCase {
 
     if (Math.abs(totalDebits - totalCredits) > 0.01) {
       throw new BadRequestException(
-        `Entry is not balanced: Debits=${totalDebits}, Credits=${totalCredits}`,
+        `Entry is not balanced: Debits=${totalDebits}, Credits=${totalCredits}`
       );
     }
 
@@ -61,7 +61,7 @@ export class PostEntryUseCase {
       description: command.description,
       reference: command.reference || null,
       source: EntrySource.MANUAL,
-      lines: command.lines.map(line => ({
+      lines: command.lines.map((line) => ({
         id: '', // Will be generated
         entryId: '', // Will be set
         accountId: line.accountId,
@@ -76,7 +76,7 @@ export class PostEntryUseCase {
       if (!account) continue;
 
       let newBalance = account.balance;
-      
+
       // Asset/Expense: Debit increases, Credit decreases
       // Liability/Revenue/Equity: Credit increases, Debit decreases
       if (account.type === 'ASSET' || account.type === 'EXPENSE') {

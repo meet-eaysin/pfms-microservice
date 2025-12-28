@@ -13,7 +13,7 @@ export interface LogHabitCommand {
 export class LogHabitUseCase {
   constructor(
     @Inject('IHabitRepository')
-    private readonly habitRepository: IHabitRepository,
+    private readonly habitRepository: IHabitRepository
   ) {}
 
   async execute(command: LogHabitCommand): Promise<HabitLog> {

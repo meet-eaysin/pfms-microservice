@@ -7,7 +7,7 @@ import { CreateCategoryDto } from '../../application/dto/category/category.dto';
 export class CategoryController {
   constructor(
     private readonly createCategoryUseCase: CreateCategoryUseCase,
-    private readonly getCategoriesUseCase: GetCategoriesUseCase,
+    private readonly getCategoriesUseCase: GetCategoriesUseCase
   ) {}
 
   @Post()

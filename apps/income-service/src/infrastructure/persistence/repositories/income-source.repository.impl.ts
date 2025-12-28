@@ -16,11 +16,13 @@ export class PrismaIncomeSourceRepository implements IIncomeSourceRepository {
       prismaSource.currency,
       prismaSource.paySchedule,
       prismaSource.createdAt,
-      prismaSource.updatedAt,
+      prismaSource.updatedAt
     );
   }
 
-  async create(source: Omit<IncomeSource, 'id' | 'createdAt' | 'updatedAt'>): Promise<IncomeSource> {
+  async create(
+    source: Omit<IncomeSource, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<IncomeSource> {
     const created = await this.prisma.incomeSource.create({
       data: {
         userId: source.userId,
@@ -35,7 +37,7 @@ export class PrismaIncomeSourceRepository implements IIncomeSourceRepository {
 
   async findAll(userId: string): Promise<IncomeSource[]> {
     const sources = await this.prisma.incomeSource.findMany({ where: { userId } });
-    return sources.map(s => this.toDomain(s));
+    return sources.map((s) => this.toDomain(s));
   }
 
   async findById(id: string): Promise<IncomeSource | null> {
@@ -43,7 +45,10 @@ export class PrismaIncomeSourceRepository implements IIncomeSourceRepository {
     return source ? this.toDomain(source) : null;
   }
 
-  async update(id: string, data: Partial<Omit<IncomeSource, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>): Promise<IncomeSource> {
+  async update(
+    id: string,
+    data: Partial<Omit<IncomeSource, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>
+  ): Promise<IncomeSource> {
     const updated = await this.prisma.incomeSource.update({
       where: { id },
       data: {

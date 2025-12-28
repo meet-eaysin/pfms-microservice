@@ -7,6 +7,6 @@ export class IncomeTransaction {
     public readonly isTaxable: boolean,
     public readonly notes: string | null,
     public readonly createdAt: Date,
-    public readonly updatedAt: Date,
+    public readonly updatedAt: Date
   ) {}
 }

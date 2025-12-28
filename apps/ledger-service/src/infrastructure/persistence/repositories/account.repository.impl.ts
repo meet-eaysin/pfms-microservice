@@ -18,7 +18,7 @@ export class PrismaAccountRepository implements IAccountRepository {
       Number(prismaAccount.balance),
       prismaAccount.isMutable,
       prismaAccount.createdAt,
-      prismaAccount.updatedAt,
+      prismaAccount.updatedAt
     );
   }
 
@@ -44,7 +44,7 @@ export class PrismaAccountRepository implements IAccountRepository {
         ...(type && { type }),
       },
     });
-    return accounts.map(a => this.toDomain(a));
+    return accounts.map((a) => this.toDomain(a));
   }
 
   async findById(id: string): Promise<Account | null> {

@@ -19,6 +19,6 @@ export class IncomeSource {
     public readonly currency: string,
     public readonly paySchedule: PaySchedule | null,
     public readonly createdAt: Date,
-    public readonly updatedAt: Date,
+    public readonly updatedAt: Date
   ) {}
 }

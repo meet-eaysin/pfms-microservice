@@ -15,7 +15,7 @@ export interface CreateAccountCommand {
 export class CreateAccountUseCase {
   constructor(
     @Inject('IAccountRepository')
-    private readonly repository: IAccountRepository,
+    private readonly repository: IAccountRepository
   ) {}
 
   async execute(command: CreateAccountCommand): Promise<Account> {

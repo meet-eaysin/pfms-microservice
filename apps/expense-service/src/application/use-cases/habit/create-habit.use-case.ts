@@ -12,7 +12,7 @@ export interface CreateHabitCommand {
 export class CreateHabitUseCase {
   constructor(
     @Inject('IHabitRepository')
-    private readonly habitRepository: IHabitRepository,
+    private readonly habitRepository: IHabitRepository
   ) {}
 
   async execute(command: CreateHabitCommand): Promise<Habit> {

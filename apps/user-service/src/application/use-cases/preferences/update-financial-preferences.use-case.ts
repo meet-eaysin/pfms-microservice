@@ -1,7 +1,4 @@
-import type {
-  IUserRepository,
-  ICacheService,
-} from '@/domain/interfaces/repository.interface';
+import type { IUserRepository, ICacheService } from '@/domain/interfaces/repository.interface';
 import type { IFinancialPreferences } from '@/domain/entities/user.entity';
 import type { EventPublisher } from '@/infrastructure/messaging/event.publisher';
 import { Currency } from '@/domain/value-objects/currency.vo';

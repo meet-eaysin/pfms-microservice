@@ -6,7 +6,7 @@ import { Category } from '../../../domain/entities/category.model';
 export class GetCategoriesUseCase {
   constructor(
     @Inject('ICategoryRepository')
-    private readonly categoryRepository: ICategoryRepository,
+    private readonly categoryRepository: ICategoryRepository
   ) {}
 
   async execute(): Promise<Category[]> {

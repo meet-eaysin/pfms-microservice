@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Put, Delete, Body, Query, Param, Headers, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Query,
+  Param,
+  Headers,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateExpenseUseCase } from '../../application/use-cases/expense/create-expense.use-case';
 import { GetExpensesUseCase } from '../../application/use-cases/expense/get-expenses.use-case';
 import { UpdateExpenseUseCase } from '../../application/use-cases/expense/update-expense.use-case';
@@ -11,7 +22,7 @@ export class ExpenseController {
     private readonly createExpenseUseCase: CreateExpenseUseCase,
     private readonly getExpensesUseCase: GetExpensesUseCase,
     private readonly updateExpenseUseCase: UpdateExpenseUseCase,
-    private readonly deleteExpenseUseCase: DeleteExpenseUseCase,
+    private readonly deleteExpenseUseCase: DeleteExpenseUseCase
   ) {}
 
   @Post()
@@ -25,7 +36,7 @@ export class ExpenseController {
     @Headers('authorization') authHeader: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
-    @Query('categoryId') categoryId?: string,
+    @Query('categoryId') categoryId?: string
   ) {
     const userId = this.extractUserId(authHeader);
     return this.getExpensesUseCase.execute({ userId, startDate, endDate, categoryId });
@@ -45,7 +56,8 @@ export class ExpenseController {
   private extractUserId(authHeader: string): string {
     if (!authHeader) throw new BadRequestException('Authorization header required');
     const [bearer, token] = authHeader.split(' ');
-    if (bearer !== 'Bearer' || !token) throw new BadRequestException('Invalid authorization header');
+    if (bearer !== 'Bearer' || !token)
+      throw new BadRequestException('Invalid authorization header');
     return token;
   }
 }

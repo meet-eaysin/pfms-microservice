@@ -15,7 +15,7 @@ export interface BalanceSheet {
 export class GetBalanceSheetUseCase {
   constructor(
     @Inject('IAccountRepository')
-    private readonly accountRepository: IAccountRepository,
+    private readonly accountRepository: IAccountRepository
   ) {}
 
   async execute(userId: string): Promise<BalanceSheet> {
@@ -28,9 +28,9 @@ export class GetBalanceSheetUseCase {
     const totalEquity = equity.reduce((sum, acc) => sum + acc.balance, 0);
 
     return {
-      assets: assets.map(a => ({ name: a.name, balance: a.balance })),
-      liabilities: liabilities.map(l => ({ name: l.name, balance: l.balance })),
-      equity: equity.map(e => ({ name: e.name, balance: e.balance })),
+      assets: assets.map((a) => ({ name: a.name, balance: a.balance })),
+      liabilities: liabilities.map((l) => ({ name: l.name, balance: l.balance })),
+      equity: equity.map((e) => ({ name: e.name, balance: e.balance })),
       totalAssets,
       totalLiabilities,
       totalEquity,

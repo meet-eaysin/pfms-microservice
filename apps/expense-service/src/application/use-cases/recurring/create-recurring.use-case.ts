@@ -16,12 +16,12 @@ export interface CreateRecurringCommand {
 export class CreateRecurringUseCase {
   constructor(
     @Inject('IRecurringRepository')
-    private readonly recurringRepository: IRecurringRepository,
+    private readonly recurringRepository: IRecurringRepository
   ) {}
 
   async execute(command: CreateRecurringCommand): Promise<RecurringExpense> {
     const startDate = parseISO(command.startDate);
-    
+
     return this.recurringRepository.create({
       userId: command.userId,
       amount: command.amount,

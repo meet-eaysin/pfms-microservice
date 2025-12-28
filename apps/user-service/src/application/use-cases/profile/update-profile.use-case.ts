@@ -1,7 +1,4 @@
-import type {
-  IUserRepository,
-  ICacheService,
-} from '@/domain/interfaces/repository.interface';
+import type { IUserRepository, ICacheService } from '@/domain/interfaces/repository.interface';
 import type { IUserProfile } from '@/domain/entities/user.entity';
 import type { EventPublisher } from '@/infrastructure/messaging/event.publisher';
 

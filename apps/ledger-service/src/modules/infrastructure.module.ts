@@ -18,10 +18,6 @@ import { PrismaJournalEntryRepository } from '../infrastructure/persistence/repo
       useClass: PrismaJournalEntryRepository,
     },
   ],
-  exports: [
-    PrismaService,
-    'IAccountRepository',
-    'IJournalEntryRepository',
-  ],
+  exports: [PrismaService, 'IAccountRepository', 'IJournalEntryRepository'],
 })
 export class InfrastructureModule {}

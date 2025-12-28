@@ -17,11 +17,13 @@ export class PrismaIncomeTransactionRepository implements IIncomeTransactionRepo
       prismaTransaction.isTaxable,
       prismaTransaction.notes,
       prismaTransaction.createdAt,
-      prismaTransaction.updatedAt,
+      prismaTransaction.updatedAt
     );
   }
 
-  async create(transaction: Omit<IncomeTransaction, 'id' | 'createdAt' | 'updatedAt'>): Promise<IncomeTransaction> {
+  async create(
+    transaction: Omit<IncomeTransaction, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<IncomeTransaction> {
     const created = await this.prisma.incomeTransaction.create({
       data: {
         sourceId: transaction.sourceId,
@@ -34,7 +36,11 @@ export class PrismaIncomeTransactionRepository implements IIncomeTransactionRepo
     return this.toDomain(created);
   }
 
-  async findAll(filters: { sourceId?: string; startDate?: Date; endDate?: Date }): Promise<IncomeTransaction[]> {
+  async findAll(filters: {
+    sourceId?: string;
+    startDate?: Date;
+    endDate?: Date;
+  }): Promise<IncomeTransaction[]> {
     const where: Prisma.IncomeTransactionWhereInput = {};
 
     if (filters.sourceId) {
@@ -45,7 +51,7 @@ export class PrismaIncomeTransactionRepository implements IIncomeTransactionRepo
     }
 
     const transactions = await this.prisma.incomeTransaction.findMany({ where });
-    return transactions.map(t => this.toDomain(t));
+    return transactions.map((t) => this.toDomain(t));
   }
 
   async findById(id: string): Promise<IncomeTransaction | null> {

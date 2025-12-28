@@ -16,7 +16,7 @@ export interface NetWorth {
 export class GetNetWorthUseCase {
   constructor(
     @Inject('IAccountRepository')
-    private readonly accountRepository: IAccountRepository,
+    private readonly accountRepository: IAccountRepository
   ) {}
 
   async execute(userId: string): Promise<NetWorth> {
@@ -27,12 +27,12 @@ export class GetNetWorthUseCase {
     const totalLiabilities = liabilities.reduce((sum, acc) => sum + acc.balance, 0);
 
     const assetBreakdown: { [key: string]: number } = {};
-    assets.forEach(a => {
+    assets.forEach((a) => {
       assetBreakdown[a.name] = a.balance;
     });
 
     const liabilityBreakdown: { [key: string]: number } = {};
-    liabilities.forEach(l => {
+    liabilities.forEach((l) => {
       liabilityBreakdown[l.name] = l.balance;
     });
 

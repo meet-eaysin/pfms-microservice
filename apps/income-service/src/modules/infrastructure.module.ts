@@ -18,10 +18,6 @@ import { PrismaIncomeTransactionRepository } from '../infrastructure/persistence
       useClass: PrismaIncomeTransactionRepository,
     },
   ],
-  exports: [
-    PrismaService,
-    'IIncomeSourceRepository',
-    'IIncomeTransactionRepository',
-  ],
+  exports: [PrismaService, 'IIncomeSourceRepository', 'IIncomeTransactionRepository'],
 })
 export class InfrastructureModule {}

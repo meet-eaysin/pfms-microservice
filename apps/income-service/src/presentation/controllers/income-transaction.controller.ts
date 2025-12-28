@@ -4,9 +4,7 @@ import { RecordIncomeDto } from '@/application/dto/income-transaction.dto';
 
 @Controller('income/transactions')
 export class IncomeTransactionController {
-  constructor(
-    private readonly recordIncomeUseCase: RecordIncomeUseCase,
-  ) {}
+  constructor(private readonly recordIncomeUseCase: RecordIncomeUseCase) {}
 
   @Post()
   async record(@Body() dto: RecordIncomeDto) {

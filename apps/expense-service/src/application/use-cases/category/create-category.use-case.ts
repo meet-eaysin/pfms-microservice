@@ -12,7 +12,7 @@ export interface CreateCategoryCommand {
 export class CreateCategoryUseCase {
   constructor(
     @Inject('ICategoryRepository')
-    private readonly categoryRepository: ICategoryRepository,
+    private readonly categoryRepository: ICategoryRepository
   ) {}
 
   async execute(command: CreateCategoryCommand): Promise<Category> {

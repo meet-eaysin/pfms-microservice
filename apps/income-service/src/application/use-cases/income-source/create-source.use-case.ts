@@ -14,7 +14,7 @@ export interface CreateSourceCommand {
 export class CreateSourceUseCase {
   constructor(
     @Inject('IIncomeSourceRepository')
-    private readonly repository: IIncomeSourceRepository,
+    private readonly repository: IIncomeSourceRepository
   ) {}
 
   async execute(command: CreateSourceCommand): Promise<IncomeSource> {

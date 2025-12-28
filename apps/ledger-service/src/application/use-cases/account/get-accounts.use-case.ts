@@ -6,7 +6,7 @@ import { Account, AccountType } from '@/domain/entities/account.model';
 export class GetAccountsUseCase {
   constructor(
     @Inject('IAccountRepository')
-    private readonly repository: IAccountRepository,
+    private readonly repository: IAccountRepository
   ) {}
 
   async execute(userId: string, type?: AccountType): Promise<Account[]> {

@@ -16,7 +16,7 @@ export class PostingLine {
     public readonly entryId: string,
     public readonly accountId: string,
     public readonly amount: number,
-    public readonly direction: Direction,
+    public readonly direction: Direction
   ) {}
 }
 
@@ -29,6 +29,6 @@ export class JournalEntry {
     public readonly reference: string | null,
     public readonly source: EntrySource,
     public readonly lines: PostingLine[],
-    public readonly createdAt: Date,
+    public readonly createdAt: Date
   ) {}
 }

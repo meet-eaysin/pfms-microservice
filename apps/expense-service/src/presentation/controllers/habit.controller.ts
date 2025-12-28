@@ -7,7 +7,7 @@ import { CreateHabitDto, LogHabitDto } from '../../application/dto/habit/habit.d
 export class HabitController {
   constructor(
     private readonly createHabitUseCase: CreateHabitUseCase,
-    private readonly logHabitUseCase: LogHabitUseCase,
+    private readonly logHabitUseCase: LogHabitUseCase
   ) {}
 
   @Post()
@@ -24,7 +24,8 @@ export class HabitController {
   private extractUserId(authHeader: string): string {
     if (!authHeader) throw new BadRequestException('Authorization header required');
     const [bearer, token] = authHeader.split(' ');
-    if (bearer !== 'Bearer' || !token) throw new BadRequestException('Invalid authorization header');
+    if (bearer !== 'Bearer' || !token)
+      throw new BadRequestException('Invalid authorization header');
     return token;
   }
 }
