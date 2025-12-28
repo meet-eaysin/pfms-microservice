@@ -89,5 +89,8 @@
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1"
     }
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   }
 }

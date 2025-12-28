@@ -86,6 +86,9 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
+  },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   }

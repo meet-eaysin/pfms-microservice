@@ -358,6 +358,8 @@ services:
       -c effective_io_concurrency=200
     volumes:
       - postgres_expense_data:/var/lib/postgresql/data
+    ports:
+      - '5434:5432'
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_EXPENSE_USER:-postgres}']
       interval: 10s
@@ -379,6 +381,8 @@ services:
         -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
     volumes:
       - postgres_user_data:/var/lib/postgresql/data
+    ports:
+      - '5435:5432'
     # Port exposed only within Docker network (internal access only)
     # Services connect via container name 'postgres-user:5432'
     healthcheck:
@@ -402,6 +406,8 @@ services:
         -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
     volumes:
       - postgres_income_data:/var/lib/postgresql/data
+    ports:
+      - '5436:5432'
     # Port exposed only within Docker network (internal access only)
     # Services connect via container name 'postgres-income:5432'
     healthcheck:
@@ -425,6 +431,8 @@ services:
         -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
     volumes:
       - postgres_investment_data:/var/lib/postgresql/data
+    ports:
+      - '5438:5432'
     # Port exposed only within Docker network (internal access only)
     # Services connect via container name 'postgres-investment:5432'
     healthcheck:
@@ -448,6 +456,8 @@ services:
         -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
     volumes:
       - postgres_loan_data:/var/lib/postgresql/data
+    ports:
+      - '5439:5432'
     # Port exposed only within Docker network (internal access only)
     # Services connect via container name 'postgres-loan:5432'
     healthcheck:
@@ -479,6 +489,8 @@ services:
       -c effective_io_concurrency=200
     volumes:
       - postgres_ledger_data:/var/lib/postgresql/data
+    ports:
+      - '5437:5432'
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_LEDGER_USER:-postgres}']
       interval: 10s
@@ -507,6 +519,8 @@ services:
       -c effective_io_concurrency=200
     volumes:
       - postgres_planning_data:/var/lib/postgresql/data
+    ports:
+      - '5440:5432'
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_PLANNING_USER:-postgres}']
       interval: 10s
