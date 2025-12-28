@@ -12,9 +12,7 @@
   "dependencies": {
     "@pfms/types": "workspace:*",
     "bcrypt": "^5.1.1",
-    "date-fns": "^3.0.6",
     "jsonwebtoken": "^9.0.2",
-    "winston": "^3.11.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
