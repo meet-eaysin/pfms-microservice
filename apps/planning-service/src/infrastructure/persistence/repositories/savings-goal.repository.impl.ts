@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ISavingsGoalRepository } from '../../../core/domain/repositories/savings-goal.repository';
-import { SavingsGoal } from '../../../core/domain/models/savings-goal.model';
+import { ISavingsGoalRepository } from '../../../domain/interfaces/savings-goal.repository';
+import { SavingsGoal } from '../../../domain/entities/savings-goal.model';
 import { PrismaService } from '../prisma.service';
 import { SavingsGoal as PrismaSavingsGoal } from '@prisma/client';
 

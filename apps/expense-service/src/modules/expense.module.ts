@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ExpenseController } from '../presentation/http/controllers/expense.controller';
-import { CreateExpenseUseCase } from '../core/application/use-cases/expense/create-expense.use-case';
-import { GetExpensesUseCase } from '../core/application/use-cases/expense/get-expenses.use-case';
-import { UpdateExpenseUseCase } from '../core/application/use-cases/expense/update-expense.use-case';
-import { DeleteExpenseUseCase } from '../core/application/use-cases/expense/delete-expense.use-case';
+import { CreateExpenseUseCase } from '../application/use-cases/expense/create-expense.use-case';
+import { GetExpensesUseCase } from '../application/use-cases/expense/get-expenses.use-case';
+import { UpdateExpenseUseCase } from '../application/use-cases/expense/update-expense.use-case';
+import { DeleteExpenseUseCase } from '../application/use-cases/expense/delete-expense.use-case';
 import { RabbitMQEventBus } from '@pfms/event-bus';
 
 @Module({

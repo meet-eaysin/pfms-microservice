@@ -3,12 +3,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AccountController } from '../presentation/http/controllers/account.controller';
 import { EntryController } from '../presentation/http/controllers/entry.controller';
 import { AnalyticsController } from '../presentation/http/controllers/analytics.controller';
-import { CreateAccountUseCase } from '../core/application/use-cases/account/create-account.use-case';
-import { GetAccountsUseCase } from '../core/application/use-cases/account/get-accounts.use-case';
-import { PostEntryUseCase } from '../core/application/use-cases/entry/post-entry.use-case';
-import { GetEntriesUseCase } from '../core/application/use-cases/entry/get-entries.use-case';
-import { GetBalanceSheetUseCase } from '../core/application/use-cases/analytics/get-balance-sheet.use-case';
-import { GetNetWorthUseCase } from '../core/application/use-cases/analytics/get-net-worth.use-case';
+import { CreateAccountUseCase } from '../application/use-cases/account/create-account.use-case';
+import { GetAccountsUseCase } from '../application/use-cases/account/get-accounts.use-case';
+import { PostEntryUseCase } from '../application/use-cases/entry/post-entry.use-case';
+import { GetEntriesUseCase } from '../application/use-cases/entry/get-entries.use-case';
+import { GetBalanceSheetUseCase } from '../application/use-cases/analytics/get-balance-sheet.use-case';
+import { GetNetWorthUseCase } from '../application/use-cases/analytics/get-net-worth.use-case';
 import { LedgerEventHandler } from '../infrastructure/messaging/event-subscriber.service';
 import { RabbitMQEventBus } from '@pfms/event-bus';
 

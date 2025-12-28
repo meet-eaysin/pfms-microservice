@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IBudgetRepository } from '../../../core/domain/repositories/budget.repository';
-import { Budget, BudgetPeriod } from '../../../core/domain/models/budget.model';
+import { IBudgetRepository } from '../../../domain/interfaces/budget.repository';
+import { Budget, BudgetPeriod } from '../../../domain/entities/budget.model';
 import { PrismaService } from '../prisma.service';
 import { Budget as PrismaBudget, BudgetPeriod as PrismaBudgetPeriod } from '@prisma/client';
 

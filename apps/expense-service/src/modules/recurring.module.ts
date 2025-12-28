@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { RecurringController } from '../presentation/http/controllers/recurring.controller';
-import { CreateRecurringUseCase } from '../core/application/use-cases/recurring/create-recurring.use-case';
+import { CreateRecurringUseCase } from '../application/use-cases/recurring/create-recurring.use-case';
 
 @Module({
   controllers: [RecurringController],

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IHabitRepository } from '../../../core/domain/repositories/habit.repository';
-import { Habit, HabitLog } from '../../../core/domain/models/habit.model';
+import { IHabitRepository } from '../../../domain/interfaces/habit.repository';
+import { Habit, HabitLog } from '../../../domain/entities/habit.model';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()

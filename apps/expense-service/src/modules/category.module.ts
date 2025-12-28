@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CategoryController } from '../presentation/http/controllers/category.controller';
-import { CreateCategoryUseCase } from '../core/application/use-cases/category/create-category.use-case';
-import { GetCategoriesUseCase } from '../core/application/use-cases/category/get-categories.use-case';
+import { CreateCategoryUseCase } from '../application/use-cases/category/create-category.use-case';
+import { GetCategoriesUseCase } from '../application/use-cases/category/get-categories.use-case';
 
 @Module({
   controllers: [CategoryController],

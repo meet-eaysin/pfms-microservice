@@ -5,12 +5,12 @@ import {
   TriggerType as PrismaTriggerType,
   ActionType as PrismaActionType,
 } from '@prisma/client';
-import { IAutomationRuleRepository } from '../../../core/domain/repositories/automation-rule.repository';
+import { IAutomationRuleRepository } from '../../../domain/interfaces/automation-rule.repository';
 import {
   AutomationRule,
   TriggerType,
   ActionType,
-} from '../../../core/domain/models/automation-rule.model';
+} from '../../../domain/entities/automation-rule.model';
 import { PrismaService } from '../prisma.service';
 
 const mapTriggerType = (t: PrismaTriggerType): TriggerType => {

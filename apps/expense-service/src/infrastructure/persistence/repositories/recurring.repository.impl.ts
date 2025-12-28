@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IRecurringRepository } from '../../../core/domain/repositories/recurring.repository';
-import { RecurringExpense, Frequency } from '../../../core/domain/models/recurring-expense.model';
+import { IRecurringRepository } from '../../../domain/interfaces/recurring.repository';
+import { RecurringExpense, Frequency } from '../../../domain/entities/recurring-expense.model';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()

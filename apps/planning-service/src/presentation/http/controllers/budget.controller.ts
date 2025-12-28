@@ -1,8 +1,8 @@
 import { Controller, Post, Get, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateBudgetUseCase } from '../../../core/application/use-cases/budget/create-budget.use-case';
-import { GetBudgetsUseCase } from '../../../core/application/use-cases/budget/get-budgets.use-case';
-import { CreateBudgetDto } from '../../../core/application/dto/budget/create-budget.dto';
+import { CreateBudgetUseCase } from '../../../application/use-cases/budget/create-budget.use-case';
+import { GetBudgetsUseCase } from '../../../application/use-cases/budget/get-budgets.use-case';
+import { CreateBudgetDto } from '../../../application/dto/budget/create-budget.dto';
 
 @ApiTags('budgets')
 @Controller('api/v1/planning/budgets')

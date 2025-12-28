@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IExpenseRepository } from '../../../core/domain/repositories/expense.repository';
-import { Expense } from '../../../core/domain/models/expense.model';
+import { IExpenseRepository } from '../../../domain/interfaces/expense.repository';
+import { Expense } from '../../../domain/entities/expense.model';
 import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
 

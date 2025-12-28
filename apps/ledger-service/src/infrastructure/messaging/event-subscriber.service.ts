@@ -1,5 +1,5 @@
-import { PostEntryUseCase } from '@/core/application/use-cases';
-import { Direction } from '@/core/domain/models/journal-entry.model';
+import { PostEntryUseCase } from '@/application/use-cases';
+import { Direction } from '@/domain/entities/journal-entry.model';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { RabbitMQEventBus, BaseEvent } from '@pfms/event-bus';
 

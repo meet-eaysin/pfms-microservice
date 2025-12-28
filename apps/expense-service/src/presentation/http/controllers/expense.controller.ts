@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Put, Delete, Body, Query, Param, Headers, BadRequestException } from '@nestjs/common';
-import { CreateExpenseUseCase } from '../../../core/application/use-cases/expense/create-expense.use-case';
-import { GetExpensesUseCase } from '../../../core/application/use-cases/expense/get-expenses.use-case';
-import { UpdateExpenseUseCase } from '../../../core/application/use-cases/expense/update-expense.use-case';
-import { DeleteExpenseUseCase } from '../../../core/application/use-cases/expense/delete-expense.use-case';
-import { CreateExpenseDto, UpdateExpenseDto } from '../../../core/application/dto/expense/expense.dto';
+import { CreateExpenseUseCase } from '../../../application/use-cases/expense/create-expense.use-case';
+import { GetExpensesUseCase } from '../../../application/use-cases/expense/get-expenses.use-case';
+import { UpdateExpenseUseCase } from '../../../application/use-cases/expense/update-expense.use-case';
+import { DeleteExpenseUseCase } from '../../../application/use-cases/expense/delete-expense.use-case';
+import { CreateExpenseDto, UpdateExpenseDto } from '../../../application/dto/expense/expense.dto';
 
 @Controller('expenses')
 export class ExpenseController {
