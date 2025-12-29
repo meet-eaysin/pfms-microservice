@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { IHabitRepository } from '../../../domain/interfaces/habit.repository';
 import { Habit, HabitLog } from '../../../domain/entities/habit.model';
 import { PrismaService } from '../prisma.service';
+import { Habit as PrismaHabit, HabitLog as PrismaHabitLog } from '@prisma/client';
 
 @Injectable()
 export class PrismaHabitRepository implements IHabitRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private toDomainHabit(prismaHabit: any): Habit {
+  private toDomainHabit(prismaHabit: PrismaHabit): Habit {
     return new Habit(
       prismaHabit.id,
       prismaHabit.userId,
@@ -18,7 +19,7 @@ export class PrismaHabitRepository implements IHabitRepository {
     );
   }
 
-  private toDomainLog(prismaLog: any): HabitLog {
+  private toDomainLog(prismaLog: PrismaHabitLog): HabitLog {
     return new HabitLog(
       prismaLog.id,
       prismaLog.habitId,

@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { IExpenseRepository } from '../../../domain/interfaces/expense.repository';
 import { Expense } from '../../../domain/entities/expense.model';
 import { PrismaService } from '../prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, Expense as PrismaExpense } from '@prisma/client';
 
 @Injectable()
 export class PrismaExpenseRepository implements IExpenseRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private toDomain(prismaExpense: any): Expense {
+  private toDomain(prismaExpense: PrismaExpense): Expense {
     return new Expense(
       prismaExpense.id,
       prismaExpense.userId,
