@@ -7,14 +7,20 @@ import {
   EntrySource,
 } from '@/domain/entities/journal-entry.model';
 import { PrismaService } from '../prisma.service';
+import {
+  JournalEntry as PrismaJournalEntry,
+  PostingLine as PrismaPostingLine,
+} from '@prisma/client';
+
+type JournalEntryWithLines = PrismaJournalEntry & { lines?: PrismaPostingLine[] };
 
 @Injectable()
 export class PrismaJournalEntryRepository implements IJournalEntryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private toDomain(prismaEntry: any): JournalEntry {
+  private toDomain(prismaEntry: JournalEntryWithLines): JournalEntry {
     const lines = (prismaEntry.lines || []).map(
-      (line: any) =>
+      (line: PrismaPostingLine) =>
         new PostingLine(
           line.id,
           line.entryId,
