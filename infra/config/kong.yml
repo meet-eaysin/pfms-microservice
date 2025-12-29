@@ -8,7 +8,7 @@ services:
   # Auth Service
   # ============================================
   - name: auth-service
-    url: http://auth-service:3001
+    url: http://host.docker.internal:3001
     protocol: http
     connect_timeout: 60000
     write_timeout: 60000
@@ -57,17 +57,17 @@ services:
           credentials: true
           max_age: 3600
 
-      - name: request-id
+      - name: correlation-id
         config:
-          header_name: X-Request-ID
-          echo_downstream: true
+          header_name: X-Correlation-ID
           generator: uuid
+          echo_downstream: true
 
   # ============================================
   # Expense Service
   # ============================================
   - name: expense-service
-    url: http://expense-service:3003
+    url: http://host.docker.internal:3003
     protocol: http
     connect_timeout: 60000
     write_timeout: 60000
@@ -116,11 +116,11 @@ services:
           credentials: true
           max_age: 3600
 
-      - name: request-id
+      - name: correlation-id
         config:
-          header_name: X-Request-ID
-          echo_downstream: true
+          header_name: X-Correlation-ID
           generator: uuid
+          echo_downstream: true
 
 # ============================================
 # Global Plugins
@@ -129,7 +129,7 @@ plugins:
   - name: correlation-id
     config:
       header_name: X-Correlation-ID
-      generator: uuid#counter
+      generator: uuid
       echo_downstream: true
 
   - name: request-size-limiting
@@ -142,5 +142,5 @@ plugins:
     enabled: false
     config:
       limits:
-        sms:
+        video:
           minute: 10
