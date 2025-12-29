@@ -1,20 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { IIncomeSourceRepository } from '@/domain/interfaces/income-source.repository';
-import { IncomeSource } from '@/domain/entities/income-source.model';
+import { IncomeSource, PaySchedule, IncomeType } from '@/domain/entities/income-source.model';
 import { PrismaService } from '../prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PrismaIncomeSourceRepository implements IIncomeSourceRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private toDomain(prismaSource: any): IncomeSource {
+  private toDomain(prismaSource: {
+    id: string;
+    userId: string;
+    name: string;
+    type: string;
+    currency: string;
+    paySchedule: Prisma.JsonValue;
+    createdAt: Date;
+    updatedAt: Date;
+  }): IncomeSource {
     return new IncomeSource(
       prismaSource.id,
       prismaSource.userId,
       prismaSource.name,
-      prismaSource.type,
+      prismaSource.type as IncomeType,
       prismaSource.currency,
-      prismaSource.paySchedule,
+      prismaSource.paySchedule as PaySchedule | null,
       prismaSource.createdAt,
       prismaSource.updatedAt
     );
@@ -29,7 +39,7 @@ export class PrismaIncomeSourceRepository implements IIncomeSourceRepository {
         name: source.name,
         type: source.type,
         currency: source.currency,
-        paySchedule: source.paySchedule as any,
+        paySchedule: source.paySchedule ?? Prisma.JsonNull,
       },
     });
     return this.toDomain(created);
@@ -55,7 +65,9 @@ export class PrismaIncomeSourceRepository implements IIncomeSourceRepository {
         ...(data.name !== undefined && { name: data.name }),
         ...(data.type !== undefined && { type: data.type }),
         ...(data.currency !== undefined && { currency: data.currency }),
-        ...(data.paySchedule !== undefined && { paySchedule: data.paySchedule as any }),
+        ...(data.paySchedule !== undefined && {
+          paySchedule: data.paySchedule ?? Prisma.JsonNull,
+        }),
       },
     });
     return this.toDomain(updated);
