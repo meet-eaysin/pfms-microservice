@@ -61,9 +61,12 @@ export class BetterAuthAdapter {
     const dynamicImport = new Function('specifier', 'return import(specifier)');
     const { betterAuth } = await dynamicImport('better-auth');
     const { toNodeHandler } = await dynamicImport('better-auth/node');
+    const { prismaAdapter } = await dynamicImport('better-auth/adapters/prisma');
 
     const auth = betterAuth({
-      database: prisma,
+      database: prismaAdapter(prisma, {
+        provider: 'postgresql',
+      }),
       secret: config.BETTER_AUTH_SECRET,
       emailAndPassword: {
         enabled: true,

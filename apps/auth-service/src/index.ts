@@ -289,7 +289,15 @@ async function bootstrap(): Promise<void> {
 // Error Handlers
 // ============================================
 process.on('unhandledRejection', (reason) => {
-  logger.error('Unhandled rejection', { reason });
+  if (reason instanceof Error) {
+    logger.error('Unhandled rejection', { 
+      message: reason.message,
+      stack: reason.stack,
+      name: reason.name
+    });
+  } else {
+    logger.error('Unhandled rejection', { reason });
+  }
   process.exit(1);
 });
 
