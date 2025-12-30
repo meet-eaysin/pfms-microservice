@@ -5,6 +5,7 @@ import { ExpenseModule } from './modules/expense.module';
 import { CategoryModule } from './modules/category.module';
 import { HabitModule } from './modules/habit.module';
 import { RecurringModule } from './modules/recurring.module';
+import { HealthController } from './presentation/controllers/health.controller';
 
 @Module({
   imports: [
@@ -17,5 +18,6 @@ import { RecurringModule } from './modules/recurring.module';
     HabitModule,
     RecurringModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}

@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { IRecurringRepository } from '../../../domain/interfaces/recurring.repository';
 import { RecurringExpense, Frequency } from '../../../domain/entities/recurring-expense.model';
 import { PrismaService } from '../prisma.service';
+import { RecurringExpense as PrismaRecurringExpense } from '@prisma/client';
 
 @Injectable()
 export class PrismaRecurringRepository implements IRecurringRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private toDomain(prismaRecurring: any): RecurringExpense {
+  private toDomain(prismaRecurring: PrismaRecurringExpense): RecurringExpense {
     return new RecurringExpense(
       prismaRecurring.id,
       prismaRecurring.userId,

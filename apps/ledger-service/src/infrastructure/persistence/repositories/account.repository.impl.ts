@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { IAccountRepository } from '@/domain/interfaces/account.repository';
 import { Account, AccountType } from '@/domain/entities/account.model';
 import { PrismaService } from '../prisma.service';
+import { Account as PrismaAccount } from '@prisma/client';
 
 @Injectable()
 export class PrismaAccountRepository implements IAccountRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private toDomain(prismaAccount: any): Account {
+  private toDomain(prismaAccount: PrismaAccount): Account {
     return new Account(
       prismaAccount.id,
       prismaAccount.userId,

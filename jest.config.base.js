@@ -25,6 +25,7 @@ module.exports = {
     '^@pfms/utils$': '<rootDir>/../../packages/utils/src/index.ts',
     '^@pfms/config$': '<rootDir>/../../packages/config/src/index.ts',
     '^@pfms/event-bus$': '<rootDir>/../../packages/event-bus/src/index.ts',
+    '^uuid$': require.resolve('uuid'),
   },
 
   // Coverage configuration

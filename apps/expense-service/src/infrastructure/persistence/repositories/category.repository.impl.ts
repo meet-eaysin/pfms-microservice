@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { ICategoryRepository } from '../../../domain/interfaces/category.repository';
 import { Category } from '../../../domain/entities/category.model';
 import { PrismaService } from '../prisma.service';
+import { Category as PrismaCategory } from '@prisma/client';
 
 @Injectable()
 export class PrismaCategoryRepository implements ICategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private toDomain(prismaCategory: any): Category {
+  private toDomain(prismaCategory: PrismaCategory): Category {
     return new Category(
       prismaCategory.id,
       prismaCategory.name,

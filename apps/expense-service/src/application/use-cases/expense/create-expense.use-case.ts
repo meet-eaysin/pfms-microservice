@@ -4,7 +4,7 @@ import { Expense } from '../../../domain/entities/expense.model';
 import { parseISO, formatDate, DateFormats } from '@pfms/date';
 import { RabbitMQEventBus } from '@pfms/event-bus';
 import { ExpenseCreatedEvent } from '@/application/events/expense.events';
-import { v4 as uuidv4 } from 'uuid';
+import { generateUUID } from '@pfms/utils';
 
 export interface CreateExpenseCommand {
   userId: string;
@@ -37,7 +37,7 @@ export class CreateExpenseUseCase {
 
     // Publish expense.created event
     const event: ExpenseCreatedEvent = {
-      eventId: uuidv4(),
+      eventId: generateUUID(),
       eventType: 'expense.created',
       timestamp: formatDate(new Date(), DateFormats.ISO_DATETIME),
       version: '1.0',

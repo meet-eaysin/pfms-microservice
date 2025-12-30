@@ -8,6 +8,7 @@ export enum IncomeType {
 export interface PaySchedule {
   frequency: 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly';
   day?: number;
+  [key: string]: string | number | undefined;
 }
 
 export class IncomeSource {

@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { IIncomeTransactionRepository } from '@/domain/interfaces/income-transaction.repository';
 import { IncomeTransaction } from '@/domain/entities/income-transaction.model';
 import { PrismaService } from '../prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, IncomeTransaction as PrismaIncomeTransaction } from '@prisma/client';
 
 @Injectable()
 export class PrismaIncomeTransactionRepository implements IIncomeTransactionRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private toDomain(prismaTransaction: any): IncomeTransaction {
+  private toDomain(prismaTransaction: PrismaIncomeTransaction): IncomeTransaction {
     return new IncomeTransaction(
       prismaTransaction.id,
       prismaTransaction.sourceId,
