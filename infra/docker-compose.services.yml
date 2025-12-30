@@ -30,7 +30,7 @@ services:
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-admin}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq_dev_password}
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_SECRET: ${JWT_SECRET:-test-secret-for-dev-only}
       JWT_EXPIRY: 24h
       BETTER_AUTH_SECRET: 'this_is_a_very_long_secret_that_is_at_least_32_chars_long'
       LOG_LEVEL: info
