@@ -64,7 +64,7 @@ services:
     ports:
       - '8000:8000' # Kong Proxy
     volumes:
-      - ./config/kong.yml:/kong/declarative/kong.yml
+      - ../apps/api-gateway/configs/dev/kong.yaml:/kong/declarative/kong.yml
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     depends_on:

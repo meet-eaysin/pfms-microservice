@@ -198,6 +198,7 @@ routes:
     service: auth-service
     paths:
       - /api/v1/health
+      - /api/v1/auth/health
     methods:
       - GET
     protocols:
@@ -368,6 +369,7 @@ routes:
     paths:
       - /api/v1/user
       - /api/v1/profile
+    strip_path: false
     methods:
       - GET
       - POST

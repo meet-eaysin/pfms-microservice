@@ -138,7 +138,26 @@ async function bootstrap(): Promise<void> {
     app.disable('x-powered-by');
 
     // ============================================
-    // Mount Better Auth Routes FIRST
+    // Health & Metrics
+    // ============================================
+    app.use('/api/v1/auth/health', createHealthRouter({ prisma }));
+
+    // Metrics endpoint
+    app.get('/metrics', async (_req: Request, res: Response) => {
+      try {
+        res.set('Content-Type', register.contentType);
+        const metrics = await register.metrics();
+        res.send(metrics);
+      } catch (error) {
+        logger.error('Failed to generate metrics', { error });
+        res
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .send('Error generating metrics');
+      }
+    });
+
+    // ============================================
+    // Mount Better Auth Routes
     // ============================================
     // CRITICAL: Better Auth must be mounted BEFORE express.json()
     // See: https://www.better-auth.com/docs/integrations/express
@@ -155,20 +174,15 @@ async function bootstrap(): Promise<void> {
     );
 
     // ============================================
-    // Body Parsing Middleware
+    // Body Parsing & Logging (Mount AFTER Better Auth)
     // ============================================
-    // Mount AFTER Better Auth to avoid breaking the client API
     app.use(express.json({ limit: '1mb' }));
     app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
-    // Request logging and metrics middleware
     app.use((req: Request, res: Response, next: NextFunction) => {
       const startTime = Date.now();
-
       res.on('finish', () => {
         const duration = (Date.now() - startTime) / 1000;
-
-        // Log request
         logger.info('📊 Request', {
           method: req.method,
           path: req.path,
@@ -176,7 +190,6 @@ async function bootstrap(): Promise<void> {
           duration: `${duration * 1000}ms`,
         });
 
-        // Record metrics
         httpRequestDuration.observe(
           {
             method: req.method,
@@ -186,27 +199,7 @@ async function bootstrap(): Promise<void> {
           duration,
         );
       });
-
       next();
-    });
-
-    // ============================================
-    // Mount Other Routes
-    // ============================================
-    app.use('/api/v1/health', createHealthRouter({ prisma }));
-
-    // Metrics endpoint
-    app.get('/metrics', async (_req: Request, res: Response) => {
-      try {
-        res.set('Content-Type', register.contentType);
-        const metrics = await register.metrics();
-        res.send(metrics);
-      } catch (error) {
-        logger.error('Failed to generate metrics', { error });
-        res
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .send('Error generating metrics');
-      }
     });
 
     // 404 Handler
