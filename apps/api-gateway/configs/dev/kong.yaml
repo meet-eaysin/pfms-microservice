@@ -377,11 +377,10 @@ routes:
       - http
       - https
     plugins:
-      - name: cors
-      - name: rate-limiting
+      - name: jwt
         config:
-          minute: 100
-          hour: 1000
+          key_claim_name: iss
+          secret_is_base64: false
   - name: expense-routes
     service: expense-service
     paths:
@@ -398,11 +397,10 @@ routes:
       - http
       - https
     plugins:
-      - name: cors
-      - name: rate-limiting
+      - name: jwt
         config:
-          minute: 100
-          hour: 1000
+          key_claim_name: iss
+          secret_is_base64: false
     strip_path: false
   - name: income-routes
     service: income-service
@@ -419,11 +417,10 @@ routes:
       - http
       - https
     plugins:
-      - name: cors
-      - name: rate-limiting
+      - name: jwt
         config:
-          minute: 100
-          hour: 1000
+          key_claim_name: iss
+          secret_is_base64: false
   - name: investment-routes
     service: investment-service
     paths:
@@ -440,11 +437,10 @@ routes:
       - http
       - https
     plugins:
-      - name: cors
-      - name: rate-limiting
+      - name: jwt
         config:
-          minute: 100
-          hour: 1000
+          key_claim_name: iss
+          secret_is_base64: false
   - name: loan-routes
     service: loan-service
     paths:
@@ -461,11 +457,10 @@ routes:
       - http
       - https
     plugins:
-      - name: cors
-      - name: rate-limiting
+      - name: jwt
         config:
-          minute: 100
-          hour: 1000
+          key_claim_name: iss
+          secret_is_base64: false
   - name: group-routes
     service: group-service
     paths:
@@ -481,11 +476,10 @@ routes:
       - http
       - https
     plugins:
-      - name: cors
-      - name: rate-limiting
+      - name: jwt
         config:
-          minute: 100
-          hour: 1000
+          key_claim_name: iss
+          secret_is_base64: false
   - name: savings-routes
     service: savings-service
     paths:
@@ -501,11 +495,10 @@ routes:
       - http
       - https
     plugins:
-      - name: cors
-      - name: rate-limiting
+      - name: jwt
         config:
-          minute: 100
-          hour: 1000
+          key_claim_name: iss
+          secret_is_base64: false
   - name: tax-routes
     service: tax-service
     paths:
@@ -556,11 +549,10 @@ routes:
       - http
       - https
     plugins:
-      - name: cors
-      - name: rate-limiting
+      - name: jwt
         config:
-          minute: 100
-          hour: 1000
+          key_claim_name: iss
+          secret_is_base64: false
   - name: automation-routes
     service: automation-service
     paths:
@@ -576,11 +568,10 @@ routes:
       - http
       - https
     plugins:
-      - name: cors
-      - name: rate-limiting
+      - name: jwt
         config:
-          minute: 100
-          hour: 1000
+          key_claim_name: iss
+          secret_is_base64: false
   - name: report-routes
     service: report-service
     paths:
@@ -646,12 +637,16 @@ routes:
       - https
     strip_path: true
     plugins:
-      - name: cors
-      - name: rate-limiting
+      - name: jwt
         config:
-          minute: 100
-          hour: 1000
+          key_claim_name: iss
+          secret_is_base64: false
 plugins:
+  - name: correlation-id
+    config:
+      header_name: X-Correlation-ID
+      generator: uuid
+      echo_downstream: true
   - name: cors
     config:
       origins:
@@ -663,14 +658,20 @@ plugins:
       max_age: 3600
   - name: rate-limiting
     config:
-      minute: 1000
-      hour: 10000
+      minute: 100
+      hour: 5000
       policy: local
       fault_tolerant: true
   - name: file-log
     config:
       path: /tmp/kong-dev-access.log
       reopen: true
+consumers:
+  - username: test-user
+    jwt_secrets:
+      - key: pfms-issuer
+        secret: test-secret-for-dev-only
+        algorithm: HS256
 upstreams:
   - name: auth-service-upstream
     algorithm: round-robin

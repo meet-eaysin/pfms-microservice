@@ -12,7 +12,7 @@ import {
   authMiddleware,
   type IAuthenticatedRequest,
 } from '../middleware/auth.middleware';
-import { fromNodeHeaders } from 'better-auth/node';
+
 import { createLogger } from '@pfms/config';
 
 const logger = createLogger('AuthRoutes');
@@ -44,6 +44,8 @@ export function createAuthRouter(deps: IAuthRouterDependencies): Router {
     authMw,
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
+        const dynamicImport = new Function('specifier', 'return import(specifier)');
+        const { fromNodeHeaders } = await dynamicImport('better-auth/node');
         const session = await deps.betterAuthAdapter.auth.api.getSession({
           headers: fromNodeHeaders(req.headers),
         });
@@ -68,6 +70,8 @@ export function createAuthRouter(deps: IAuthRouterDependencies): Router {
     authMw,
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
+        const dynamicImport = new Function('specifier', 'return import(specifier)');
+        const { fromNodeHeaders } = await dynamicImport('better-auth/node');
         await deps.betterAuthAdapter.auth.api.signOut({
           headers: fromNodeHeaders(req.headers),
         });

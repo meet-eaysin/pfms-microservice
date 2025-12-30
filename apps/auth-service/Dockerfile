@@ -43,11 +43,16 @@ COPY --link apps/api-gateway/package.json ./apps/api-gateway/
 COPY --link apps/auth-service/package.json ./apps/auth-service/
 COPY --link apps/expense-service/package.json ./apps/expense-service/
 COPY --link apps/web/package.json ./apps/web/
-COPY --link packages/api-client/package.json ./packages/api-client/
+
 COPY --link packages/config/package.json ./packages/config/
+COPY --link packages/date/package.json ./packages/date/
+COPY --link packages/email/package.json ./packages/email/
+COPY --link packages/errors/package.json ./packages/errors/
 COPY --link packages/eslint-config/package.json ./packages/eslint-config/
 COPY --link packages/event-bus/package.json ./packages/event-bus/
-COPY --link packages/saga-orchestrator/package.json ./packages/saga-orchestrator/
+COPY --link packages/http/package.json ./packages/http/
+
+COPY --link packages/schema/package.json ./packages/schema/
 COPY --link packages/types/package.json ./packages/types/
 COPY --link packages/typescript-config/package.json ./packages/typescript-config/
 COPY --link packages/utils/package.json ./packages/utils/
@@ -55,7 +60,7 @@ COPY --link packages/utils/package.json ./packages/utils/
 # Install all dependencies (including dev) with caching
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn/berry/cache \
     --mount=type=cache,id=yarn-state,target=/root/.yarn/state \
-    yarn install --immutable
+    yarn install
 
 # Copy source code (after install for better layer caching)
 COPY --link turbo.json ./
@@ -64,17 +69,23 @@ COPY --link turbo.json ./
 COPY --link apps/auth-service ./apps/auth-service
 
 # Copy all workspace packages source (required for building)
-COPY --link packages/api-client ./packages/api-client
+
 COPY --link packages/config ./packages/config
+COPY --link packages/date ./packages/date
+COPY --link packages/email ./packages/email
+COPY --link packages/errors ./packages/errors
 COPY --link packages/eslint-config ./packages/eslint-config
 COPY --link packages/event-bus ./packages/event-bus
-COPY --link packages/saga-orchestrator ./packages/saga-orchestrator
+COPY --link packages/http ./packages/http
+
+COPY --link packages/schema ./packages/schema
 COPY --link packages/types ./packages/types
 COPY --link packages/typescript-config ./packages/typescript-config
 COPY --link packages/utils ./packages/utils
 
 # Generate Prisma Client
-RUN cd apps/auth-service && yarn prisma generate
+# Generate Prisma Client
+RUN yarn workspace @pfms/auth-service run prisma generate
 
 # Build shared packages (parallel when possible)
 RUN yarn turbo run build \
@@ -99,54 +110,50 @@ RUN apk upgrade --no-cache && \
         curl \
     && rm -rf /var/cache/apk/*
 
-# Create non-root user for security
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 --ingroup nodejs authservice
-
-WORKDIR /app
-
-# Copy Prisma generated client first (before it might be pruned)
-COPY --from=builder --chown=authservice:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=authservice:nodejs /app/node_modules/@prisma/client ./node_modules/@prisma/client
-
-# Copy production dependencies
-COPY --from=builder --chown=authservice:nodejs /app/node_modules ./node_modules
-
-# Copy built application
-COPY --from=builder --chown=authservice:nodejs /app/apps/auth-service/dist ./dist
-COPY --from=builder --chown=authservice:nodejs /app/apps/auth-service/package.json ./package.json
-COPY --from=builder --chown=authservice:nodejs /app/apps/auth-service/prisma ./prisma
-
-# Copy built shared packages (optimized)
-COPY --from=builder --chown=authservice:nodejs /app/packages/config/dist ./node_modules/@pfms/config/dist
-COPY --from=builder --chown=authservice:nodejs /app/packages/config/package.json ./node_modules/@pfms/config/
-COPY --from=builder --chown=authservice:nodejs /app/packages/types/dist ./node_modules/@pfms/types/dist
-COPY --from=builder --chown=authservice:nodejs /app/packages/types/package.json ./node_modules/@pfms/types/
-COPY --from=builder --chown=authservice:nodejs /app/packages/utils/dist ./node_modules/@pfms/utils/dist
-COPY --from=builder --chown=authservice:nodejs /app/packages/utils/package.json ./node_modules/@pfms/utils/
-
-# Create logs directory with proper permissions
-RUN mkdir -p /app/logs && chown -R authservice:nodejs /app/logs
-
-# Switch to non-root user
-USER authservice
-
-# Environment variables (production defaults)
 ENV NODE_ENV=production \
     SERVICE_NAME=auth-service \
     SERVICE_PORT=3001 \
     NODE_OPTIONS="--max-old-space-size=384 --enable-source-maps" \
     TZ=UTC
 
-# Expose port (documentation only, not published in Docker network)
+# Install only runtime dependencies
+RUN apk upgrade --no-cache && \
+    apk add --no-cache \
+        openssl \
+        dumb-init \
+        curl \
+    && rm -rf /var/cache/apk/*
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --ingroup nodejs authservice
+
+WORKDIR /app
+
+# Copy root files
+COPY --from=builder --chown=authservice:nodejs /app/package.json /app/yarn.lock /app/.yarnrc.yml ./
+COPY --from=builder --chown=authservice:nodejs /app/node_modules ./node_modules
+
+# Copy workspace packages
+COPY --from=builder --chown=authservice:nodejs /app/packages ./packages
+
+# Copy service files
+COPY --from=builder --chown=authservice:nodejs /app/apps/auth-service/package.json ./apps/auth-service/package.json
+COPY --from=builder --chown=authservice:nodejs /app/apps/auth-service/dist ./apps/auth-service/dist
+COPY --from=builder --chown=authservice:nodejs /app/apps/auth-service/prisma ./apps/auth-service/prisma
+COPY --from=builder --chown=authservice:nodejs /app/apps/auth-service/node_modules ./apps/auth-service/node_modules
+
+# Create logs directory
+RUN mkdir -p /app/apps/auth-service/logs && chown -R authservice:nodejs /app/apps/auth-service/logs
+
+WORKDIR /app/apps/auth-service
+
+USER authservice
+
 EXPOSE 3001
 
-# Health check (30s interval, 5s timeout, 3 retries, 15s start period)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD node -e "require('http').get('http://localhost:3001/api/v1/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# Use dumb-init to handle signals properly (PID 1 problem)
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-
-# Start the service
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/index.js"]

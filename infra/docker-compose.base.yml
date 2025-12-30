@@ -61,7 +61,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-rabbitmq_dev_password}
       RABBITMQ_DEFAULT_VHOST: /
-      RABBITMQ_VM_MEMORY_HIGH_WATERMARK: 0.6
+
       RABBITMQ_DISK_FREE_LIMIT: 2GB
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq

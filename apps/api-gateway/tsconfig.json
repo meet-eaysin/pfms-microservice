@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "types": ["node", "jest", "supertest"],
+    "esModuleInterop": true
+  },
+  "include": ["tests/**/*.ts", "scripts/**/*.js"]
+}

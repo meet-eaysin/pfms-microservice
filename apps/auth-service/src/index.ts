@@ -11,7 +11,7 @@ import * as promClient from 'prom-client';
 import { loadAuthServiceConfig } from './config';
 
 // Infrastructure
-import { createBetterAuthAdapter } from './infrastructure/auth/better-auth.adapter';
+import { BetterAuthAdapter } from './infrastructure/auth/better-auth.adapter';
 import { createPrismaRepository } from './infrastructure/database/prisma.repository';
 import { createEventPublisher } from './infrastructure/messaging/event.publisher';
 
@@ -82,7 +82,7 @@ async function bootstrap(): Promise<void> {
     await prisma.$connect();
     logger.info('✅ Database connected');
 
-    const betterAuthAdapter = createBetterAuthAdapter(config.auth, prisma);
+    const betterAuthAdapter = await BetterAuthAdapter.create(config.auth, prisma);
     logger.info('✅ Better-Auth adapter initialized');
 
     const repository = createPrismaRepository(prisma);
@@ -143,7 +143,7 @@ async function bootstrap(): Promise<void> {
     // CRITICAL: Better Auth must be mounted BEFORE express.json()
     // See: https://www.better-auth.com/docs/integrations/express
     app.use(
-      '/auth',
+      '/api/v1/auth',
       createAuthRouter({
         betterAuthAdapter,
         authService,
@@ -193,7 +193,7 @@ async function bootstrap(): Promise<void> {
     // ============================================
     // Mount Other Routes
     // ============================================
-    app.use('/health', createHealthRouter({ prisma }));
+    app.use('/api/v1/health', createHealthRouter({ prisma }));
 
     // Metrics endpoint
     app.get('/metrics', async (_req: Request, res: Response) => {

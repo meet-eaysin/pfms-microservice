@@ -4,15 +4,16 @@
   "private": true,
   "description": "Kong API Gateway configuration and management",
   "scripts": {
-    "validate": "npm run validate:dev",
+    "test:e2e": "jest --config jest.config.js",
+    "validate": "yarn validate:dev",
     "validate:dev": "node scripts/merge-config.js dev && deck validate --config configs/dev/kong.yaml",
     "validate:staging": "node scripts/merge-config.js staging && deck validate --config configs/staging/kong.yaml",
     "validate:prod": "node scripts/merge-config.js prod && deck validate --config configs/prod/kong.yaml",
-    "sync": "npm run sync:dev",
+    "sync": "yarn sync:dev",
     "sync:dev": "node scripts/substitute-env.js dev && deck sync --config configs/dev/kong.yaml",
     "sync:staging": "node scripts/substitute-env.js staging && deck sync --config configs/staging/kong.yaml",
     "sync:prod": "node scripts/substitute-env.js prod && deck sync --config configs/prod/kong.yaml",
-    "diff": "npm run diff:dev",
+    "diff": "yarn diff:dev",
     "diff:dev": "node scripts/substitute-env.js dev && deck diff --config configs/dev/kong.yaml",
     "diff:staging": "node scripts/substitute-env.js staging && deck diff --config configs/staging/kong.yaml",
     "diff:prod": "node scripts/substitute-env.js prod && deck diff --config configs/prod/kong.yaml",
@@ -22,9 +23,16 @@
     "format:check": "prettier --check \"configs/**/*.{yaml,yml}\""
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.10.7",
+    "@types/supertest": "^6.0.2",
     "dotenv": "^16.4.5",
+    "jest": "^30.0.0",
     "js-yaml": "^4.1.0",
     "prettier": "^3.2.5",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.7.3",
     "yaml-lint": "^1.7.0"
   },
   "engines": {

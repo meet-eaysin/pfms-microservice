@@ -1,9 +1,9 @@
-import { betterAuth } from 'better-auth';
 import type { PrismaClient } from '@prisma/client';
 import type { User, Session } from '../../domain/entities/user.entity';
 import type { AuthConfig } from '../../config';
-import { toNodeHandler } from 'better-auth/node';
 import type { Request, Response } from 'express';
+import type { betterAuth } from 'better-auth';
+import type { toNodeHandler } from 'better-auth/node';
 
 interface IBetterAuthSession {
   user: {
@@ -35,98 +35,111 @@ export class BetterAuthAdapter {
   public readonly auth: ReturnType<typeof betterAuth>;
   private readonly nodeHandler: ReturnType<typeof toNodeHandler>;
 
-  constructor(
-    private readonly config: AuthConfig,
-    private readonly prisma: PrismaClient,
+  private constructor(
+    auth: ReturnType<typeof betterAuth>,
+    nodeHandler: ReturnType<typeof toNodeHandler>,
   ) {
-    if (
-      !this.config.BETTER_AUTH_SECRET ||
-      this.config.BETTER_AUTH_SECRET.length < 32
+    this.auth = auth;
+    this.nodeHandler = nodeHandler;
+  }
+
+  static async create(
+    config: AuthConfig,
+    prisma: PrismaClient,
+  ): Promise<BetterAuthAdapter> {
+      if (
+      !config.BETTER_AUTH_SECRET ||
+      config.BETTER_AUTH_SECRET.length < 32
     ) {
       throw new Error('BETTER_AUTH_SECRET must be at least 32 characters long');
     }
 
-    if (!this.config.DATABASE_URL) {
+    if (!config.DATABASE_URL) {
       throw new Error('Database URL is required for better-auth');
     }
 
-    this.auth = betterAuth({
-      database: this.prisma,
-      secret: this.config.BETTER_AUTH_SECRET,
+    const dynamicImport = new Function('specifier', 'return import(specifier)');
+    const { betterAuth } = await dynamicImport('better-auth');
+    const { toNodeHandler } = await dynamicImport('better-auth/node');
+
+    const auth = betterAuth({
+      database: prisma,
+      secret: config.BETTER_AUTH_SECRET,
       emailAndPassword: {
         enabled: true,
-        minPasswordLength: this.config.PASSWORD_MIN_LENGTH,
+        minPasswordLength: config.PASSWORD_MIN_LENGTH,
         maxPasswordLength: 128,
-        requireEmailVerification: this.config.EMAIL_VERIFICATION_ENABLED,
+        requireEmailVerification: config.EMAIL_VERIFICATION_ENABLED,
       },
-      socialProviders: this.configureSocialProviders(),
+      socialProviders: BetterAuthAdapter.configureSocialProviders(config),
       session: {
-        expiresIn: this.config.SESSION_ABSOLUTE_TIMEOUT_HOURS * 60 * 60,
-        updateAge: this.config.SESSION_IDLE_TIMEOUT_HOURS * 60 * 60,
+        expiresIn: config.SESSION_ABSOLUTE_TIMEOUT_HOURS * 60 * 60,
+        updateAge: config.SESSION_IDLE_TIMEOUT_HOURS * 60 * 60,
         cookieCache: {
           enabled: true,
-          maxAge: this.config.BETTER_AUTH_COOKIE_MAX_AGE,
+          maxAge: config.BETTER_AUTH_COOKIE_MAX_AGE,
         },
       },
       advanced: {
-        cookiePrefix: this.config.BETTER_AUTH_COOKIE_NAME,
+        cookiePrefix: config.BETTER_AUTH_COOKIE_NAME,
         crossSubDomainCookies: {
           enabled: false,
         },
-        useSecureCookies: this.config.BETTER_AUTH_COOKIE_SECURE,
+        useSecureCookies: config.BETTER_AUTH_COOKIE_SECURE,
         defaultCookieAttributes: {
-          sameSite: this.config.BETTER_AUTH_COOKIE_SAME_SITE,
+          sameSite: config.BETTER_AUTH_COOKIE_SAME_SITE,
           httpOnly: true,
-          secure: this.config.BETTER_AUTH_COOKIE_SECURE,
+          secure: config.BETTER_AUTH_COOKIE_SECURE,
           path: '/',
         },
       },
     });
 
-    // Create Node.js handler for Express
-    this.nodeHandler = toNodeHandler(this.auth);
+    const nodeHandler = toNodeHandler(auth);
+
+    return new BetterAuthAdapter(auth, nodeHandler);
   }
 
-  private configureSocialProviders(): Record<string, unknown> {
+  private static configureSocialProviders(config: AuthConfig): Record<string, unknown> {
     const providers: Record<string, unknown> = {};
 
     // Google OAuth
     if (
-      this.config.GOOGLE_CLIENT_ID !== undefined &&
-      this.config.GOOGLE_CLIENT_SECRET !== undefined
+      config.GOOGLE_CLIENT_ID !== undefined &&
+      config.GOOGLE_CLIENT_SECRET !== undefined
     ) {
       providers.google = {
-        clientId: this.config.GOOGLE_CLIENT_ID,
-        clientSecret: this.config.GOOGLE_CLIENT_SECRET,
-        redirectURI: this.config.GOOGLE_REDIRECT_URI,
+        clientId: config.GOOGLE_CLIENT_ID,
+        clientSecret: config.GOOGLE_CLIENT_SECRET,
+        redirectURI: config.GOOGLE_REDIRECT_URI,
       };
     }
 
     // GitHub OAuth
     if (
-      this.config.GITHUB_CLIENT_ID !== undefined &&
-      this.config.GITHUB_CLIENT_SECRET !== undefined
+      config.GITHUB_CLIENT_ID !== undefined &&
+      config.GITHUB_CLIENT_SECRET !== undefined
     ) {
       providers.github = {
-        clientId: this.config.GITHUB_CLIENT_ID,
-        clientSecret: this.config.GITHUB_CLIENT_SECRET,
-        redirectURI: this.config.GITHUB_REDIRECT_URI,
+        clientId: config.GITHUB_CLIENT_ID,
+        clientSecret: config.GITHUB_CLIENT_SECRET,
+        redirectURI: config.GITHUB_REDIRECT_URI,
       };
     }
 
     // Apple OAuth
     if (
-      this.config.APPLE_CLIENT_ID !== undefined &&
-      this.config.APPLE_TEAM_ID !== undefined &&
-      this.config.APPLE_KEY_ID !== undefined &&
-      this.config.APPLE_PRIVATE_KEY !== undefined
+      config.APPLE_CLIENT_ID !== undefined &&
+      config.APPLE_TEAM_ID !== undefined &&
+      config.APPLE_KEY_ID !== undefined &&
+      config.APPLE_PRIVATE_KEY !== undefined
     ) {
       providers.apple = {
-        clientId: this.config.APPLE_CLIENT_ID,
-        teamId: this.config.APPLE_TEAM_ID,
-        keyId: this.config.APPLE_KEY_ID,
-        privateKey: this.config.APPLE_PRIVATE_KEY,
-        redirectURI: this.config.APPLE_REDIRECT_URI,
+        clientId: config.APPLE_CLIENT_ID,
+        teamId: config.APPLE_TEAM_ID,
+        keyId: config.APPLE_KEY_ID,
+        privateKey: config.APPLE_PRIVATE_KEY,
+        redirectURI: config.APPLE_REDIRECT_URI,
       };
     }
 
@@ -222,10 +235,3 @@ export class BetterAuthAdapter {
   }
 }
 
-// Factory function for creating adapter
-export function createBetterAuthAdapter(
-  config: AuthConfig,
-  prisma: PrismaClient,
-): BetterAuthAdapter {
-  return new BetterAuthAdapter(config, prisma);
-}

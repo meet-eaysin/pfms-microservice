@@ -28,6 +28,15 @@ export class PostEntryUseCase {
   ) {}
 
   async execute(command: PostEntryCommand): Promise<JournalEntry> {
+    // Idempotency check
+    if (command.reference) {
+      const existingEntry = await this.entryRepository.findByReference(command.reference);
+      if (existingEntry) {
+        console.log(`Duplicate entry ignored: reference=${command.reference}`);
+        return existingEntry;
+      }
+    }
+
     // Validate: Debits must equal Credits
     let totalDebits = 0;
     let totalCredits = 0;

@@ -1,7 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { AuthApplicationService } from '../../application/services/auth.application.service';
 import type { User, Session } from '../../domain/entities/user.entity';
-import { fromNodeHeaders } from 'better-auth/node';
 
 export interface IAuthenticatedRequest extends Request {
   user: User;
@@ -19,10 +18,10 @@ export function authMiddleware(options: IAuthMiddlewareOptions) {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      // Convert Express headers to Better Auth Headers format
+      const dynamicImport = new Function('specifier', 'return import(specifier)');
+      const { fromNodeHeaders } = await dynamicImport('better-auth/node');
       const headers = fromNodeHeaders(req.headers);
 
-      // getSession expects { headers: Headers }
       const session = await options.authService.getSession({ headers });
 
       if (session === null) {

@@ -133,7 +133,7 @@ async function bootstrap(): Promise<void> {
     // ============================================
     // Mount Routes
     // ============================================
-    app.use('/health', createHealthRouter({ prisma: container.prisma }));
+    app.use('/api/v1/user/health', createHealthRouter({ prisma: container.prisma }));
 
     app.use(
       '/api/v1/user/profile',

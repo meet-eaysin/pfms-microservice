@@ -81,4 +81,15 @@ export class PrismaJournalEntryRepository implements IJournalEntryRepository {
     });
     return entry ? this.toDomain(entry) : null;
   }
+
+  async findByReference(reference: string): Promise<JournalEntry | null> {
+    // Assuming reference is not unique in schema, using findFirst.
+    // Ideally reference should be unique or compound unique with source.
+    const entry = await this.prisma.journalEntry.findFirst({
+      where: { reference },
+      include: { lines: true },
+    });
+    return entry ? this.toDomain(entry) : null;
+  }
 }
+
