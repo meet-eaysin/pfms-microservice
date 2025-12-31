@@ -43,7 +43,7 @@ services:
     container_name: pfms_kong_db
     environment:
       POSTGRES_USER: kong
-      POSTGRES_PASSWORD: kong
+      POSTGRES_PASSWORD: PLACEHOLDER_KONG_DB_PASSWORD
       POSTGRES_DB: kong
     volumes:
       - kong_db_data:/var/lib/postgresql/data
@@ -86,7 +86,7 @@ services:
       DB_ADAPTER: postgres
       DB_HOST: kong-db
       DB_USER: kong
-      DB_PASSWORD: kong
+      DB_PASSWORD: PLACEHOLDER_KONG_DB_PASSWORD
       DB_DATABASE: kong
     # Port exposed only within Docker network (internal access)
     depends_on:

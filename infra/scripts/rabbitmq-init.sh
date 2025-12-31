@@ -21,7 +21,7 @@ echo "Creating users..."
 
 # Use environment variables if provided, otherwise use defaults
 RABBIT_USER=${RABBITMQ_USER:-pfms_user}
-RABBIT_PASS=${RABBITMQ_PASSWORD:-pfms_password}
+RABBIT_PASS=${RABBITMQ_PASSWORD:-placeholder_rabbitmq_password}
 
 # Create pfms user if not exists
 rabbitmqctl add_user "$RABBIT_USER" "$RABBIT_PASS" 2>/dev/null || true
@@ -153,8 +153,7 @@ echo "========================================"
 echo "RabbitMQ Initialization Summary:"
 echo "========================================"
 echo "Management UI: http://localhost:15672"
-echo "Username: guest / pfms_user"
-echo "Password: guest / pfms_password"
+echo "Username: guest / $RABBIT_USER"
 echo "Default VHOST: /"
 echo "PFMS VHOST: pfms"
 echo "========================================"

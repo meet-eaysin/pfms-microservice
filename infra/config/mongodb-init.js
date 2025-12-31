@@ -5,7 +5,7 @@ db = db.getSiblingDB('admin');
 try {
   db.createUser({
     user: 'pfms_user',
-    pwd: 'pfms_password',
+    pwd: 'PLACEHOLDER_MONGODB_PASSWORD',
     roles: [
       { role: 'readWrite', db: 'ai_analytics_db' },
       { role: 'dbAdmin', db: 'ai_analytics_db' },
