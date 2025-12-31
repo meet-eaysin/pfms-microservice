@@ -26,7 +26,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
     // Basic JWT decode (Gateway already verified signature)
     const base64Url = token.split('.')[1];
     if (!base64Url) {
-        throw new Error('Invalid token format');
+      throw new Error('Invalid token format');
     }
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = Buffer.from(base64, 'base64').toString('utf-8');
@@ -36,10 +36,10 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
       id: payload.sub || payload.userId || payload.id, // Fallback for different claim names
       email: payload.email || '',
     };
-    
+
     // Add Kong-injected headers if available for extra security/context
     if (req.headers['x-consumer-username']) {
-       // Only if we want to rely on Kong Consumer mapping
+      // Only if we want to rely on Kong Consumer mapping
     }
 
     next();

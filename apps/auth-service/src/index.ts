@@ -82,7 +82,10 @@ async function bootstrap(): Promise<void> {
     await prisma.$connect();
     logger.info('✅ Database connected');
 
-    const betterAuthAdapter = await BetterAuthAdapter.create(config.auth, prisma);
+    const betterAuthAdapter = await BetterAuthAdapter.create(
+      config.auth,
+      prisma,
+    );
     logger.info('✅ Better-Auth adapter initialized');
 
     const repository = createPrismaRepository(prisma);
@@ -283,10 +286,10 @@ async function bootstrap(): Promise<void> {
 // ============================================
 process.on('unhandledRejection', (reason) => {
   if (reason instanceof Error) {
-    logger.error('Unhandled rejection', { 
+    logger.error('Unhandled rejection', {
       message: reason.message,
       stack: reason.stack,
-      name: reason.name
+      name: reason.name,
     });
   } else {
     logger.error('Unhandled rejection', { reason });

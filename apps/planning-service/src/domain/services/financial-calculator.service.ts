@@ -13,19 +13,14 @@ export class FinancialCalculatorService {
    * r = Monthly interest rate (annual rate / 12 / 100)
    * n = Number of months
    */
-  calculateEMI(
-    principal: number,
-    annualInterestRate: number,
-    months: number,
-  ): number {
+  calculateEMI(principal: number, annualInterestRate: number, months: number): number {
     const monthlyRate = annualInterestRate / 12 / 100;
 
     if (monthlyRate === 0) {
       return principal / months;
     }
 
-    const numerator =
-      principal * monthlyRate * Math.pow(1 + monthlyRate, months);
+    const numerator = principal * monthlyRate * Math.pow(1 + monthlyRate, months);
     const denominator = Math.pow(1 + monthlyRate, months) - 1;
 
     return numerator / denominator;
@@ -34,11 +29,7 @@ export class FinancialCalculatorService {
   /**
    * Calculate total interest for a loan
    */
-  calculateTotalInterest(
-    principal: number,
-    emiAmount: number,
-    numberOfEMIs: number,
-  ): number {
+  calculateTotalInterest(principal: number, emiAmount: number, numberOfEMIs: number): number {
     return emiAmount * numberOfEMIs - principal;
   }
 
@@ -55,18 +46,14 @@ export class FinancialCalculatorService {
     principal: number,
     annualRate: number,
     compoundingPeriodsPerYear: number,
-    years: number,
+    years: number
   ): {
     finalAmount: number;
     interestEarned: number;
   } {
     const rate = annualRate / 100;
     const finalAmount =
-      principal *
-      Math.pow(
-        1 + rate / compoundingPeriodsPerYear,
-        compoundingPeriodsPerYear * years,
-      );
+      principal * Math.pow(1 + rate / compoundingPeriodsPerYear, compoundingPeriodsPerYear * years);
 
     return {
       finalAmount,
@@ -84,7 +71,7 @@ export class FinancialCalculatorService {
   calculateSimpleInterest(
     principal: number,
     rate: number,
-    timeInYears: number,
+    timeInYears: number
   ): {
     interest: number;
     totalAmount: number;
@@ -105,7 +92,7 @@ export class FinancialCalculatorService {
     principal: number,
     emiAmount: number,
     emisPaid: number,
-    monthlyRate: number,
+    monthlyRate: number
   ): number {
     const emiRate = monthlyRate / 100;
 
@@ -127,7 +114,7 @@ export class FinancialCalculatorService {
     currentBalance: number,
     monthlyEMI: number,
     monthlyRate: number,
-    remainingEMIs: number,
+    remainingEMIs: number
   ): {
     earlyPaymentAmount: number;
     interestSaved: number;
@@ -160,7 +147,7 @@ export class FinancialCalculatorService {
    */
   calculateProfitLoss(
     currentValue: number,
-    costPrice: number,
+    costPrice: number
   ): {
     profit: number;
     profitPercentage: number;
@@ -179,13 +166,8 @@ export class FinancialCalculatorService {
   /**
    * Calculate average buy price
    */
-  calculateAverageBuyPrice(
-    transactions: { quantity: number; price: number }[],
-  ): number {
-    const totalCost = transactions.reduce(
-      (sum, t) => sum + t.quantity * t.price,
-      0,
-    );
+  calculateAverageBuyPrice(transactions: { quantity: number; price: number }[]): number {
+    const totalCost = transactions.reduce((sum, t) => sum + t.quantity * t.price, 0);
     const totalQuantity = transactions.reduce((sum, t) => sum + t.quantity, 0);
 
     return totalCost / totalQuantity;
@@ -194,16 +176,11 @@ export class FinancialCalculatorService {
   /**
    * Calculate portfolio diversification score (0-100)
    */
-  calculateDiversificationScore(
-    allocations: { percentage: number }[],
-  ): number {
+  calculateDiversificationScore(allocations: { percentage: number }[]): number {
     if (allocations.length === 0) return 0;
 
     // Herfindahl–Hirschman Index (HHI) approach
-    const hhi = allocations.reduce(
-      (sum, a) => sum + Math.pow(a.percentage, 2),
-      0,
-    );
+    const hhi = allocations.reduce((sum, a) => sum + Math.pow(a.percentage, 2), 0);
 
     // Convert HHI to diversification score
     // Perfect diversity = 1/n, so HHI = 10000/n
@@ -218,11 +195,7 @@ export class FinancialCalculatorService {
   /**
    * Calculate compound annual growth rate (CAGR)
    */
-  calculateCAGR(
-    startValue: number,
-    endValue: number,
-    years: number,
-  ): number {
+  calculateCAGR(startValue: number, endValue: number, years: number): number {
     const cagr = Math.pow(endValue / startValue, 1 / years) - 1;
     return cagr * 100;
   }
@@ -236,7 +209,7 @@ export class FinancialCalculatorService {
    */
   calculateBudgetRemaining(
     budgetLimit: number,
-    spent: number,
+    spent: number
   ): {
     remaining: number;
     percentageUsed: number;
@@ -261,10 +234,7 @@ export class FinancialCalculatorService {
   /**
    * Calculate projected monthly average based on days passed
    */
-  calculateProjectedMonthlyAverage(
-    spent: number,
-    daysPassed: number,
-  ): number {
+  calculateProjectedMonthlyAverage(spent: number, daysPassed: number): number {
     const daysInMonth = 30;
     return (spent / daysPassed) * daysInMonth;
   }
@@ -274,7 +244,7 @@ export class FinancialCalculatorService {
    */
   calculateSavings(
     income: number,
-    expenses: number,
+    expenses: number
   ): {
     savings: number;
     savingsRate: number;
@@ -299,7 +269,7 @@ export class FinancialCalculatorService {
    */
   calculateGoalProgress(
     currentAmount: number,
-    targetAmount: number,
+    targetAmount: number
   ): {
     progressPercentage: number;
     remainingAmount: number;
@@ -321,7 +291,7 @@ export class FinancialCalculatorService {
   calculateProjectedCompletionDate(
     currentAmount: number,
     targetAmount: number,
-    monthlyContribution: number,
+    monthlyContribution: number
   ): {
     projectedCompletionDate: Date | null;
     monthsRemaining: number;
@@ -337,9 +307,7 @@ export class FinancialCalculatorService {
 
     const monthsRemaining = Math.ceil(remainingAmount / monthlyContribution);
     const projectedCompletionDate = new Date();
-    projectedCompletionDate.setMonth(
-      projectedCompletionDate.getMonth() + monthsRemaining,
-    );
+    projectedCompletionDate.setMonth(projectedCompletionDate.getMonth() + monthsRemaining);
 
     return {
       projectedCompletionDate,
@@ -385,10 +353,7 @@ export class FinancialCalculatorService {
       return 0;
     }
 
-    const totalWeighted = values.reduce(
-      (sum, val, i) => sum + val * (weights[i] as number),
-      0,
-    );
+    const totalWeighted = values.reduce((sum, val, i) => sum + val * (weights[i] as number), 0);
     const totalWeight = weights.reduce((sum, w) => sum + w, 0);
 
     return totalWeighted / totalWeight;
@@ -415,11 +380,7 @@ export class FinancialCalculatorService {
   /**
    * Format currency
    */
-  formatCurrency(
-    value: number,
-    currency: string = 'USD',
-    locale: string = 'en-US',
-  ): string {
+  formatCurrency(value: number, currency: string = 'USD', locale: string = 'en-US'): string {
     return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency,

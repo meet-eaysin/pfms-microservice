@@ -47,10 +47,7 @@ export class BetterAuthAdapter {
     config: AuthConfig,
     prisma: PrismaClient,
   ): Promise<BetterAuthAdapter> {
-      if (
-      !config.BETTER_AUTH_SECRET ||
-      config.BETTER_AUTH_SECRET.length < 32
-    ) {
+    if (!config.BETTER_AUTH_SECRET || config.BETTER_AUTH_SECRET.length < 32) {
       throw new Error('BETTER_AUTH_SECRET must be at least 32 characters long');
     }
 
@@ -61,7 +58,9 @@ export class BetterAuthAdapter {
     const dynamicImport = new Function('specifier', 'return import(specifier)');
     const { betterAuth } = await dynamicImport('better-auth');
     const { toNodeHandler } = await dynamicImport('better-auth/node');
-    const { prismaAdapter } = await dynamicImport('better-auth/adapters/prisma');
+    const { prismaAdapter } = await dynamicImport(
+      'better-auth/adapters/prisma',
+    );
 
     const auth = betterAuth({
       database: prismaAdapter(prisma, {
@@ -103,7 +102,9 @@ export class BetterAuthAdapter {
     return new BetterAuthAdapter(auth, nodeHandler);
   }
 
-  private static configureSocialProviders(config: AuthConfig): Record<string, unknown> {
+  private static configureSocialProviders(
+    config: AuthConfig,
+  ): Record<string, unknown> {
     const providers: Record<string, unknown> = {};
 
     // Google OAuth
@@ -237,4 +238,3 @@ export class BetterAuthAdapter {
     };
   }
 }
-

@@ -1,4 +1,3 @@
-
 import request from 'supertest';
 
 describe('API Gateway E2E', () => {
@@ -20,9 +19,7 @@ describe('API Gateway E2E', () => {
   describe('Authentication', () => {
     it('should block unauthorized access to protected routes', async () => {
       // user-service profile route is protected by JWT plugin
-      await request(GATEWAY_URL)
-        .get('/api/v1/user/profile')
-        .expect(401);
+      await request(GATEWAY_URL).get('/api/v1/user/profile').expect(401);
     });
   });
 

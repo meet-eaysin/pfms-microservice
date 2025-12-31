@@ -98,4 +98,3 @@ export class PrismaJournalEntryRepository implements IJournalEntryRepository {
     return entry ? this.toDomain(entry) : null;
   }
 }
-

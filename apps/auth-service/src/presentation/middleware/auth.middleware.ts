@@ -18,7 +18,10 @@ export function authMiddleware(options: IAuthMiddlewareOptions) {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const dynamicImport = new Function('specifier', 'return import(specifier)');
+      const dynamicImport = new Function(
+        'specifier',
+        'return import(specifier)',
+      );
       const { fromNodeHeaders } = await dynamicImport('better-auth/node');
       const headers = fromNodeHeaders(req.headers);
 
