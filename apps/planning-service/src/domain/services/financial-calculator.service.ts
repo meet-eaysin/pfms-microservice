@@ -111,7 +111,6 @@ export class FinancialCalculatorService {
    * Calculate early payoff savings
    */
   calculateEarlyPayoffSavings(
-    currentBalance: number,
     monthlyEMI: number,
     monthlyRate: number,
     remainingEMIs: number

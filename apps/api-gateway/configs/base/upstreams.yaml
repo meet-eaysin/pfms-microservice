@@ -66,6 +66,7 @@ upstreams:
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -77,6 +78,7 @@ upstreams:
           http_statuses: [429, 500, 502, 503, 504]
           tcp_failures: 2
           timeouts: 2
+          http_failures: 5
 
   # ============================================
   # FINANCIAL SERVICES UPSTREAMS
@@ -87,6 +89,7 @@ upstreams:
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -97,12 +100,15 @@ upstreams:
           interval: 10
           http_statuses: [429, 500, 502, 503, 504]
           tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # Income Service
   - name: income-service-upstream
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -112,12 +118,16 @@ upstreams:
         unhealthy:
           interval: 10
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # Investment Service
   - name: investment-service-upstream
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -127,12 +137,16 @@ upstreams:
         unhealthy:
           interval: 10
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # Loan Service
   - name: loan-service-upstream
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -142,12 +156,16 @@ upstreams:
         unhealthy:
           interval: 10
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # Group Service
   - name: group-service-upstream
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -157,12 +175,16 @@ upstreams:
         unhealthy:
           interval: 10
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # Savings Service
   - name: savings-service-upstream
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -172,6 +194,9 @@ upstreams:
         unhealthy:
           interval: 10
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # ============================================
   # SPECIALIZED SERVICES UPSTREAMS
@@ -182,6 +207,7 @@ upstreams:
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -191,12 +217,16 @@ upstreams:
         unhealthy:
           interval: 20
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # AI Service - Longer timeouts due to ML operations
   - name: ai-service-upstream
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 10 # Longer timeout for AI service
         healthy:
@@ -206,12 +236,16 @@ upstreams:
         unhealthy:
           interval: 20
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # Notification Service
   - name: notification-service-upstream
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -221,12 +255,16 @@ upstreams:
         unhealthy:
           interval: 10
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # Automation Service
   - name: automation-service-upstream
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -236,12 +274,16 @@ upstreams:
         unhealthy:
           interval: 10
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # Report Service - Longer timeouts for report generation
   - name: report-service-upstream
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 10
         healthy:
@@ -251,12 +293,16 @@ upstreams:
         unhealthy:
           interval: 20
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5
 
   # Market Service
   - name: market-service-upstream
     algorithm: round-robin
     healthchecks:
       active:
+        type: http
         http_path: /health
         timeout: 5
         healthy:
@@ -266,3 +312,6 @@ upstreams:
         unhealthy:
           interval: 10
           http_statuses: [500, 502, 503, 504]
+          tcp_failures: 2
+          timeouts: 2
+          http_failures: 5

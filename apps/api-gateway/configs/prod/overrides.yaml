@@ -59,6 +59,13 @@ plugins:
           - Content-Security-Policy:default-src 'self'
           - Permissions-Policy:geolocation=(), microphone=(), camera=()
 
+  # ACL - Access Control
+  - name: acl
+    config:
+      whitelist:
+        - user-app
+      hide_groups_header: true
+
 # IP Restriction for admin routes (Grafana/Prometheus)
 # Uncomment and configure with your admin IP addresses
 # routes:

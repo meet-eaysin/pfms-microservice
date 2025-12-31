@@ -43,3 +43,10 @@ plugins:
       redis_database: 0
       fault_tolerant: true
       hide_client_headers: false
+
+  # ACL - Access Control
+  - name: acl
+    config:
+      whitelist:
+        - user-app
+      hide_groups_header: true

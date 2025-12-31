@@ -34,3 +34,10 @@ plugins:
     config:
       path: /tmp/kong-dev-access.log
       reopen: true
+
+  # ACL - Access Control
+  - name: acl
+    config:
+      whitelist:
+        - user-app
+      hide_groups_header: true
