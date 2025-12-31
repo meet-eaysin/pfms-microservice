@@ -9,6 +9,10 @@
     "yarn": "^4.12.0"
   },
   "packageManager": "yarn@4.12.0",
+  "resolutions": {
+    "glob": "^10.4.5",
+    "qs": "^6.14.0"
+  },
   "scripts": {
     "build": "turbo run build",
     "build:services": "turbo run build --filter='./apps/*'",

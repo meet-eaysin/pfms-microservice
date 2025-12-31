@@ -19,10 +19,14 @@ rabbitmq-plugins enable rabbitmq_management
 # ============================================
 echo "Creating users..."
 
+# Use environment variables if provided, otherwise use defaults
+RABBIT_USER=${RABBITMQ_USER:-pfms_user}
+RABBIT_PASS=${RABBITMQ_PASSWORD:-pfms_password}
+
 # Create pfms user if not exists
-rabbitmqctl add_user pfms_user pfms_password 2>/dev/null || true
-rabbitmqctl set_permissions -p / pfms_user ".*" ".*" ".*"
-rabbitmqctl set_user_tags pfms_user administrator
+rabbitmqctl add_user "$RABBIT_USER" "$RABBIT_PASS" 2>/dev/null || true
+rabbitmqctl set_permissions -p / "$RABBIT_USER" ".*" ".*" ".*"
+rabbitmqctl set_user_tags "$RABBIT_USER" administrator
 
 # ============================================
 # CREATE VIRTUAL HOSTS
@@ -30,7 +34,7 @@ rabbitmqctl set_user_tags pfms_user administrator
 echo "Creating virtual hosts..."
 rabbitmqctl add_vhost pfms 2>/dev/null || true
 rabbitmqctl set_permissions -p pfms guest ".*" ".*" ".*"
-rabbitmqctl set_permissions -p pfms pfms_user ".*" ".*" ".*"
+rabbitmqctl set_permissions -p pfms "$RABBIT_USER" ".*" ".*" ".*"
 
 # ============================================
 # CREATE EXCHANGES
