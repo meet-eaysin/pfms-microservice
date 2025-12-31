@@ -22,17 +22,17 @@ services:
       DATABASE_PORT: 5432
       DATABASE_NAME: auth_db
       DATABASE_USER: ${POSTGRES_AUTH_USER:-postgres}
-      DATABASE_PASSWORD: ${POSTGRES_AUTH_PASSWORD:-postgres_dev_password}
+      DATABASE_PASSWORD: ${POSTGRES_AUTH_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_dev_password}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-placeholder_redis_password}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-admin}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq_dev_password}
-      JWT_SECRET: ${JWT_SECRET:-test-secret-for-dev-only}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-placeholder_rabbitmq_password}
+      JWT_SECRET: ${JWT_SECRET:-placeholder_jwt_secret}
       JWT_EXPIRY: 24h
-      BETTER_AUTH_SECRET: 'this_is_a_very_long_secret_that_is_at_least_32_chars_long'
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-placeholder_better_auth_secret}
       LOG_LEVEL: info
       ENABLE_SWAGGER: 'false'
     # Port 3001 is internal only - access via Kong on port 8000
@@ -78,22 +78,22 @@ services:
       DATABASE_HOST: postgres-user
       DATABASE_PORT: 5432
       DATABASE_NAME: user_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_dev_password}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-placeholder_redis_password}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-admin}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq_dev_password}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-placeholder_rabbitmq_password}
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-      DATABASE_URL: postgresql://${POSTGRES_USER_USER:-postgres}:${POSTGRES_USER_PASSWORD:-postgres}@postgres-user:5432/user_db
+      DATABASE_URL: postgresql://${POSTGRES_USER_USER:-postgres}:${POSTGRES_USER_PASSWORD:-placeholder_postgres_password}@postgres-user:5432/user_db
       S3_ENDPOINT: ${S3_ENDPOINT:-http://minio:9000}
       S3_BUCKET: ${S3_BUCKET:-pfms-users}
       S3_ACCESS_KEY: ${S3_ACCESS_KEY:-minioadmin}
-      S3_SECRET_KEY: ${S3_SECRET_KEY:-minioadmin}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-placeholder_minio_password}
       S3_REGION: ${S3_REGION:-us-east-1}
       AUTH_SERVICE_URL: http://auth-service:3001
     ports:
@@ -128,19 +128,19 @@ services:
       NODE_ENV: production
       SERVICE_NAME: expense-service
       SERVICE_PORT: 3003
-      DATABASE_URL: postgresql://${POSTGRES_EXPENSE_USER:-postgres}:${POSTGRES_EXPENSE_PASSWORD:-postgres_dev_password}@postgres-expense:5432/expense_db
+      DATABASE_URL: postgresql://${POSTGRES_EXPENSE_USER:-postgres}:${POSTGRES_EXPENSE_PASSWORD:-placeholder_postgres_password}@postgres-expense:5432/expense_db
       DATABASE_HOST: postgres-expense
       DATABASE_PORT: 5432
       DATABASE_NAME: expense_db
       DATABASE_USER: ${POSTGRES_EXPENSE_USER:-postgres}
-      DATABASE_PASSWORD: ${POSTGRES_EXPENSE_PASSWORD:-postgres_dev_password}
+      DATABASE_PASSWORD: ${POSTGRES_EXPENSE_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_dev_password}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-placeholder_redis_password}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-admin}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq_dev_password}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-placeholder_rabbitmq_password}
       LOG_LEVEL: info
     # NO PORT EXPOSURE - Internal Docker network only
     # External access ONLY via Kong Gateway (port 8000)
@@ -182,8 +182,8 @@ services:
       DATABASE_HOST: postgres-income
       DATABASE_PORT: 5432
       DATABASE_NAME: income_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -223,8 +223,8 @@ services:
       DATABASE_HOST: postgres-investment
       DATABASE_PORT: 5432
       DATABASE_NAME: investment_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -264,8 +264,8 @@ services:
       DATABASE_HOST: postgres-loan
       DATABASE_PORT: 5432
       DATABASE_NAME: loan_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -305,8 +305,8 @@ services:
       DATABASE_HOST: postgres-user
       DATABASE_PORT: 5432
       DATABASE_NAME: group_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -346,8 +346,8 @@ services:
       DATABASE_HOST: postgres-user
       DATABASE_PORT: 5432
       DATABASE_NAME: tax_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -387,8 +387,8 @@ services:
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
       MONGODB_NAME: ai_analytics_db
-      MONGODB_USER: root
-      MONGODB_PASSWORD: root
+      MONGODB_USER: ${MONGODB_USER:-root}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD:-placeholder_mongodb_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -428,8 +428,8 @@ services:
       DATABASE_HOST: postgres-user
       DATABASE_PORT: 5432
       DATABASE_NAME: notification_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -473,8 +473,8 @@ services:
       DATABASE_HOST: postgres-user
       DATABASE_PORT: 5432
       DATABASE_NAME: automation_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -514,8 +514,8 @@ services:
       DATABASE_HOST: postgres-user
       DATABASE_PORT: 5432
       DATABASE_NAME: report_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -592,8 +592,8 @@ services:
       DATABASE_HOST: postgres-user
       DATABASE_PORT: 5432
       DATABASE_NAME: savings_db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq

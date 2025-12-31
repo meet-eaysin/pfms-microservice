@@ -29,8 +29,8 @@ const RedisConfigSchema = z.object({
 const RabbitMQConfigSchema = z.object({
   RABBITMQ_HOST: z.string().default('localhost'),
   RABBITMQ_PORT: z.number().default(5672),
-  RABBITMQ_USER: z.string().default('guest'),
-  RABBITMQ_PASSWORD: z.string().default('guest'),
+  RABBITMQ_USER: z.string().default('dummy_user'),
+  RABBITMQ_PASSWORD: z.string().default('dummy_password'),
   RABBITMQ_VHOST: z.string().default('/'),
 });
 
@@ -95,8 +95,8 @@ export function loadUserServiceConfig(): UserServiceConfig {
       RABBITMQ_HOST: process.env.RABBITMQ_HOST ?? 'localhost',
       RABBITMQ_PORT:
         process.env.RABBITMQ_PORT !== undefined ? Number(process.env.RABBITMQ_PORT) : 5672,
-      RABBITMQ_USER: process.env.RABBITMQ_USER ?? 'guest',
-      RABBITMQ_PASSWORD: process.env.RABBITMQ_PASSWORD ?? 'guest',
+      RABBITMQ_USER: process.env.RABBITMQ_USER ?? 'dummy_user',
+      RABBITMQ_PASSWORD: process.env.RABBITMQ_PASSWORD ?? 'dummy_password',
       RABBITMQ_VHOST: process.env.RABBITMQ_VHOST ?? '/',
     },
     storage: {

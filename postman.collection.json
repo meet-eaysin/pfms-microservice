@@ -24,7 +24,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password123!\",\n  \"name\": \"John Doe\"\n}"
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"PLACEHOLDER_PASSWORD\",\n  \"name\": \"John Doe\"\n}"
             }
           },
           "response": []
@@ -46,7 +46,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password123!\"\n}"
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"PLACEHOLDER_PASSWORD\"\n}"
             }
           },
           "response": []
@@ -170,7 +170,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"token\": \"RESET_TOKEN\",\n  \"newPassword\": \"NewPassword123!\"\n}"
+              "raw": "{\n  \"token\": \"RESET_TOKEN\",\n  \"newPassword\": \"NewPLACEHOLDER_PASSWORD\"\n}"
             }
           },
           "response": []
@@ -192,7 +192,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"currentPassword\": \"Password123!\",\n  \"newPassword\": \"NewPassword456!\"\n}"
+              "raw": "{\n  \"currentPassword\": \"PLACEHOLDER_PASSWORD\",\n  \"newPassword\": \"PLACEHOLDER_PASSWORD\"\n}"
             }
           },
           "response": []
@@ -481,7 +481,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"token\": \"TOKEN\",\n  \"newPassword\": \"NewPassword123!\"\n}"
+              "raw": "{\n  \"token\": \"TOKEN\",\n  \"newPassword\": \"NewPLACEHOLDER_PASSWORD\"\n}"
             }
           },
           "response": []
