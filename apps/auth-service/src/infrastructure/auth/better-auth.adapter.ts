@@ -95,6 +95,7 @@ export class BetterAuthAdapter {
           path: '/',
         },
       },
+      basePath: '/',
     });
 
     const nodeHandler = toNodeHandler(auth);

@@ -32,7 +32,7 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-placeholder_rabbitmq_password}
       JWT_SECRET: ${JWT_SECRET:-placeholder_jwt_secret}
       JWT_EXPIRY: 24h
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-placeholder_better_auth_secret}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-placeholder_better_auth_secret_longer_value_secure}
       LOG_LEVEL: info
       ENABLE_SWAGGER: 'false'
     # Port 3001 is internal only - access via Kong on port 8000

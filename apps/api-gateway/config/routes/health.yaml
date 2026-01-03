@@ -1,11 +1,11 @@
 # Health Check Routes
 # All services expose health checks at /api/v1/{service}/health
-# Health checks are public (no authentication required)
+# Kong rewrites these to the internal /health or /api/v1/health endpoints
 
 _format_version: '3.0'
 
 routes:
-  # Auth Service Health
+  # Auth Service Health (Target: /api/v1/health)
   - name: auth-health
     service: auth-service
     paths:
@@ -16,9 +16,13 @@ routes:
       - http
       - https
     strip_path: false
-    plugins: [] # No authentication for health checks
+    plugins:
+      - name: request-transformer
+        config:
+          replace:
+            uri: /api/v1/health
 
-  # User Service Health
+  # User Service Health (Target: /health)
   - name: user-health
     service: user-service
     paths:
@@ -29,9 +33,13 @@ routes:
       - http
       - https
     strip_path: false
-    plugins: []
+    plugins:
+      - name: request-transformer
+        config:
+          replace:
+            uri: /health
 
-  # Expense Service Health
+  # Expense Service Health (Target: /health)
   - name: expense-health
     service: expense-service
     paths:
@@ -42,9 +50,13 @@ routes:
       - http
       - https
     strip_path: false
-    plugins: []
+    plugins:
+      - name: request-transformer
+        config:
+          replace:
+            uri: /health
 
-  # Income Service Health
+  # Income Service Health (Target: /health)
   - name: income-health
     service: income-service
     paths:
@@ -55,9 +67,13 @@ routes:
       - http
       - https
     strip_path: false
-    plugins: []
+    plugins:
+      - name: request-transformer
+        config:
+          replace:
+            uri: /health
 
-  # Ledger Service Health
+  # Ledger Service Health (Target: /health)
   - name: ledger-health
     service: ledger-service
     paths:
@@ -68,9 +84,13 @@ routes:
       - http
       - https
     strip_path: false
-    plugins: []
+    plugins:
+      - name: request-transformer
+        config:
+          replace:
+            uri: /health
 
-  # Planning Service Health
+  # Planning Service Health (Target: /health)
   - name: planning-health
     service: planning-service
     paths:
@@ -81,9 +101,13 @@ routes:
       - http
       - https
     strip_path: false
-    plugins: []
+    plugins:
+      - name: request-transformer
+        config:
+          replace:
+            uri: /health
 
-  # Grafana Health
+  # Grafana Health (Target: /api/health)
   - name: grafana-health
     service: grafana
     paths:
@@ -94,9 +118,13 @@ routes:
       - http
       - https
     strip_path: false
-    plugins: []
+    plugins:
+      - name: request-transformer
+        config:
+          replace:
+            uri: /api/health
 
-  # Prometheus Health
+  # Prometheus Health (Target: /-/healthy)
   - name: prometheus-health
     service: prometheus
     paths:
@@ -107,4 +135,8 @@ routes:
       - http
       - https
     strip_path: false
-    plugins: []
+    plugins:
+      - name: request-transformer
+        config:
+          replace:
+            uri: /-/healthy

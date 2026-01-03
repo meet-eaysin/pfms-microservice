@@ -22,8 +22,9 @@ plugins:
       minute: 1000
       hour: 10000
       policy: redis
-      redis_host: ${REDIS_HOST:-redis}
-      redis_port: ${REDIS_PORT:-6379}
+      redis:
+        host: redis
+        port: 6379
       fault_tolerant: true
 
   # Verbose logging in development
@@ -32,12 +33,9 @@ plugins:
       path: /tmp/kong-dev-access.log
       reopen: true
 
-  # ACL - Access Control
-  - name: acl
-    config:
-      whitelist:
-        - user-app
-      hide_groups_header: true
+  # ============================================
+  # ACL - Moved to per-route configuration
+  # ============================================
 
 # Optional: Disable JWT validation for easier testing
 # Uncomment to disable authentication in development

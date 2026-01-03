@@ -20,15 +20,30 @@ routes:
       - https
     strip_path: true
     plugins:
+      - name: jwt
+        config:
+          uri_param_names:
+            - jwt
+          cookie_names:
+            - better_auth.session_token
+          header_names:
+            - Authorization
+          claims_to_verify:
+            - exp
+          run_on_preflight: false
+          maximum_expiration: 86400
       - name: cors
+      - name: acl
+        config:
+          allow:
+            - user-app
+          hide_groups_header: true
       - name: rate-limiting
         config:
           minute: 200
           hour: 2000
           policy: ${RATE_LIMIT_POLICY:-redis}
-          redis_host: ${REDIS_HOST:-redis}
           redis_port: ${REDIS_PORT:-6379}
-    # TODO: Add JWT authentication plugin for admin-only access
 
   # Prometheus Metrics Access
   - name: prometheus-routes
@@ -43,12 +58,27 @@ routes:
       - https
     strip_path: true
     plugins:
+      - name: jwt
+        config:
+          uri_param_names:
+            - jwt
+          cookie_names:
+            - better_auth.session_token
+          header_names:
+            - Authorization
+          claims_to_verify:
+            - exp
+          run_on_preflight: false
+          maximum_expiration: 86400
       - name: cors
+      - name: acl
+        config:
+          allow:
+            - user-app
+          hide_groups_header: true
       - name: rate-limiting
         config:
           minute: 100
           hour: 1000
           policy: ${RATE_LIMIT_POLICY:-redis}
-          redis_host: ${REDIS_HOST:-redis}
           redis_port: ${REDIS_PORT:-6379}
-    # TODO: Add JWT authentication plugin for admin-only access

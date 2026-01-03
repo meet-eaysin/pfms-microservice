@@ -9,6 +9,7 @@ _route_defaults: &route_defaults
   preserve_host: false
   plugins:
     - name: cors
+      config: {}
     - name: correlation-id
 
 # Public routes (no authentication required)
@@ -16,11 +17,13 @@ _public_route_defaults: &public_route_defaults
   <<: *route_defaults
   plugins:
     - name: cors
+      config: {}
 
 # Protected routes (authentication required)
 _protected_route_defaults: &protected_route_defaults
   <<: *route_defaults
   plugins:
     - name: cors
+      config: {}
     - name: correlation-id
     # JWT authentication applied globally via global plugins

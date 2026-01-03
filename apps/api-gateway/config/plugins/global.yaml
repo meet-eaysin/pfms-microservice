@@ -8,20 +8,9 @@ plugins:
   # ============================================
   # AUTHENTICATION - Better-Auth JWT
   # ============================================
-  - name: jwt
-    config:
-      # URI to fetch JWKS (JSON Web Key Set) from Better-Auth
-      uri_param_names:
-        - jwt
-      cookie_names:
-        - better_auth.session_token # Better-Auth session cookie
-      header_names:
-        - Authorization
-      claims_to_verify:
-        - exp # Expiration time
-      run_on_preflight: false
-      maximum_expiration: 86400 # 24 hours max token lifetime
-      # Note: JWKS URI configured per environment via overrides
+  # ============================================
+  # AUTHENTICATION - Moved to per-route configuration
+  # ============================================
 
   # ============================================
   # CORS - Global
@@ -94,13 +83,8 @@ plugins:
       require_content_length: false
 
   # ============================================
-  # ACL - Access Control
+  # ACL - Moved to per-route configuration
   # ============================================
-  - name: acl
-    config:
-      whitelist:
-        - user-app
-      hide_groups_header: true
 
   # ============================================
   # LOGGING (File-based for development)
