@@ -31,6 +31,13 @@ export function createAuthRouter(deps: IAuthRouterDependencies): Router {
   const authMw = authMiddleware({ authService: deps.authService });
 
   router.all('/*', async (req: Request, res: Response): Promise<void> => {
+    logger.info('🔐 BetterAuth Request', {
+      method: req.method,
+      url: req.url,
+      originalUrl: req.originalUrl,
+      path: req.path,
+      baseUrl: req.baseUrl,
+    });
     try {
       await deps.betterAuthAdapter.handleRequest(req, res);
     } catch (error) {
