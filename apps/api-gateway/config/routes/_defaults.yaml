@@ -1,0 +1,26 @@
+# Default Route Configuration
+# These defaults are inherited by all routes unless explicitly overridden
+
+_route_defaults: &route_defaults
+  protocols:
+    - http
+    - https
+  strip_path: false
+  preserve_host: false
+  plugins:
+    - name: cors
+    - name: correlation-id
+
+# Public routes (no authentication required)
+_public_route_defaults: &public_route_defaults
+  <<: *route_defaults
+  plugins:
+    - name: cors
+
+# Protected routes (authentication required)
+_protected_route_defaults: &protected_route_defaults
+  <<: *route_defaults
+  plugins:
+    - name: cors
+    - name: correlation-id
+    # JWT authentication applied globally via global plugins

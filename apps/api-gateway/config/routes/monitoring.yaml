@@ -1,0 +1,54 @@
+# Monitoring Service Routes
+# Handles Grafana dashboards and Prometheus metrics
+
+_format_version: '3.0'
+
+routes:
+  # Grafana Dashboard Access
+  - name: grafana-routes
+    service: grafana
+    paths:
+      - /grafana
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    strip_path: true
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 2000
+          policy: ${RATE_LIMIT_POLICY:-redis}
+          redis_host: ${REDIS_HOST:-redis}
+          redis_port: ${REDIS_PORT:-6379}
+    # TODO: Add JWT authentication plugin for admin-only access
+
+  # Prometheus Metrics Access
+  - name: prometheus-routes
+    service: prometheus
+    paths:
+      - /prometheus
+    methods:
+      - GET
+      - POST
+    protocols:
+      - http
+      - https
+    strip_path: true
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+          policy: ${RATE_LIMIT_POLICY:-redis}
+          redis_host: ${REDIS_HOST:-redis}
+          redis_port: ${REDIS_PORT:-6379}
+    # TODO: Add JWT authentication plugin for admin-only access

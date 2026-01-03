@@ -1,0 +1,63 @@
+# Production Environment Overrides
+# These settings override base configurations for production environment
+
+_format_version: '3.0'
+
+plugins:
+  # Strict CORS in production
+  - name: cors
+    config:
+      origins:
+        - 'https://pfms.com'
+        - 'https://www.pfms.com'
+        - 'https://app.pfms.com'
+      credentials: true
+      max_age: 3600
+
+  # Strict rate limiting in production
+  - name: rate-limiting
+    config:
+      minute: 200
+      hour: 2000
+      policy: redis
+      redis_host: ${REDIS_HOST}
+      redis_port: ${REDIS_PORT:-6379}
+      redis_password: ${REDIS_PASSWORD}
+      redis_timeout: 2000
+      fault_tolerant: true
+
+  # Warn level logging only
+  - name: file-log
+    config:
+      path: /var/log/kong/production-access.log
+      reopen: true
+
+  # JWT with strict validation
+  - name: jwt
+    config:
+      uri_param_names:
+        - jwt
+      cookie_names:
+        - better_auth.session_token
+      header_names:
+        - Authorization
+      claims_to_verify:
+        - exp
+        - iss
+        - aud
+      run_on_preflight: false
+      maximum_expiration: 3600 # 1 hour max in production
+      # JWKS URI for production
+      # Set via environment variable: BETTER_AUTH_JWKS_URI
+
+  # Additional security headers for production
+  - name: response-transformer
+    config:
+      add:
+        headers:
+          - X-Content-Type-Options:nosniff
+          - X-Frame-Options:DENY
+          - X-XSS-Protection:1; mode=block
+          - Referrer-Policy:strict-origin-when-cross-origin
+          - Strict-Transport-Security:max-age=31536000; includeSubDomains; preload
+          - Content-Security-Policy:default-src 'self'

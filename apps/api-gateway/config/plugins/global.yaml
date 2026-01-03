@@ -1,6 +1,6 @@
-# Base Global Plugin Definitions
+# Global Plugin Configuration
 # These plugins are applied globally across all routes and services
-# Environment-specific plugin configurations can be applied in configs/{env}/overrides.yaml
+# Environment-specific plugin configurations can override these in environments/
 
 _format_version: '3.0'
 
@@ -8,13 +8,9 @@ plugins:
   # ============================================
   # AUTHENTICATION - Better-Auth JWT
   # ============================================
-  # JWT Authentication using Better-Auth JWKS endpoint
-  # Better-Auth provides JWT tokens via the JWT plugin
-  # JWKS endpoint: http://auth-service:3001/api/auth/jwks
   - name: jwt
     config:
       # URI to fetch JWKS (JSON Web Key Set) from Better-Auth
-      # This allows Kong to verify JWT signatures without storing keys
       uri_param_names:
         - jwt
       cookie_names:
@@ -23,11 +19,9 @@ plugins:
         - Authorization
       claims_to_verify:
         - exp # Expiration time
-      # Note: JWKS URI will be configured per environment via overrides
-      # Dev: http://auth-service:3001/api/auth/jwks
-      # Prod: https://auth.yourdomain.com/api/auth/jwks
       run_on_preflight: false
       maximum_expiration: 86400 # 24 hours max token lifetime
+      # Note: JWKS URI configured per environment via overrides
 
   # ============================================
   # CORS - Global
@@ -58,9 +52,9 @@ plugins:
   # ============================================
   - name: rate-limiting
     config:
-      minute: 500
-      hour: 5000
-      policy: local # Will be overridden to 'redis' in staging/prod
+      minute: ${RATE_LIMIT_MINUTE:-500}
+      hour: ${RATE_LIMIT_HOUR:-5000}
+      policy: ${RATE_LIMIT_POLICY:-local}
       fault_tolerant: true
       hide_client_headers: false
       # Redis config will be added via environment overrides
@@ -115,6 +109,5 @@ plugins:
     config:
       path: /tmp/kong-access.log
       reopen: true
-      # Log format includes request/response details
       custom_fields_by_lua:
         request_id: return kong.ctx.shared.correlation_id

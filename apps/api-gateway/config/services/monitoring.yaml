@@ -1,0 +1,29 @@
+# Monitoring Services - Grafana, Prometheus
+# These services provide observability and metrics
+
+_format_version: '3.0'
+
+services:
+  # Grafana - Monitoring Dashboards
+  - name: grafana
+    url: http://grafana:3000
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - monitoring
+      - observability
+      - internal
+
+  # Prometheus - Metrics Collection
+  - name: prometheus
+    url: http://prometheus:9090
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - monitoring
+      - metrics
+      - internal

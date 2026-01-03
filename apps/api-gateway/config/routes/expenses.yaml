@@ -1,0 +1,32 @@
+# Expense Service Routes
+# Handles expenses, categories, and spending habits
+
+_format_version: '3.0'
+
+routes:
+  # Expense Routes - Protected
+  - name: expense-routes
+    service: expense-service
+    paths:
+      - /api/v1/expenses
+      - /api/v1/habits # Part of expense domain
+      - /api/v1/categories # Part of expense domain
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+          policy: ${RATE_LIMIT_POLICY:-redis}
+          redis_host: ${REDIS_HOST:-redis}
+          redis_port: ${REDIS_PORT:-6379}

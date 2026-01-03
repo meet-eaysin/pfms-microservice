@@ -1,0 +1,110 @@
+# Health Check Routes
+# All services expose health checks at /api/v1/{service}/health
+# Health checks are public (no authentication required)
+
+_format_version: '3.0'
+
+routes:
+  # Auth Service Health
+  - name: auth-health
+    service: auth-service
+    paths:
+      - /api/v1/auth/health
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins: [] # No authentication for health checks
+
+  # User Service Health
+  - name: user-health
+    service: user-service
+    paths:
+      - /api/v1/users/health
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins: []
+
+  # Expense Service Health
+  - name: expense-health
+    service: expense-service
+    paths:
+      - /api/v1/expenses/health
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins: []
+
+  # Income Service Health
+  - name: income-health
+    service: income-service
+    paths:
+      - /api/v1/income/health
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins: []
+
+  # Ledger Service Health
+  - name: ledger-health
+    service: ledger-service
+    paths:
+      - /api/v1/ledger/health
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins: []
+
+  # Planning Service Health
+  - name: planning-health
+    service: planning-service
+    paths:
+      - /api/v1/planning/health
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins: []
+
+  # Grafana Health
+  - name: grafana-health
+    service: grafana
+    paths:
+      - /api/v1/monitoring/grafana/health
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins: []
+
+  # Prometheus Health
+  - name: prometheus-health
+    service: prometheus
+    paths:
+      - /api/v1/monitoring/prometheus/health
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins: []

@@ -1,0 +1,23 @@
+# Default Service Configuration
+# These defaults are inherited by all services unless explicitly overridden
+
+_defaults: &service_defaults
+  protocol: http
+  retries: 3
+  connect_timeout: 60000
+  write_timeout: 30000
+  read_timeout: 30000
+  tags:
+    - pfms
+
+# Critical services can override retries
+_critical_defaults: &critical_defaults
+  <<: *service_defaults
+  retries: 5
+
+# Long-running services (reports, exports)
+_long_running_defaults: &long_running_defaults
+  <<: *service_defaults
+  connect_timeout: 120000
+  write_timeout: 60000
+  read_timeout: 60000

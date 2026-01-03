@@ -1,0 +1,49 @@
+# Staging Environment Overrides
+# These settings override base configurations for staging environment
+
+_format_version: '3.0'
+
+plugins:
+  # Moderate CORS in staging
+  - name: cors
+    config:
+      origins:
+        - 'https://staging.pfms.com'
+        - 'https://staging-app.pfms.com'
+        - 'http://localhost:3000' # For testing
+      credentials: true
+      max_age: 3600
+
+  # Moderate rate limiting in staging
+  - name: rate-limiting
+    config:
+      minute: 300
+      hour: 3000
+      policy: redis
+      redis_host: ${REDIS_HOST}
+      redis_port: ${REDIS_PORT:-6379}
+      redis_password: ${REDIS_PASSWORD}
+      fault_tolerant: true
+
+  # Info level logging
+  - name: file-log
+    config:
+      path: /var/log/kong/staging-access.log
+      reopen: true
+
+  # JWT with staging JWKS endpoint
+  - name: jwt
+    config:
+      uri_param_names:
+        - jwt
+      cookie_names:
+        - better_auth.session_token
+      header_names:
+        - Authorization
+      claims_to_verify:
+        - exp
+        - iss
+      run_on_preflight: false
+      maximum_expiration: 86400
+      # JWKS URI for staging
+      # Set via environment variable: BETTER_AUTH_JWKS_URI

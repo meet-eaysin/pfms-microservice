@@ -1,0 +1,29 @@
+# Core Services - Authentication, User Management
+# These are critical services that the platform depends on
+
+_format_version: '3.0'
+
+services:
+  # Auth Service - Critical (Better-Auth)
+  - name: auth-service
+    url: http://auth-service:3001
+    retries: 5 # Critical service
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - core
+      - authentication
+      - critical
+
+  # User Service - Critical
+  - name: user-service
+    url: http://user-service:3002
+    retries: 5 # Critical service
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - core
+      - user-management
+      - critical

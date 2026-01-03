@@ -1,0 +1,36 @@
+# Auth Service Routes
+# Handles authentication, sessions, and user auth operations
+
+_format_version: '3.0'
+
+routes:
+  # Auth Routes - Public (Better-Auth handles its own auth)
+  - name: auth-routes
+    service: auth-service
+    paths:
+      - /api/v1/auth
+      - /api/auth # Legacy support - will be deprecated
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins:
+      - name: cors
+        config:
+          origins: ['*']
+          methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
+          headers: ['Content-Type', 'Authorization', 'X-Session-Token']
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+          policy: ${RATE_LIMIT_POLICY:-redis}
+          redis_host: ${REDIS_HOST:-redis}
+          redis_port: ${REDIS_PORT:-6379}

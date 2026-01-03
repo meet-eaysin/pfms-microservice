@@ -1,0 +1,53 @@
+# Financial Services - Expense, Income, Ledger, Planning
+# These services handle financial transactions and planning
+
+_format_version: '3.0'
+
+services:
+  # Expense Service
+  - name: expense-service
+    url: http://expense-service:3003
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - expense
+      - transactional
+
+  # Income Service
+  - name: income-service
+    url: http://income-service:3004
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - income
+      - transactional
+
+  # Ledger Service
+  - name: ledger-service
+    url: http://ledger-service:3005
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - ledger
+      - transactional
+
+  # Planning Service (Budgets, Goals, Automation)
+  - name: planning-service
+    url: http://planning-service:3011
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - planning
+      - automation
