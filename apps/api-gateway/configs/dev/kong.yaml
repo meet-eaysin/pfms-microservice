@@ -382,6 +382,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: expense-routes
     service: expense-service
     paths:
@@ -403,6 +406,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
     strip_path: false
   - name: income-routes
     service: income-service
@@ -424,6 +430,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: investment-routes
     service: investment-service
     paths:
@@ -445,6 +454,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: loan-routes
     service: loan-service
     paths:
@@ -466,6 +478,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: group-routes
     service: group-service
     paths:
@@ -486,6 +501,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: savings-routes
     service: savings-service
     paths:
@@ -506,6 +524,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: tax-routes
     service: tax-service
     paths:
@@ -525,6 +546,9 @@ routes:
         config:
           minute: 50
           hour: 500
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: ai-routes
     service: ai-service
     paths:
@@ -543,6 +567,9 @@ routes:
         config:
           minute: 30
           hour: 300
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: notification-routes
     service: notification-service
     paths:
@@ -561,6 +588,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: automation-routes
     service: automation-service
     paths:
@@ -581,6 +611,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: report-routes
     service: report-service
     paths:
@@ -598,6 +631,9 @@ routes:
         config:
           minute: 20
           hour: 100
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: market-routes
     service: market-service
     paths:
@@ -614,6 +650,9 @@ routes:
         config:
           minute: 100
           hour: 2000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: grafana-routes
     service: grafana
     paths:
@@ -634,6 +673,9 @@ routes:
         config:
           minute: 200
           hour: 2000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
   - name: prometheus-routes
     service: prometheus
     paths:
@@ -651,6 +693,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 plugins:
   - name: cors
     config:
@@ -665,7 +710,9 @@ plugins:
     config:
       minute: 1000
       hour: 10000
-      policy: local
+      policy: redis
+      redis_host: redis
+      redis_port: 6379
       fault_tolerant: true
   - name: file-log
     config:
@@ -1045,7 +1092,7 @@ consumers:
     custom_id: test-client-001
     basicauth_credentials:
       - username: testuser
-        password: testpass123
+        password: TEST_CLIENT_PASSWORD_PLACEHOLDER
 acls:
   - consumer: test-client
     group: user-app

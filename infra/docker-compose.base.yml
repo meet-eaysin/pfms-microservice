@@ -529,6 +529,144 @@ services:
     networks:
       - pfms_network
 
+  # Group Service Database
+  postgres-group:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_group
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_GROUP_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_GROUP_PASSWORD:-placeholder_postgres_password}
+      POSTGRES_DB: group_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_group_data:/var/lib/postgresql/data
+    ports:
+      - '5441:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_GROUP_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Tax Service Database
+  postgres-tax:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_tax
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_TAX_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_TAX_PASSWORD:-placeholder_postgres_password}
+      POSTGRES_DB: tax_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_tax_data:/var/lib/postgresql/data
+    ports:
+      - '5442:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_TAX_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Notification Service Database
+  postgres-notification:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_notification
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_NOTIFICATION_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_NOTIFICATION_PASSWORD:-placeholder_postgres_password}
+      POSTGRES_DB: notification_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_notification_data:/var/lib/postgresql/data
+    ports:
+      - '5443:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_NOTIFICATION_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Automation Service Database
+  postgres-automation:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_automation
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_AUTOMATION_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_AUTOMATION_PASSWORD:-placeholder_postgres_password}
+      POSTGRES_DB: automation_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_automation_data:/var/lib/postgresql/data
+    ports:
+      - '5444:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_AUTOMATION_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Report Service Database
+  postgres-report:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_report
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_REPORT_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_REPORT_PASSWORD:-placeholder_postgres_password}
+      POSTGRES_DB: report_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_report_data:/var/lib/postgresql/data
+    ports:
+      - '5445:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_REPORT_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # Savings Service Database
+  postgres-savings:
+    image: postgres:16-alpine
+    container_name: pfms_postgres_savings
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_SAVINGS_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_SAVINGS_PASSWORD:-placeholder_postgres_password}
+      POSTGRES_DB: savings_db
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=50 -c shared_buffers=64MB -c effective_cache_size=256MB
+    volumes:
+      - postgres_savings_data:/var/lib/postgresql/data
+    ports:
+      - '5446:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_SAVINGS_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfms_network
+
 networks:
   pfms_network:
     driver: bridge
@@ -553,3 +691,9 @@ volumes:
   postgres_loan_data:
   postgres_ledger_data:
   postgres_planning_data:
+  postgres_group_data:
+  postgres_tax_data:
+  postgres_notification_data:
+  postgres_automation_data:
+  postgres_report_data:
+  postgres_savings_data:

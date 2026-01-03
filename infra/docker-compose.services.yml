@@ -96,8 +96,8 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY:-placeholder_minio_password}
       S3_REGION: ${S3_REGION:-us-east-1}
       AUTH_SERVICE_URL: http://auth-service:3001
-    ports:
-      - '3002:3002'
+    # ports:
+    #   - '3002:3002'
     depends_on:
       postgres-user:
         condition: service_healthy
@@ -190,8 +190,8 @@ services:
       RABBITMQ_PORT: 5672
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3004:3004'
+    # ports:
+    #   - '3004:3004'
     depends_on:
       postgres-income:
         condition: service_healthy
@@ -231,8 +231,8 @@ services:
       RABBITMQ_PORT: 5672
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3005:3005'
+    # ports:
+    #   - '3005:3005'
     depends_on:
       postgres-investment:
         condition: service_healthy
@@ -272,8 +272,8 @@ services:
       RABBITMQ_PORT: 5672
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3006:3006'
+    # ports:
+    #   - '3006:3006'
     depends_on:
       postgres-loan:
         condition: service_healthy
@@ -302,21 +302,21 @@ services:
       NODE_ENV: development
       SERVICE_NAME: group-service
       SERVICE_PORT: 3007
-      DATABASE_HOST: postgres-user
+      DATABASE_HOST: postgres-group
       DATABASE_PORT: 5432
       DATABASE_NAME: group_db
-      DATABASE_USER: ${POSTGRES_USER:-postgres}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
+      DATABASE_USER: ${POSTGRES_GROUP_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_GROUP_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3007:3007'
+    # ports:
+    #   - '3007:3007'
     depends_on:
-      postgres-user:
+      postgres-group:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -343,21 +343,21 @@ services:
       NODE_ENV: development
       SERVICE_NAME: tax-service
       SERVICE_PORT: 3008
-      DATABASE_HOST: postgres-user
+      DATABASE_HOST: postgres-tax
       DATABASE_PORT: 5432
       DATABASE_NAME: tax_db
-      DATABASE_USER: ${POSTGRES_USER:-postgres}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
+      DATABASE_USER: ${POSTGRES_TAX_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_TAX_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3008:3008'
+    # ports:
+    #   - '3008:3008'
     depends_on:
-      postgres-user:
+      postgres-tax:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -395,8 +395,8 @@ services:
       RABBITMQ_PORT: 5672
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3009:3009'
+    # ports:
+    #   - '3009:3009'
     depends_on:
       mongodb:
         condition: service_healthy
@@ -425,11 +425,11 @@ services:
       NODE_ENV: development
       SERVICE_NAME: notification-service
       SERVICE_PORT: 3010
-      DATABASE_HOST: postgres-user
+      DATABASE_HOST: postgres-notification
       DATABASE_PORT: 5432
       DATABASE_NAME: notification_db
-      DATABASE_USER: ${POSTGRES_USER:-postgres}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
+      DATABASE_USER: ${POSTGRES_NOTIFICATION_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_NOTIFICATION_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -438,10 +438,10 @@ services:
       SMTP_PORT: 1025
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3010:3010'
+    # ports:
+    #   - '3010:3010'
     depends_on:
-      postgres-user:
+      postgres-notification:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -470,21 +470,21 @@ services:
       NODE_ENV: development
       SERVICE_NAME: automation-service
       SERVICE_PORT: 3011
-      DATABASE_HOST: postgres-user
+      DATABASE_HOST: postgres-automation
       DATABASE_PORT: 5432
       DATABASE_NAME: automation_db
-      DATABASE_USER: ${POSTGRES_USER:-postgres}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
+      DATABASE_USER: ${POSTGRES_AUTOMATION_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_AUTOMATION_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3011:3011'
+    # ports:
+    #   - '3011:3011'
     depends_on:
-      postgres-user:
+      postgres-automation:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -511,11 +511,11 @@ services:
       NODE_ENV: development
       SERVICE_NAME: report-service
       SERVICE_PORT: 3012
-      DATABASE_HOST: postgres-user
+      DATABASE_HOST: postgres-report
       DATABASE_PORT: 5432
       DATABASE_NAME: report_db
-      DATABASE_USER: ${POSTGRES_USER:-postgres}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
+      DATABASE_USER: ${POSTGRES_REPORT_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_REPORT_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
@@ -524,10 +524,10 @@ services:
       LOCAL_STORAGE_PATH: /app/uploads
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3012:3012'
+    # ports:
+    #   - '3012:3012'
     depends_on:
-      postgres-user:
+      postgres-report:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -561,8 +561,8 @@ services:
       RABBITMQ_PORT: 5672
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3013:3013'
+    # ports:
+    #   - '3013:3013'
     depends_on:
       redis:
         condition: service_healthy
@@ -589,21 +589,21 @@ services:
       NODE_ENV: development
       SERVICE_NAME: savings-service
       SERVICE_PORT: 3014
-      DATABASE_HOST: postgres-user
+      DATABASE_HOST: postgres-savings
       DATABASE_PORT: 5432
       DATABASE_NAME: savings_db
-      DATABASE_USER: ${POSTGRES_USER:-postgres}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-placeholder_postgres_password}
+      DATABASE_USER: ${POSTGRES_SAVINGS_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_SAVINGS_PASSWORD:-placeholder_postgres_password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    ports:
-      - '3014:3014'
+    # ports:
+    #   - '3014:3014'
     depends_on:
-      postgres-user:
+      postgres-savings:
         condition: service_healthy
       redis:
         condition: service_healthy

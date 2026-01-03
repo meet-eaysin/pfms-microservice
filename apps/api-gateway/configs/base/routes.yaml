@@ -228,6 +228,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # ============================================
   # FINANCIAL SERVICE ROUTES
@@ -255,6 +258,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
     strip_path: false
 
   # Income Routes
@@ -278,6 +284,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # Investment Routes
   - name: investment-routes
@@ -301,6 +310,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # Loan Routes
   - name: loan-routes
@@ -324,6 +336,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # Group Routes
   - name: group-routes
@@ -346,6 +361,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # Savings Routes
   - name: savings-routes
@@ -368,6 +386,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # ============================================
   # SPECIALIZED SERVICE ROUTES
@@ -393,6 +414,9 @@ routes:
         config:
           minute: 50
           hour: 500
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # AI Routes
   - name: ai-routes
@@ -413,6 +437,9 @@ routes:
         config:
           minute: 30
           hour: 300
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # Notification Routes
   - name: notification-routes
@@ -433,6 +460,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # Automation Routes
   - name: automation-routes
@@ -455,6 +485,9 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # Report Routes
   - name: report-routes
@@ -474,6 +507,9 @@ routes:
         config:
           minute: 20
           hour: 100
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # Market Routes
   - name: market-routes
@@ -492,6 +528,9 @@ routes:
         config:
           minute: 100
           hour: 2000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
 
   # ============================================
   # MONITORING ROUTES (Admin Access)
@@ -517,6 +556,9 @@ routes:
         config:
           minute: 200
           hour: 2000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
     # TODO: Add JWT authentication plugin for admin-only access
 
   # Prometheus Metrics Access
@@ -537,4 +579,7 @@ routes:
         config:
           minute: 100
           hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
     # TODO: Add JWT authentication plugin for admin-only access
