@@ -16,11 +16,7 @@ routes:
       - http
       - https
     strip_path: false
-    plugins:
-      - name: request-transformer
-        config:
-          replace:
-            uri: /api/v1/health
+    plugins: []
 
   # User Service Health (Target: /health)
   - name: user-health
