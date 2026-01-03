@@ -33,6 +33,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-placeholder_jwt_secret}
       JWT_EXPIRY: 24h
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-placeholder_better_auth_secret_longer_value_secure}
+      EMAIL_VERIFICATION_ENABLED: 'false'
       LOG_LEVEL: info
       ENABLE_SWAGGER: 'false'
     # Port 3001 is internal only - access via Kong on port 8000
