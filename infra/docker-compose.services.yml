@@ -547,24 +547,25 @@ services:
       - ./uploads:/app/uploads
 
   # 13. Market Data Service (Port 3013, Express.js)
-  market-service:
-    container_name: pfms_market_service
+  market-data-service:
+    container_name: pfms_market_data_service
     build:
-      context: ../apps/market-service
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: apps/market-data-service/Dockerfile
     environment:
       NODE_ENV: development
-      SERVICE_NAME: market-service
+      SERVICE_NAME: market-data-service
       SERVICE_PORT: 3013
+      DATABASE_URL: postgresql://${POSTGRES_MARKET_USER:-postgres}:${POSTGRES_MARKET_PASSWORD:-placeholder_postgres_password}@postgres-market:5432/market_db
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       LOG_LEVEL: debug
       ENABLE_SWAGGER: 'true'
-    # ports:
-    #   - '3013:3013'
     depends_on:
+      postgres-market:
+        condition: service_healthy
       redis:
         condition: service_healthy
       rabbitmq:
@@ -572,13 +573,13 @@ services:
     networks:
       - pfms_network
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3013/health']
+      test: ['CMD', 'curl', '-f', 'http://localhost:3013/api/v1/market/health']
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
     volumes:
-      - ../apps/market-service/src:/app/src
+      - ../apps/market-data-service/src:/app/src
 
   # 14. Savings/Goals Service (Port 3014, Express.js)
   savings-service:

@@ -51,3 +51,15 @@ services:
       - financial
       - planning
       - automation
+
+  # Market Data Service (Oracle for prices)
+  - name: market-data-service
+    url: http://market-data-service:3013
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 30000
+    read_timeout: 30000
+    tags:
+      - financial
+      - market
+      - oracle

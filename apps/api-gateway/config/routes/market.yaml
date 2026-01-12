@@ -1,0 +1,25 @@
+# Market Data Service Routes
+# Oracle for financial market data
+
+_format_version: '3.0'
+
+routes:
+  # Market Data Routes - Public (or protected depending on policy, typically public for discovery, protected for specific data)
+  - name: market-data-routes
+    service: market-data-service
+    paths:
+      - /api/v1/market
+    methods:
+      - GET
+    protocols:
+      - http
+      - https
+    strip_path: false
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 60
+          hour: 500
+          policy: ${RATE_LIMIT_POLICY:-redis}
+          redis_port: ${REDIS_PORT:-6379}

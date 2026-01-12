@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AssetPrice {
+  symbol      String   @id
+  price       Decimal  @db.Decimal(18, 8)
+  currency    String   @default("USD") @db.Char(3)
+  lastUpdated DateTime @default(now()) @map("last_updated")
+
+  @@map("asset_prices")
+}
+
+model HistoricalCandle {
+  symbol String
+  date   DateTime @db.Date
+  open   Decimal  @db.Decimal(18, 8)
+  high   Decimal  @db.Decimal(18, 8)
+  low    Decimal  @db.Decimal(18, 8)
+  close  Decimal  @db.Decimal(18, 8)
+  volume BigInt
+
+  @@id([symbol, date])
+  @@map("historical_candles")
+}
