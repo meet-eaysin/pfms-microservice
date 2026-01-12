@@ -4,8 +4,8 @@ import { connect, Channel, ChannelModel } from 'amqplib';
 
 @Injectable()
 export class EventPublisher implements OnModuleInit, OnModuleDestroy {
-  private connection: ChannelModel;
-  private channel: Channel;
+  private connection!: ChannelModel;
+  private channel!: Channel;
   private readonly logger = new Logger(EventPublisher.name);
   private readonly exchange = 'pfms.events';
 

@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { AssetPrice } from '@/domain/entities/asset-price.entity';
 import { HistoricalCandle } from '@/domain/entities/historical-candle.entity';
 import type { IMarketDataRepository } from '@/domain/interfaces/repository.interface';
@@ -40,10 +40,7 @@ export class PrismaMarketDataRepository implements IMarketDataRepository {
       },
     });
 
-    return data.map(
-      (d: { symbol: string; price: { toNumber(): number }; currency: string; lastUpdated: Date }) =>
-        new AssetPrice(d.symbol, d.price.toNumber(), d.currency, d.lastUpdated)
-    );
+    return data.map((d) => new AssetPrice(d.symbol, d.price.toNumber(), d.currency, d.lastUpdated));
   }
 
   async saveHistoricalCandles(candles: HistoricalCandle[]): Promise<void> {
@@ -92,15 +89,7 @@ export class PrismaMarketDataRepository implements IMarketDataRepository {
     });
 
     return data.map(
-      (d: {
-        symbol: string;
-        date: Date;
-        open: { toNumber(): number };
-        high: { toNumber(): number };
-        low: { toNumber(): number };
-        close: { toNumber(): number };
-        volume: bigint;
-      }) =>
+      (d) =>
         new HistoricalCandle(
           d.symbol,
           d.date,

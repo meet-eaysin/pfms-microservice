@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Headers, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Headers, BadRequestException } from '@nestjs/common';
 import { CreateRecurringUseCase } from '../../application/use-cases/recurring/create-recurring.use-case';
 import { CreateRecurringDto } from '../../application/dto/recurring/recurring.dto';
 

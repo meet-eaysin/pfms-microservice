@@ -11,7 +11,7 @@ import {
 export class CreateExpenseDto {
   @IsNotEmpty()
   @IsNumber()
-  amount: number;
+  amount!: number;
 
   @IsString()
   @IsOptional()
@@ -19,11 +19,11 @@ export class CreateExpenseDto {
 
   @IsNotEmpty()
   @IsUUID()
-  categoryId: string;
+  categoryId!: string;
 
   @IsNotEmpty()
   @IsDateString()
-  date: string;
+  date!: string;
 
   @IsString()
   @IsOptional()

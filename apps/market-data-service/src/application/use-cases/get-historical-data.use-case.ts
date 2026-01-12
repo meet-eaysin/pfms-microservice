@@ -1,9 +1,6 @@
 import type { HistoricalCandle } from '@/domain/entities/historical-candle.entity';
 import type { IMarketDataRepository } from '@/domain/interfaces/repository.interface';
 import type { IPriceProvider } from '@/domain/interfaces/price-provider.interface';
-import { createLogger } from '@pfms/config';
-
-const logger = createLogger('GetHistoricalDataUseCase');
 
 export class GetHistoricalDataUseCase {
   constructor(

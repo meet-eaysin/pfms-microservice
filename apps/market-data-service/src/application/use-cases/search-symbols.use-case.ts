@@ -2,9 +2,6 @@ import type {
   AssetSearchResult,
   IPriceProvider,
 } from '@/domain/interfaces/price-provider.interface';
-import { createLogger } from '@pfms/config';
-
-const logger = createLogger('SearchSymbolsUseCase');
 
 export class SearchSymbolsUseCase {
   constructor(

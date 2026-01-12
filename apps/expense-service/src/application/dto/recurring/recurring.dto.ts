@@ -12,7 +12,7 @@ import { Frequency } from '../../../domain/entities/recurring-expense.model';
 export class CreateRecurringDto {
   @IsNotEmpty()
   @IsNumber()
-  amount: number;
+  amount!: number;
 
   @IsString()
   @IsOptional()
@@ -20,13 +20,13 @@ export class CreateRecurringDto {
 
   @IsNotEmpty()
   @IsEnum(Frequency)
-  frequency: Frequency;
+  frequency!: Frequency;
 
   @IsNotEmpty()
   @IsInt()
-  interval: number;
+  interval!: number;
 
   @IsNotEmpty()
   @IsDateString()
-  startDate: string;
+  startDate!: string;
 }

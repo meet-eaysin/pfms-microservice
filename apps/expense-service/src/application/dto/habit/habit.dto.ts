@@ -3,23 +3,23 @@ import { IsNotEmpty, IsString, IsNumber, IsInt, IsDateString, IsUUID } from 'cla
 export class CreateHabitDto {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name!: string;
 
   @IsNotEmpty()
   @IsNumber()
-  unitCost: number;
+  unitCost!: number;
 }
 
 export class LogHabitDto {
   @IsNotEmpty()
   @IsUUID()
-  habitId: string;
+  habitId!: string;
 
   @IsNotEmpty()
   @IsInt()
-  quantity: number;
+  quantity!: number;
 
   @IsNotEmpty()
   @IsDateString()
-  date: string;
+  date!: string;
 }

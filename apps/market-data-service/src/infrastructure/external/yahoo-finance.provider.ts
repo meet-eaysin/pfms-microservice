@@ -12,11 +12,8 @@ const logger = createLogger('YahooFinanceProvider');
 
 export class YahooFinanceProvider implements IPriceProvider {
   private readonly baseUrl = 'https://query1.finance.yahoo.com/v8/finance';
-  private readonly apiKey?: string;
 
-  constructor(config: MarketProvidersConfig) {
-    this.apiKey = config.YAHOO_API_KEY;
-  }
+  constructor(_config: MarketProvidersConfig) {}
 
   async getPrice(symbol: string): Promise<AssetPrice | null> {
     try {

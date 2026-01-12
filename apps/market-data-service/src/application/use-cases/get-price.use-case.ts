@@ -5,9 +5,6 @@ import type {
 } from '@/domain/interfaces/repository.interface';
 import type { IPriceProvider } from '@/domain/interfaces/price-provider.interface';
 import type { EventPublisher } from '@/infrastructure/messaging/event.publisher';
-import { createLogger } from '@pfms/config';
-
-const logger = createLogger('GetPriceUseCase');
 
 export class GetPriceUseCase {
   constructor(
