@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Group {
+  id          String      @id @default(uuid()) @db.Uuid
+  name        String
+  description String?
+  groupType   String      @default("general")
+  createdBy   String      @db.Uuid
+  isActive    Boolean     @default(true)
+  members     Member[]
+  expenses    Expense[]
+  settlements Settlement[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("groups")
+}
+
+enum MemberRole {
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+model Member {
+  id          String     @id @default(uuid()) @db.Uuid
+  groupId     String     @db.Uuid
+  group       Group      @relation(fields: [groupId], references: [id])
+  userId      String     @db.Uuid
+  role        MemberRole @default(MEMBER)
+  displayName String?
+  isActive    Boolean    @default(true)
+  joinedAt    DateTime   @default(now())
+
+  @@unique([groupId, userId])
+  @@index([userId])
+  @@map("members")
+}
+
+enum SplitType {
+  EQUAL
+  UNEQUAL
+  PERCENTAGE
+  WEIGHT
+}
+
+model Expense {
+  id          String   @id @default(uuid()) @db.Uuid
+  groupId     String   @db.Uuid
+  group       Group    @relation(fields: [groupId], references: [id])
+  paidBy      String   @db.Uuid
+  amount      Decimal  @db.Decimal(12, 2)
+  currency    String   @default("USD") @db.Char(3)
+  description String
+  category    String?
+  date        DateTime
+  splitType   SplitType @default(EQUAL)
+  splits      Split[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([groupId])
+  @@index([paidBy])
+  @@map("expenses")
+}
+
+model Split {
+  id              String   @id @default(uuid()) @db.Uuid
+  groupExpenseId  String   @db.Uuid
+  expense         Expense  @relation(fields: [groupExpenseId], references: [id])
+  userId          String   @db.Uuid
+  shareAmount     Decimal  @db.Decimal(12, 2)
+  sharePercentage Decimal? @db.Decimal(5, 2)
+  isPaid          Boolean  @default(false)
+  paidAt          DateTime?
+  createdAt       DateTime @default(now())
+
+  @@index([groupExpenseId])
+  @@index([userId])
+  @@map("expense_splits")
+}
+
+enum SettlementStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+model Settlement {
+  id             String           @id @default(uuid()) @db.Uuid
+  groupId        String           @db.Uuid
+  group          Group            @relation(fields: [groupId], references: [id])
+  fromUserId     String           @db.Uuid
+  toUserId       String           @db.Uuid
+  amount         Decimal          @db.Decimal(12, 2)
+  currency       String           @default("USD") @db.Char(3)
+  status         SettlementStatus @default(PENDING)
+  settlementDate DateTime?
+  notes          String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([groupId])
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@map("settlements")
+}
