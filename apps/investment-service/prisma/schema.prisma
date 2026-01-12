@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Portfolio {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  assets      Asset[]
+
+  @@map("portfolios")
+  @@index([userId])
+}
+
+model Asset {
+  id             String   @id @default(uuid()) @db.Uuid
+  portfolioId    String   @map("portfolio_id") @db.Uuid
+  symbol         String   @db.VarChar(20)
+  assetType      String   @default("stock") @map("asset_type") @db.VarChar(20)
+  quantity       Decimal  @db.Decimal(18, 8)
+  averageBuyPrice Decimal  @map("avg_buy_price") @db.Decimal(18, 8)
+  currency       String   @default("USD") @db.Char(3)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  portfolio    Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@map("assets")
+  @@unique([portfolioId, symbol])
+  @@index([portfolioId])
+}
+
+enum TransactionType {
+  BUY
+  SELL
+  DIVIDEND
+}
+
+model Transaction {
+  id            String          @id @default(uuid()) @db.Uuid
+  assetId       String          @map("asset_id") @db.Uuid
+  type          TransactionType
+  quantity      Decimal         @db.Decimal(18, 8)
+  price         Decimal         @db.Decimal(18, 8)
+  fees          Decimal?        @default(0) @db.Decimal(18, 8)
+  tax           Decimal?        @default(0) @db.Decimal(18, 8)
+  date          DateTime        @db.Timestamp
+  createdAt     DateTime        @default(now()) @map("created_at")
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@map("investment_transactions")
+  @@index([assetId])
+}
