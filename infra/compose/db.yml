@@ -1,0 +1,94 @@
+x-postgres-common: &postgres-common
+  image: postgres:16-alpine
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U postgres"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+  networks:
+    - pfms_network
+
+services:
+  postgres-auth:
+    <<: *postgres-common
+    container_name: pfms_postgres_auth
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: ${POSTGRES_AUTH_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_AUTH_PASSWORD:-placeholder_postgres_password}
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  postgres-user:
+    <<: *postgres-common
+    container_name: pfms_postgres_user
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_user_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+
+  postgres-expense:
+    <<: *postgres-common
+    container_name: pfms_postgres_expense
+    environment:
+      POSTGRES_DB: expense_db
+      POSTGRES_USER: ${POSTGRES_EXPENSE_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_EXPENSE_PASSWORD:-placeholder_postgres_password}
+    volumes:
+      - postgres_expense_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+
+  postgres-income:
+    <<: *postgres-common
+    container_name: pfms_postgres_income
+    environment:
+      POSTGRES_DB: income_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_income_data:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+
+  postgres-ledger:
+    <<: *postgres-common
+    container_name: pfms_postgres_ledger
+    environment:
+      POSTGRES_DB: ledger_db
+      POSTGRES_USER: ${POSTGRES_LEDGER_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_LEDGER_PASSWORD:-placeholder_postgres_password}
+    volumes:
+      - postgres_ledger_data:/var/lib/postgresql/data
+    ports:
+      - "5437:5432"
+
+  postgres-planning:
+    <<: *postgres-common
+    container_name: pfms_postgres_planning
+    environment:
+      POSTGRES_DB: planning_db
+      POSTGRES_USER: ${POSTGRES_PLANNING_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PLANNING_PASSWORD:-placeholder_postgres_password}
+    volumes:
+      - postgres_planning_data:/var/lib/postgresql/data
+    ports:
+      - "5440:5432"
+
+networks:
+  pfms_network:
+
+volumes:
+  postgres_auth_data:
+  postgres_user_data:
+  postgres_expense_data:
+  postgres_income_data:
+  postgres_ledger_data:
+  postgres_planning_data:

@@ -1,0 +1,90 @@
+services:
+  # Redis - Shared Cache & Session Store
+  redis:
+    image: redis:7-alpine
+    container_name: pfms_redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD:-placeholder_redis_password}
+      --appendonly yes
+    volumes:
+      - redis_data:/data
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-placeholder_redis_password}
+    healthcheck:
+      test: ["CMD", "redis-cli", "--pass", "${REDIS_PASSWORD:-placeholder_redis_password}", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # RabbitMQ - Shared Event Bus & Message Queue
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: pfms_rabbitmq
+    restart: unless-stopped
+    hostname: pfms-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-placeholder_rabbitmq_password}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ../config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ../scripts/rabbitmq-init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # MongoDB - Analytics & AI Data
+  mongodb:
+    image: mongo:7.0
+    container_name: pfms_mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-placeholder_mongodb_password}
+      MONGO_INITDB_DATABASE: pfms
+    volumes:
+      - mongodb_data:/data/db
+      - ../config/mongodb-init.js:/docker-entrypoint-initdb.d/init.js:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "admin", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - pfms_network
+
+  # MinIO - S3-compatible Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: pfms_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-placeholder_minio_password}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - pfms_network
+
+networks:
+  pfms_network:
+
+volumes:
+  redis_data:
+  rabbitmq_data:
+  mongodb_data:
+  minio_data:

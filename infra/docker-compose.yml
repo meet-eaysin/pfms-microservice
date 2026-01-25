@@ -1,0 +1,53 @@
+# PFMS Simplified Docker Compose
+# Core entry point using Docker Compose 'include'
+
+include:
+  - path: compose/infra.yml
+  - path: compose/db.yml
+  - path: compose/monitoring.yml
+  - path: compose/gateway.yml
+  - path: compose/apps.yml
+
+networks:
+  pfms_network:
+    name: pfms_network
+    driver: bridge
+
+volumes:
+  # Shared Infrastructure
+  redis_data:
+    name: pfms_redis_data
+  rabbitmq_data:
+    name: pfms_rabbitmq_data
+  mongodb_data:
+    name: pfms_mongodb_data
+  minio_data:
+    name: pfms_minio_data
+
+  # Monitoring
+  prometheus_data:
+    name: pfms_prometheus_data
+  grafana_data:
+    name: pfms_grafana_data
+  elasticsearch_data:
+    name: pfms_elasticsearch_data
+
+  # Gateway
+  kong_db_data:
+    name: pfms_kong_db_data
+  portainer_data:
+    name: pfms_portainer_data
+
+  # Databases
+  postgres_auth_data:
+    name: pfms_postgres_auth_data
+  postgres_user_data:
+    name: pfms_postgres_user_data
+  postgres_expense_data:
+    name: pfms_postgres_expense_data
+  postgres_income_data:
+    name: pfms_postgres_income_data
+  postgres_ledger_data:
+    name: pfms_postgres_ledger_data
+  postgres_planning_data:
+    name: pfms_postgres_planning_data

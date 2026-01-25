@@ -5,7 +5,7 @@
 # This image contains Kong configuration files and deck CLI for deployment
 # ==============================================================================
 
-ARG KONG_VERSION=3.4-alpine
+ARG KONG_VERSION=latest
 
 # ==============================================================================
 # Stage 1: Configuration Builder
@@ -17,8 +17,7 @@ WORKDIR /app
 # Copy package files
 COPY package.json ./
 COPY scripts ./scripts
-COPY configs ./configs
-COPY templates ./templates
+COPY config ./config
 
 # Install dependencies for config processing
 RUN npm install --production
@@ -43,7 +42,7 @@ RUN apk add --no-cache curl && \
     rm -rf /var/cache/apk/*
 
 # Copy configuration files
-COPY --from=builder /app/configs /etc/kong/configs
+COPY --from=builder /app/config /etc/kong/config
 COPY --from=builder /app/scripts /etc/kong/scripts
 
 # Create directory for declarative config

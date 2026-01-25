@@ -1,0 +1,129 @@
+x-app-env: &app-env
+  NODE_ENV: ${NODE_ENV:-development}
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  REDIS_PASSWORD: ${REDIS_PASSWORD:-placeholder_redis_password}
+  RABBITMQ_HOST: rabbitmq
+  RABBITMQ_PORT: 5672
+  RABBITMQ_USER: ${RABBITMQ_USER:-admin}
+  RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-placeholder_rabbitmq_password}
+
+x-app-defaults: &app-defaults
+  restart: unless-stopped
+  networks:
+    - pfms_network
+
+services:
+  # 1. Auth Service
+  auth-service:
+    <<: *app-defaults
+    container_name: pfms_auth_service
+    build:
+      context: ../..
+      dockerfile: apps/auth-service/Dockerfile
+    environment:
+      <<: *app-env
+      SERVICE_NAME: auth-service
+      SERVICE_PORT: 3001
+      DATABASE_URL: postgresql://${POSTGRES_AUTH_USER:-postgres}:${POSTGRES_AUTH_PASSWORD:-postgres_dev_password}@postgres-auth:5432/auth_db
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # 3. User Service
+  user-service:
+    <<: *app-defaults
+    container_name: pfms_user_service
+    build:
+      context: ../..
+      dockerfile: apps/user-service/Dockerfile
+    environment:
+      <<: *app-env
+      SERVICE_NAME: user-service
+      SERVICE_PORT: 3002
+      DATABASE_URL: postgresql://${POSTGRES_USER_USER:-postgres}:${POSTGRES_USER_PASSWORD:-placeholder_postgres_password}@postgres-user:5432/user_db
+    depends_on:
+      postgres-user:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # 4. Expense Service
+  expense-service:
+    <<: *app-defaults
+    container_name: pfms_expense_service
+    build:
+      context: ../..
+      dockerfile: apps/expense-service/Dockerfile
+    environment:
+      <<: *app-env
+      SERVICE_NAME: expense-service
+      SERVICE_PORT: 3003
+      DATABASE_URL: postgresql://${POSTGRES_EXPENSE_USER:-postgres}:${POSTGRES_EXPENSE_PASSWORD:-placeholder_postgres_password}@postgres-expense:5432/expense_db
+    depends_on:
+      postgres-expense:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # 5. Income Service
+  income-service:
+    <<: *app-defaults
+    container_name: pfms_income_service
+    build:
+      context: ../..
+      dockerfile: apps/income-service/Dockerfile
+    environment:
+      <<: *app-env
+      SERVICE_NAME: income-service
+      SERVICE_PORT: 3004
+      DATABASE_HOST: postgres-income
+      DATABASE_NAME: income_db
+    depends_on:
+      postgres-income:
+        condition: service_healthy
+
+  # 6. Ledger Service
+  ledger-service:
+    <<: *app-defaults
+    container_name: pfms_ledger_service
+    build:
+      context: ../..
+      dockerfile: apps/ledger-service/Dockerfile
+    environment:
+      <<: *app-env
+      SERVICE_NAME: ledger-service
+      SERVICE_PORT: 3008
+      DATABASE_HOST: postgres-ledger
+      DATABASE_NAME: ledger_db
+    depends_on:
+      postgres-ledger:
+        condition: service_healthy
+
+  # 7. Planning Service
+  planning-service:
+    <<: *app-defaults
+    container_name: pfms_planning_service
+    build:
+      context: ../..
+      dockerfile: apps/planning-service/Dockerfile
+    environment:
+      <<: *app-env
+      SERVICE_NAME: planning-service
+      SERVICE_PORT: 3009
+      DATABASE_HOST: postgres-planning
+      DATABASE_NAME: planning_db
+    depends_on:
+      postgres-planning:
+        condition: service_healthy
+
+networks:
+  pfms_network:
