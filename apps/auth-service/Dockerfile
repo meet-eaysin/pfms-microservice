@@ -37,6 +37,7 @@ RUN apk add --no-cache python3 make g++ && \
 
 # Copy dependency manifests first for better layer caching
 COPY --link package.json yarn.lock .yarnrc.yml ./
+COPY --link .yarn ./.yarn
 
 # Copy workspace package.json files for monorepo
 COPY --link apps/api-gateway/package.json ./apps/api-gateway/

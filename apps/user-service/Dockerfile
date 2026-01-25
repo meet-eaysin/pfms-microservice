@@ -30,6 +30,7 @@ WORKDIR /app
 FROM base AS deps
 
 COPY --link package.json yarn.lock .yarnrc.yml ./
+COPY --link .yarn ./.yarn
 COPY --link apps/user-service/package.json ./apps/user-service/
 COPY --link packages/config/package.json ./packages/config/
 COPY --link packages/date/package.json ./packages/date/
@@ -52,6 +53,7 @@ RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn/berry/cache \
 FROM base AS builder
 
 COPY --from=deps --link /app/node_modules ./node_modules
+COPY --from=deps --link /app/.yarn ./.yarn
 COPY --from=deps --link /app/apps/user-service/node_modules ./apps/user-service/node_modules
 COPY --link . .
 
